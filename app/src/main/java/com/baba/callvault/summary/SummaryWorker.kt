@@ -67,23 +67,39 @@ class SummaryWorker(
                 return@withContext Result.failure()
             }
 
+        val prefs = AppPreferences(applicationContext)
+
+        // The user's own endpoint, when chosen and actually configured. A cloud summary needs no
+        // downloaded model, so the whole model-load-and-retry path below is skipped for it; a cloud
+        // selection without a configured endpoint falls back to the local model rather than failing.
+        val cloudConfig = prefs.getSummaryCloudConfig().takeIf {
+            prefs.getSummaryEngine() == AppPreferences.ENGINE_CLOUD
+        }
+        if (prefs.getSummaryEngine() == AppPreferences.ENGINE_CLOUD && cloudConfig == null) {
+            AppLogger.w(TAG, "Cloud summariser is selected but not configured; using the on-device model")
+        }
+
         val model = SummaryModel.fromId(inputData.getString(KEY_MODEL_ID)) ?: SummaryModel.DEFAULT
-        val modelPath = ModelRepository.pathFor(applicationContext, model)?.absolutePath
-            ?: run {
-                // Retry rather than fail: the model may still be downloading, and 3.46 GB takes a
-                // while. The work should pick up when it lands instead of the user asking again.
-                AppLogger.i(TAG, "The summariser is not installed yet; will retry")
-                return@withContext Result.retry()
-            }
+        val modelPath = if (cloudConfig != null) {
+            ""
+        } else {
+            ModelRepository.pathFor(applicationContext, model)?.absolutePath
+                ?: run {
+                    // Retry rather than fail: the model may still be downloading, and 3.46 GB takes a
+                    // while. The work should pick up when it lands instead of the user asking again.
+                    AppLogger.i(TAG, "The summariser is not installed yet; will retry")
+                    return@withContext Result.retry()
+                }
+        }
+        val modelId = cloudConfig?.model ?: model.id
 
         // Checked here as well as at the tap, because a queued job can start much later than it was
-        // asked for — by which time a transcription may have begun on the same cores.
-        if (TranscriptionEngine.isRunning) {
+        // asked for — by which time a transcription may have begun on the same cores. A cloud run
+        // holds no model in memory, so it is not blocked by a running transcription.
+        if (cloudConfig == null && TranscriptionEngine.isRunning) {
             AppLogger.i(TAG, "A transcription is running; deferring the summary")
             return@withContext Result.retry()
         }
-
-        val prefs = AppPreferences(applicationContext)
 
         // Resolved to a concrete language before the prompt is built, never left for the model to
         // infer. "Write in the same language as the conversation" is what produced a Hebrew call
@@ -102,7 +118,7 @@ class SummaryWorker(
         )
         AppLogger.i(TAG, "Summarising in $language")
 
-        AppLogger.i(TAG, "Summarising one recording with ${model.id}")
+        AppLogger.i(TAG, "Summarising one recording with $modelId")
 
         // Chunks are the only place the runner can report from, and a chunk is about a minute. The
         // gap between them is far too long to leave a bar still, so the same asymptotic prediction
@@ -142,9 +158,14 @@ class SummaryWorker(
         }
 
         val summary = runCatching {
-            SummaryRunner(applicationContext).run(
+            val runner = if (cloudConfig != null) {
+                SummaryRunner(applicationContext, host = CloudSummaryHost(cloudConfig))
+            } else {
+                SummaryRunner(applicationContext)
+            }
+            runner.run(
                 displayName = displayName,
-                modelId = model.id,
+                modelId = modelId,
                 modelPath = modelPath,
                 language = language,
                 now = System.currentTimeMillis(),

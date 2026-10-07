@@ -305,9 +305,6 @@
     <string name="settings_subsection_phone_calls">Cuộc gọi điện thoại</string>
     <string name="settings_subsection_resilience">Độ bền bỉ</string>
     <string name="settings_subsection_voip">Cuộc gọi VoIP</string>
-    <string name="settings_support_label">Ủng hộ phát triển</string>
-    <string name="settings_support_supporting">Mở Ko-fi trong trình duyệt</string>
-    <string name="settings_support_value">Mời tôi một ly cà phê trên Ko-fi</string>
     <string name="settings_tap_to_select_folder">Chạm để chọn thư mục...</string>
     <string name="settings_theme_mode">Chế độ chủ đề</string>
     <string name="settings_theme_mode_dark">Tối</string>
@@ -388,9 +385,6 @@
     <string name="summary_requirements_time">Một đến hai phút cho cuộc gọi ngắn, lâu hơn với cuộc gọi dài</string>
     <string name="summary_requirements_title">Yêu cầu</string>
     <string name="summary_requirements_toggle_description">Hiện yêu cầu của trình tóm tắt trước khi tải</string>
-    <string name="support_appeal_body">Tôi tự phát triển Callrex trong thời gian rảnh — miễn phí, mã nguồn mở, không quảng cáo, không theo dõi. ☕ Nếu thấy hữu ích, một khoản nhỏ giúp tôi tiếp tục. Dù sao thì, cảm ơn bạn! 🙏</string>
-    <string name="support_appeal_title">Do một người làm 👋</string>
-    <string name="support_not_now">Để sau</string>
     <string name="transcribe_confirm_dont_ask">Đừng hỏi lại</string>
     <string name="transcribe_confirm_message">Chép lời %1$s sẽ khiến máy bận và hao pin rõ rệt. Bạn có thể dừng bất cứ lúc nào.\n\nCâu hỏi này có thể bật lại trong mục Chép lời ở Cài đặt.</string>
     <string name="transcribe_confirm_title">Việc này mất khoảng %1$s</string>

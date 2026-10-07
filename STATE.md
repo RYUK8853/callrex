@@ -1,41 +1,61 @@
-# CallSage — STATE (live checkpoint)
-_Last updated: 2026-10-05 IST_
+# Callrex — STATE (live checkpoint)
+_Last updated: 2026-10-08 IST_
 
 ## What this is
-Fork of **CallVault** (madkongo/CallVault, GPL-3.0) → **CallSage**: record calls (phone + WhatsApp) both sides → on-device transcription (whisper.cpp) → on-device AI summary (llama.cpp + Gemma).
-- Fork path: `~/dev/callvault-fork` (branch `fork/ai-call-summary`)
-- Originals kept for reference: `/tmp/repo-study/callvault`, `/tmp/repo-study/shizu`
+Fork of **CallVault** (madkongo/CallVault, GPL-3.0) → **Callrex**: record calls (phone +
+WhatsApp/VoIP) both sides → transcription (whisper.cpp) → AI summary (llama.cpp + Gemma).
+- Fork path: `~/dev/callvault-fork` (local branch `fork/ai-call-summary`)
+- applicationId = `com.vishal.callrex` (internal namespace `com.baba.callvault` kept)
+- app_name = "Callrex", Nothing-style dark UI. Repo pushed as clean snapshot → RYUK8853/callrex:main
 
-## Key architecture facts (verified in code, not guessed)
-- Capture: privileged process (shell UID 2000) via **built-in ADB** (wireless-debugging pairing, default) OR **Shizuku** (optional mode). Scrcpy-server fallback for audio source `mic-voice-communication`.
-- Phone calls: InCallService detection (Android 12+; verified working on AOSP android-16 r4) + PhoneState fallback.
-- VoIP (WhatsApp/Signal/Telegram): shell-side reflection of hidden `AudioMixingRule` → loopback-render sink for far party (source usage `USAGE_VOICE_COMMUNICATION`) + plain MIC for near party → stereo interleave (L=near, R=far) → mono downmix → Opus/AAC mux. (server/VoipCaptureSession.kt, server/VoipAudioPolicy.kt)
-- R8 shrinking MUST stay off (privileged recorder launched by string class name via app_process).
-- Speaker labels: from the call's 2 channels, NOT a voice model (server/speakers/).
-- Transcription: whisper.cpp, models 190MB / 574MB, chunked passes for long calls.
-- Summary: llama.cpp + Gemma (2.6GB), structured JSON {intent, keyPoints, decisions, actionItems} with [m:ss] timestamps (summary/SummaryPrompt.kt).
-- Trap list (from their issues, all handled in code): VOICE_COMMUNICATION mic source zero-filled during calls; arrival-based stream pairing caused 6.4s far-party lag (fixed slot pairing); OPPO/OnePlus/Realme need "Disable system optimization" switch; vivo AudioRecord public ctor crash (reflective fallback); OEM background kills need battery-exemption guidance.
+## ACTIVE TASK: hybrid transcription/summary + mandatory update
+User complaint: on-device transcription "not good at all" → summary bad. Wants:
+(1) better transcription using the "Hermes method", (2) hosted Qwen for summary,
+(3) user's own API optional + NOT publicized, (4) mandatory in-app update (no data loss).
 
-## Rebrand done (Phase 0)
-- `applicationId` = `com.vishal.callsage` (app/build.gradle.kts:144) — INTERNAL namespace `com.baba.callvault` kept for build stability; full package rename is Phase 2.
-- `app_name` string = "CallSage" (res/values/strings.xml:13). User-facing "CallVault" mentions in other strings remain — bulk string rename pending (Phase 1, cosmetic).
-- GPL-3.0 + §7: fork attribution to kitsumed (original) + madkongo/CallVault authors MUST be kept (NOTICE.md, README credits).
+## VERIFIED FACTS (real runs — trust these over memory)
+- **Hermes STT = `faster-whisper large-v3` int8, beam 5, on the Mac** (skill local-audio-transcription).
+  Model cache: Systran/faster-whisper-large-v3. THIS is the "perfect, no-error" method the user references.
+- **onetapretain server = TEXT ONLY.** Real runs: `Qwen/Qwen3.8-27B` + audio → 502;
+  `/v1/audio/transcriptions` with user key → 403 (key limited to gemma-4-31b-it, Qwen3.8-27B).
+  Both are text LLMs. => user's server CANNOT transcribe audio; CAN do text→summary.
+- **whisper.cpp model digests** (HF `x-linked-etag`, verified by matching known turbo-q8_0):
+    ggml-large-v3.bin       3095033483  64d182b440b98d5203c4f9bd541544d84c605196c4f7b845dfa11fb23594d1e2
+    ggml-large-v3-q5_0.bin  1081140203  d75795ecff3f83b5faa89d1900604ad8c780abd5739fae406de19f23ecd98ad1
+  (large-v3 q8_0 / q4_0 / q3_0 do NOT exist on HF → 404. q5_0 = 1.08GB is the smallest FULL large-v3.)
 
-## Phases
-- [x] P0: Fork + rebrand (applicationId, app_name)
-- [x] P1a: Build env — SDK 36 + NDK 27.2.12479018 + CMake 3.22.1 installed (~/Library/Android/sdk)
-- [x] P1b: First `./gradlew assembleDebug` GREEN — 4m36s. APK verified via aapt:
-      package com.vishal.callsage v2.4.5 (code 20451), label "CallSage", minSdk 30 / targetSdk 36,
-      84MB, all native libs present: libwhisper.so, libllama.so, libggml-*, libparakeet.so (VAD),
-      libaudiohandoff.so, libllamacv.so, libwhispercv.so
-- [ ] P1: Full "CallVault"→"CallSage" string sweep + icon (cosmetic)
-- [ ] P2: Full package rename com.baba.callvault → com.vishal.callsage
-- [ ] P3: Customize summary prompts for Vishal's business use (decisions/action-items focus, Hinglish)
-- [ ] P4: Release keystore + signed APK; E2E on Android 16 phone (phone call + WhatsApp call → transcript + summary)
-- NOTE: debug APK IS installable (debug-signed) — usable for E2E test now, no release keystore needed first.
+## WHY the phone transcription is "not good"
+Phone default = `large-v3-turbo-q8_0` (809M params, distilled) — fast but lower accuracy.
+Hermes uses full `large-v3` (1550M). Adding full large-v3 as the phone's top tier closes most of
+the gap. Residual gap vs Hermes = int8 beam-5 on M4 CPU vs phone quant; the rest needs cloud ASR.
+
+## PLAN (build after each phase)
+- [ ] **P1 transcription quality**: add full `large-v3` (q5_0, 1.08GB) as new top on-device tier,
+      make it DEFAULT (transcription never released → no migration). Touch: TranscriptionModel.kt
+      (enum + DEFAULT L164), TranscriptionLabels.titleOf (when L122), strings.xml (L593-603).
+- [ ] **P2 cloud transcription (optional)**: Settings → user's own OpenAI-compatible base URL + key
+      + model; POST audio to /v1/audio/transcriptions, parse to TranscriptSegments. Nothing hardcoded.
+      Injection at TranscriptionRunner.kt (model→transcribe).
+- [ ] **P3 cloud summary (optional)**: user's LLM URL+key as alternate SummaryModelHost (text→summary,
+      their Qwen). Their API stays on-device only. Injection at summary/SummaryRunner.kt host.
+- [ ] **P4 mandatory update**: release keystore + pin Callrex cert + re-point to RYUK8853/callrex
+      + asset name Callrex.apk + remove "Later" option (blocking dialog).
+- [ ] **P5**: build debug, install on emulator, verify UI (model dropdown has new tier, settings
+      cloud section, update dialog). Build release-signed. GitHub Release v1.0. Push commits.
+
+## KEY FILES
+- transcription/model/TranscriptionModel.kt   enum + DEFAULT
+- ui/common/TranscriptionLabels.kt            titleOf when (exhaustive → forces new tier entry)
+- res/values/strings.xml                      transcription_model_*
+- transcription/TranscriptionRunner.kt        P2 cloud injection
+- summary/SummaryRunner.kt (+ SummaryModelHost / SummarySession)   P3 cloud injection
+- system/updates/UpdateManager.kt             repo/asset/cert pin (P4)
+- app/build.gradle.kts                        applicationId, signing (P4)
+- ui/screens/SettingsScreen.kt                add cloud settings section (P2/P3)
 
 ## Open / risks
-- Signing keystore does not exist yet (release builds unsigned without it).
-- 27GB free disk on Mac — NDK+SDK+build outputs are big; watch it.
-- VoWiFi/VoLTE calls not covered (upstream limitation).
-- Play Store not an option (call-recording ban) → side-load / F-Droid / Obtainium only.
+- Release keystore NOT generated yet (only debug-signed). P4 creates it — MUST back it up.
+- Phone brand unknown (Pixel/Samsung/Xiaomi/OnePlus) → OEM notes pending.
+- E2E real-phone transcription+summary not yet verified.
+- 27GB free on Mac (tight). Shallow clone → use orphan/snapshot for pushes.
+- Cloud endpoint entered by user only; app ships on-device defaults. No user secret committed.

@@ -35,7 +35,6 @@ import com.baba.callvault.data.merge.MergeCandidates
 import com.baba.callvault.data.recordings.AudioImport
 import com.baba.callvault.data.recordings.DeleteScope
 import com.baba.callvault.data.recordings.RecordingSelection
-import com.baba.callvault.system.openKofi
 import com.baba.callvault.system.openTelegramGroup
 import com.baba.callvault.ui.common.DeleteScopeStateSaver
 import com.baba.callvault.ui.common.M3DropdownField
@@ -44,7 +43,6 @@ import com.baba.callvault.ui.common.TranscribeRequest
 import com.baba.callvault.ui.common.TranscribeRequestStateSaver
 import com.baba.callvault.ui.common.UriSetStateSaver
 import com.baba.callvault.ui.common.formatByteSize
-import com.baba.callvault.ui.common.SupportDialog
 import com.baba.callvault.system.shareRecordings
 import com.baba.callvault.system.shareRecording
 import androidx.compose.foundation.layout.Arrangement
@@ -331,12 +329,6 @@ fun HomeScreen(
 
     val playback by viewModel.playback.collectAsState()
 
-    // Two separate flags, not one: the chooser is opened by the user tapping Support, the appeal
-    // arrives on its own after a release note. Sharing a flag would let dismissing one suppress the
-    // other in the same session.
-    var showSupport by rememberSaveable { mutableStateOf(false) }
-    var showSupportAppeal by rememberSaveable { mutableStateOf(false) }
-
     // Multi-selection, keyed by each row's primary Uri. Empty means normal browsing; the moment it
     // holds anything the screen is in selection mode, so there is no second flag to keep in step.
     var selection by rememberSaveable(stateSaver = UriSetStateSaver) {
@@ -515,8 +507,11 @@ fun HomeScreen(
         viewModel.markUpdatePopupSeen(tag)
     }
     updatePrompt?.let { tag ->
+        // Mandatory: the dialog cannot be dismissed by scrim or back, only by a button. "Remind me
+        // later" closes it for this launch; the prompt returns on the next open until the update is
+        // installed (see HomeViewModel.updatePopupTag).
         AlertDialog(
-            onDismissRequest = { updatePrompt = null },
+            onDismissRequest = {},
             title = { Text(stringResource(R.string.update_popup_title, tag.removePrefix("v"))) },
             text = { Text(stringResource(R.string.update_popup_text)) },
             confirmButton = {
@@ -872,29 +867,24 @@ fun HomeScreen(
         }
     }
 
-    // The pill beside the title, on whichever section is showing. One slot, two claimants:
-    // transcription wins while it is working, because it is transient and explains something
-    // happening right now, whereas the support pill is always there and loses nothing by waiting.
+    // The pill beside the title, on whichever section is showing. Transcription wins the slot
+    // while it is working, because it is transient and explains something happening right now.
     val titleTrailing: @Composable () -> Unit = {
         if (transcribingShown.occupiesTitleSlot) {
             TranscribingPill(state = transcribingShown, onClick = { showTranscribingSheet = true })
         } else {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                SupportPill(onClick = { showSupport = true })
-                // Where the Telegram card goes when the user long-presses it away — moved, not dismissed,
-                // because someone who tucks it away has usually joined and may still want the way back.
-                // Long-pressing here undoes it, which is the only way back: nothing else mentions it.
-                if (communityTucked) {
-                    Spacer(Modifier.width(8.dp))
-                    CommunityPill(
-                        onClick = { context.openTelegramGroup() },
-                        onLongClick = {
-                            preferences.setCommunityTucked(false)
-                            communityTucked = false
-                            Toast.makeText(context, R.string.home_community_restored_hint, Toast.LENGTH_SHORT).show()
-                        },
-                    )
-                }
+            // Where the Telegram card goes when the user long-presses it away — moved, not dismissed,
+            // because someone who tucks it away has usually joined and may still want the way back.
+            // Long-pressing here undoes it, which is the only way back: nothing else mentions it.
+            if (communityTucked) {
+                CommunityPill(
+                    onClick = { context.openTelegramGroup() },
+                    onLongClick = {
+                        preferences.setCommunityTucked(false)
+                        communityTucked = false
+                        Toast.makeText(context, R.string.home_community_restored_hint, Toast.LENGTH_SHORT).show()
+                    },
+                )
             }
         }
     }
@@ -1396,21 +1386,12 @@ fun HomeScreen(
             onDismiss = { showBulkDelete = false },
         )
     }
-    if (showSupport) {
-        SupportDialog(onDismiss = { showSupport = false })
-    }
-    // The appeal follows the release note rather than replacing it: the note is the reason the
-    // user has the app open, and asking mid-note would bury what changed.
-    if (showSupportAppeal) {
-        SupportDialog(onDismiss = { showSupportAppeal = false })
-    }
     if (uiState.showWhatsNew) {
         // Persist the version so the note never reappears for this build, and clear the small
         // "updated" banner too.
         val dismiss = {
             viewModel.markWhatsNewSeen()
             viewModel.dismissUpdatedBanner()
-            showSupportAppeal = true
         }
         WhatsNewDialog(onDismiss = dismiss, onOpenSettings = { dismiss(); onOpenSettings() })
     }
@@ -2044,7 +2025,7 @@ private fun FullReleaseNotesLink() {
 }
 
 /** The releases page rather than one tag, so it keeps working for whatever version is installed. */
-private const val RELEASE_NOTES_URL = "https://github.com/madkongo/CallVault/releases"
+private const val RELEASE_NOTES_URL = "https://github.com/RYUK8853/callrex/releases"
 
 /**
  * Dismissable confirmation shown once after an update lands ("CallVault updated to X.Y.Z"). Uses a
@@ -2205,13 +2186,8 @@ private fun UpdateBannerCard(
 }
 
 /**
- * A compact, tappable "♥ Support" pill shown next to the app title. Opens the maintainer's Ko-fi
- * page in the browser — an optional, low-key donation entry point that keeps the status card and the
- * recordings list uncluttered. The matching, more explicit ask lives in Settings → About.
- */
-/**
- * The tucked-away Telegram invite. Deliberately quieter than [SupportPill]: it is a way back to something
- * the user has already seen, not a second thing asking for their attention.
+ * The tucked-away Telegram invite. A way back to something the user has already seen, not a
+ * second thing asking for their attention.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -2235,35 +2211,6 @@ private fun CommunityPill(onClick: () -> Unit, onLongClick: () -> Unit) {
             Spacer(Modifier.width(6.dp))
             Text(
                 text = stringResource(R.string.home_community_pill),
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Medium,
-                color = accent,
-            )
-        }
-    }
-}
-
-@Composable
-private fun SupportPill(onClick: () -> Unit) {
-    val accent = MaterialTheme.colorScheme.primary
-    Surface(
-        onClick = onClick,
-        shape = CircleShape,
-        color = accent.copy(alpha = 0.12f),
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Favorite,
-                contentDescription = null,
-                tint = accent,
-                modifier = Modifier.size(15.dp),
-            )
-            Spacer(Modifier.width(6.dp))
-            Text(
-                text = stringResource(R.string.home_support_pill),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Medium,
                 color = accent,

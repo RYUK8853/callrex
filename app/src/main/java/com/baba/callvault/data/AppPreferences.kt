@@ -78,6 +78,12 @@ class AppPreferences(context: Context) {
         /** Public key id for the privileged mode, so the UI can react the moment it changes. */
         const val PRIVILEGED_MODE_KEY = "privileged_mode"
 
+        /** On-device engine id: whisper on the phone, no network. */
+        const val ENGINE_LOCAL = "local"
+
+        /** The user's own OpenAI-compatible endpoint. */
+        const val ENGINE_CLOUD = "cloud"
+
         /** Public key id for [getPairingRefusals], so Home's "Pairing expired" card can follow it live. */
         const val PAIRING_REFUSALS_KEY = "pairing_refusals"
 
@@ -212,6 +218,21 @@ class AppPreferences(context: Context) {
         // more than one language.
         const val TRANSCRIPTION_ASK_LANGUAGE = false
 
+        // --- Cloud AI (the user's own endpoint) ---
+        // "local" keeps every word on the device; "cloud" sends audio (transcription) or transcript
+        // text (summary) to the endpoint the user configured — any OpenAI-compatible server. Empty
+        // URL or model means "not configured", and a misconfigured cloud selection falls back to the
+        // on-device path rather than failing the run.
+        const val TRANSCRIPTION_ENGINE = ENGINE_LOCAL
+        const val SUMMARY_ENGINE = ENGINE_LOCAL
+        val TRANSCRIPTION_CLOUD_BASE_URL: String? = null
+        val TRANSCRIPTION_CLOUD_API_KEY: String? = null
+        val TRANSCRIPTION_CLOUD_MODEL: String? = null
+        val TRANSCRIPTION_CLOUD_LANGUAGE: String? = null
+        val SUMMARY_CLOUD_BASE_URL: String? = null
+        val SUMMARY_CLOUD_API_KEY: String? = null
+        val SUMMARY_CLOUD_MODEL: String? = null
+
         // --- Retention (auto-delete old recordings) ---
         // Delete recordings older than N days. 0 = keep forever (OFF). Applied per copy: device copies
         // use RETENTION_LOCAL_DAYS, Drive copies use RETENTION_DRIVE_DAYS. When RETENTION_LINKED is true
@@ -328,6 +349,16 @@ class AppPreferences(context: Context) {
         TRANSCRIPTION_MODEL_ID("transcription_model_id"),
         TRANSCRIPTION_LANGUAGE("transcription_language"),
         TRANSCRIPTION_ASK_LANGUAGE("transcription_ask_language"),
+        // --- Cloud AI (user's own endpoint; deliberately NOT in EXPORTABLE_KEYS) ---
+        TRANSCRIPTION_ENGINE("transcription_engine"),
+        TRANSCRIPTION_CLOUD_BASE_URL("transcription_cloud_base_url"),
+        TRANSCRIPTION_CLOUD_API_KEY("transcription_cloud_api_key"),
+        TRANSCRIPTION_CLOUD_MODEL("transcription_cloud_model"),
+        TRANSCRIPTION_CLOUD_LANGUAGE("transcription_cloud_language"),
+        SUMMARY_ENGINE("summary_engine"),
+        SUMMARY_CLOUD_BASE_URL("summary_cloud_base_url"),
+        SUMMARY_CLOUD_API_KEY("summary_cloud_api_key"),
+        SUMMARY_CLOUD_MODEL("summary_cloud_model"),
         PRIVILEGED_MODE("privileged_mode"),
         /** Which switches *CallVault* turned off for the current mode, so a round trip can undo it. */
         MODE_AUTO_DISABLED("mode_auto_disabled"),
@@ -891,6 +922,112 @@ class AppPreferences(context: Context) {
     /** Sets the language passed to whisper, or null to auto-detect. */
     fun setTranscriptionLanguage(language: String?) =
         setString(Key.TRANSCRIPTION_LANGUAGE, TranscriptionLanguageChoice.encode(language))
+
+    // ----- Cloud AI (the user's own endpoint) -----
+    //
+    // Never exported: the keys and endpoint name where this user's credentials live, and a settings
+    // file moved to another phone must not carry them with it. See EXPORTABLE_KEYS.
+
+    /** The transcription engine id, "local" or "cloud"; anything stored that is neither is local. */
+    fun getTranscriptionEngine(): String =
+        getString(Key.TRANSCRIPTION_ENGINE, DefaultsValue.TRANSCRIPTION_ENGINE)
+            ?.trim().orEmpty().takeIf { it == ENGINE_CLOUD } ?: ENGINE_LOCAL
+
+    fun setTranscriptionEngine(engine: String) = setString(Key.TRANSCRIPTION_ENGINE, engine)
+
+    /** The cloud endpoint's base URL, or null when unset or blank. */
+    fun getTranscriptionCloudBaseUrl(): String? =
+        getString(Key.TRANSCRIPTION_CLOUD_BASE_URL, DefaultsValue.TRANSCRIPTION_CLOUD_BASE_URL)
+            ?.trim()?.ifBlank { null }
+
+    fun setTranscriptionCloudBaseUrl(url: String?) = setString(Key.TRANSCRIPTION_CLOUD_BASE_URL, url)
+
+    fun getTranscriptionCloudApiKey(): String? =
+        getString(Key.TRANSCRIPTION_CLOUD_API_KEY, DefaultsValue.TRANSCRIPTION_CLOUD_API_KEY)
+
+    fun setTranscriptionCloudApiKey(key: String?) = setString(Key.TRANSCRIPTION_CLOUD_API_KEY, key)
+
+    fun getTranscriptionCloudModel(): String? =
+        getString(Key.TRANSCRIPTION_CLOUD_MODEL, DefaultsValue.TRANSCRIPTION_CLOUD_MODEL)
+            ?.trim()?.ifBlank { null }
+
+    fun setTranscriptionCloudModel(model: String?) = setString(Key.TRANSCRIPTION_CLOUD_MODEL, model)
+
+    /** A language pinned for the cloud endpoint, or null to let it detect. */
+    fun getTranscriptionCloudLanguage(): String? =
+        getString(Key.TRANSCRIPTION_CLOUD_LANGUAGE, DefaultsValue.TRANSCRIPTION_CLOUD_LANGUAGE)
+            ?.trim()?.ifBlank { null }
+
+    fun setTranscriptionCloudLanguage(language: String?) = setString(Key.TRANSCRIPTION_CLOUD_LANGUAGE, language)
+
+    /**
+     * The configured cloud transcription endpoint, or null when the user has not set both the base
+     * URL and the model — the two halves that make a request possible.
+     */
+    fun getTranscriptionCloudConfig(): CloudTranscriptionConfig? {
+        val baseUrl = getTranscriptionCloudBaseUrl() ?: return null
+        val model = getTranscriptionCloudModel() ?: return null
+        return CloudTranscriptionConfig(
+            baseUrl = CloudTranscriptionConfig.normalizeBase(baseUrl),
+            model = model,
+            apiKey = getTranscriptionCloudApiKey().orEmpty(),
+            language = getTranscriptionCloudLanguage().orEmpty(),
+        )
+    }
+
+    /** The summary engine id, "local" or "cloud"; anything stored that is neither is local. */
+    fun getSummaryEngine(): String =
+        getString(Key.SUMMARY_ENGINE, DefaultsValue.SUMMARY_ENGINE)
+            ?.trim().orEmpty().takeIf { it == ENGINE_CLOUD } ?: ENGINE_LOCAL
+
+    fun setSummaryEngine(engine: String) = setString(Key.SUMMARY_ENGINE, engine)
+
+    fun getSummaryCloudBaseUrl(): String? =
+        getString(Key.SUMMARY_CLOUD_BASE_URL, DefaultsValue.SUMMARY_CLOUD_BASE_URL)
+            ?.trim()?.ifBlank { null }
+
+    fun setSummaryCloudBaseUrl(url: String?) = setString(Key.SUMMARY_CLOUD_BASE_URL, url)
+
+    fun getSummaryCloudApiKey(): String? =
+        getString(Key.SUMMARY_CLOUD_API_KEY, DefaultsValue.SUMMARY_CLOUD_API_KEY)
+
+    fun setSummaryCloudApiKey(key: String?) = setString(Key.SUMMARY_CLOUD_API_KEY, key)
+
+    fun getSummaryCloudModel(): String? =
+        getString(Key.SUMMARY_CLOUD_MODEL, DefaultsValue.SUMMARY_CLOUD_MODEL)
+            ?.trim()?.ifBlank { null }
+
+    fun setSummaryCloudModel(model: String?) = setString(Key.SUMMARY_CLOUD_MODEL, model)
+
+    /**
+     * The configured cloud summariser, or null when the user has not set both the base URL and the
+     * model.
+     */
+    fun getSummaryCloudConfig(): CloudSummaryConfig? {
+        val baseUrl = getSummaryCloudBaseUrl() ?: return null
+        val model = getSummaryCloudModel() ?: return null
+        return CloudSummaryConfig(
+            baseUrl = CloudTranscriptionConfig.normalizeBase(baseUrl),
+            model = model,
+            apiKey = getSummaryCloudApiKey().orEmpty(),
+        )
+    }
+
+    /**
+     * Deletes the stored cloud credentials and endpoint. The engine switch is left alone — a user
+     * clearing the key to switch providers is more likely than one clearing it to switch engines.
+     */
+    fun clearCloudSettings() {
+        prefs.edit {
+            remove(Key.TRANSCRIPTION_CLOUD_BASE_URL.id)
+            remove(Key.TRANSCRIPTION_CLOUD_API_KEY.id)
+            remove(Key.TRANSCRIPTION_CLOUD_MODEL.id)
+            remove(Key.TRANSCRIPTION_CLOUD_LANGUAGE.id)
+            remove(Key.SUMMARY_CLOUD_BASE_URL.id)
+            remove(Key.SUMMARY_CLOUD_API_KEY.id)
+            remove(Key.SUMMARY_CLOUD_MODEL.id)
+        }
+    }
 
     /**
      * Whether tapping Transcribe asks which language, instead of always using the setting above.

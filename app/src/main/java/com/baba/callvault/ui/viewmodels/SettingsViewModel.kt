@@ -105,6 +105,23 @@ interface SettingsActions {
     fun setTranscriptionAskLanguage(ask: Boolean)
     fun downloadTranscriptionModel(model: TranscriptionModel)
 
+    // ----- Cloud AI (the user's own endpoint) -----
+
+    /** "local" keeps everything on-device; "cloud" sends audio to the configured endpoint. */
+    fun setTranscriptionEngine(engine: String)
+    fun setTranscriptionCloudBaseUrl(url: String)
+    fun setTranscriptionCloudApiKey(key: String)
+    fun setTranscriptionCloudModel(model: String)
+
+    /** The summariser's engine, same ids as the transcription engine. */
+    fun setSummaryEngine(engine: String)
+    fun setSummaryCloudBaseUrl(url: String)
+    fun setSummaryCloudApiKey(key: String)
+    fun setSummaryCloudModel(model: String)
+
+    /** Deletes the stored endpoints and keys of both engines; the engine choice itself is kept. */
+    fun clearCloudSettings()
+
     /** Stops a download in progress. The partial file is kept, so resuming does not re-fetch it. */
     fun cancelTranscriptionModelDownload(model: TranscriptionModel)
     fun deleteTranscriptionModel(model: TranscriptionModel)
@@ -512,6 +529,51 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     /** Saves whether tapping Transcribe asks which language first. */
     override fun setTranscriptionAskLanguage(ask: Boolean) {
         preferences.setTranscriptionAskLanguage(ask)
+        refresh()
+    }
+
+    override fun setTranscriptionEngine(engine: String) {
+        preferences.setTranscriptionEngine(engine)
+        refresh()
+    }
+
+    override fun setTranscriptionCloudBaseUrl(url: String) {
+        preferences.setTranscriptionCloudBaseUrl(url)
+        refresh()
+    }
+
+    override fun setTranscriptionCloudApiKey(key: String) {
+        preferences.setTranscriptionCloudApiKey(key)
+        refresh()
+    }
+
+    override fun setTranscriptionCloudModel(model: String) {
+        preferences.setTranscriptionCloudModel(model)
+        refresh()
+    }
+
+    override fun setSummaryEngine(engine: String) {
+        preferences.setSummaryEngine(engine)
+        refresh()
+    }
+
+    override fun setSummaryCloudBaseUrl(url: String) {
+        preferences.setSummaryCloudBaseUrl(url)
+        refresh()
+    }
+
+    override fun setSummaryCloudApiKey(key: String) {
+        preferences.setSummaryCloudApiKey(key)
+        refresh()
+    }
+
+    override fun setSummaryCloudModel(model: String) {
+        preferences.setSummaryCloudModel(model)
+        refresh()
+    }
+
+    override fun clearCloudSettings() {
+        preferences.clearCloudSettings()
         refresh()
     }
 

@@ -32,7 +32,6 @@
     <string name="home_recordings_count">%1$d сохранено</string>
     <string name="home_recordings_empty_hint">Когда Callrex запишет звонок, он появится здесь. Совершите или примите звонок, чтобы начать.</string>
     <string name="home_recordings_empty_title">Записей пока нет</string>
-    <string name="home_support_pill">Поддержать</string>
     <string name="home_update_banner_button">Обновить</string>
     <string name="home_update_banner_downloading">Загрузка… %1$d%%</string>
     <string name="home_update_banner_installing">Установка…</string>

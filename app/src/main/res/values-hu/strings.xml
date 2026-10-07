@@ -305,9 +305,6 @@
     <string name="settings_subsection_phone_calls">Telefonhívások</string>
     <string name="settings_subsection_resilience">Ellenállóság</string>
     <string name="settings_subsection_voip">VoIP-hívások</string>
-    <string name="settings_support_label">Fejlesztés támogatása</string>
-    <string name="settings_support_supporting">Megnyitja a Ko-fit a böngészőben</string>
-    <string name="settings_support_value">Hívj meg egy kávéra a Ko-fin</string>
     <string name="settings_tap_to_select_folder">Mappa kiálasztása...</string>
     <string name="settings_theme_mode">Téma mód</string>
     <string name="settings_theme_mode_dark">Sötét</string>
@@ -388,9 +385,6 @@
     <string name="summary_requirements_time">Rövid híváshoz egy-két perc, hosszabbhoz több</string>
     <string name="summary_requirements_title">Mi kell hozzá</string>
     <string name="summary_requirements_toggle_description">Mutassa a letöltés előtt, mit igényel az összefoglaló</string>
-    <string name="support_appeal_body">A Callrexot egyedül fejlesztem, a szabadidőmben – ingyenes, nyílt forráskódú, nincs hirdetés és nyomkövetés. ☕ Ha hasznos neked, egy kis támogatás segít folytatni. Így is, úgy is: köszönöm! 🙏</string>
-    <string name="support_appeal_title">Egyetlen ember készíti 👋</string>
-    <string name="support_not_now">Most nem</string>
     <string name="transcribe_confirm_dont_ask">Ne kérdezze többet</string>
     <string name="transcribe_confirm_message">A(z) %1$s átírása leköti a telefont, és érezhetően fogyasztja az akkumulátort. Bármikor leállíthatja.\n\nEz a kérdés a Beállítások Átírás részében kapcsolható vissza.</string>
     <string name="transcribe_confirm_title">Ez körülbelül %1$s lesz</string>

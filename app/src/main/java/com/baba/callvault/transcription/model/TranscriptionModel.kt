@@ -135,6 +135,33 @@ enum class TranscriptionModel(
         sha256 = "317eb69c11673c9de1e1f0d459b253999804ec71ac4c23c17ecf5fbe24e259a1",
         sizeBytes = 874_188_075L,
         realTimeFactor = 1.10
+    ),
+
+    /**
+     * The **full** large-v3, not the turbo distillation — the largest and most accurate model
+     * whisper.cpp ships, quantised to 5 bits to keep the download under 1.1 GB.
+     *
+     * Why this tier exists: the turbo models (809M parameters) trade accuracy for speed, and on
+     * noisy phone audio with proper nouns, numbers and mixed Hinglish that trade shows up as
+     * mangled names and dropped words — which then cascade into a bad summary. The full model
+     * (1550M) is what Callrex's companion tooling uses for its error-free transcripts, and this is
+     * that same model, on-device.
+     *
+     * [realTimeFactor] is an upper-bound estimate only (superseded per device by
+     * `AppPreferences.getTranscriptionRtf` after the first real run): the full model does roughly
+     * twice the work of turbo per second of audio, so where q8_0 measured 0.72 RTF on an OP9 Pro,
+     * this one is expected to run at or below real time on the same class of hardware.
+     *
+     * The 1.1 GB download is the price; it is the largest tier offered, which is why the picker and
+     * the wizard's size note both keep ordering by download size and let the user pick knowingly.
+     */
+    LARGE_V3_Q5_0(
+        id = "large-v3-q5_0",
+        fileName = "ggml-large-v3-q5_0.bin",
+        url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-q5_0.bin",
+        sha256 = "d75795ecff3f83b5faa89d1900604ad8c780abd5739fae406de19f23ecd98ad1",
+        sizeBytes = 1_081_140_203L,
+        realTimeFactor = 1.80
     );
 
     companion object {
@@ -161,7 +188,7 @@ enum class TranscriptionModel(
          * Once 2.x ships, that argument is spent. Any future move of this constant is a breaking
          * change for people who already downloaded a model, and needs the migration.
          */
-        val DEFAULT = LARGE_V3_TURBO_Q8_0
+        val DEFAULT = LARGE_V3_Q5_0
 
         fun fromId(id: String?): TranscriptionModel? = entries.firstOrNull { it.id == id }
 

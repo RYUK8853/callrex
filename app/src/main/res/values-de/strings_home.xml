@@ -32,7 +32,6 @@
     <string name="home_recordings_count">%1$d gespeichert</string>
     <string name="home_recordings_empty_hint">Wenn Callrex einen Anruf aufzeichnet, erscheint er hier. Tätigen oder nehmen Sie einen Anruf an, um zu beginnen.</string>
     <string name="home_recordings_empty_title">Noch keine Aufnahmen</string>
-    <string name="home_support_pill">Unterstützen</string>
     <string name="home_update_banner_button">Aktualisieren</string>
     <string name="home_update_banner_downloading">Wird heruntergeladen… %1$d%%</string>
     <string name="home_update_banner_installing">Wird installiert…</string>

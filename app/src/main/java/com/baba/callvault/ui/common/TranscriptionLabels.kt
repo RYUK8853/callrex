@@ -123,6 +123,7 @@ object TranscriptionLabels {
         TranscriptionModel.SMALL_Q5_1 -> R.string.transcription_model_small
         TranscriptionModel.LARGE_V3_TURBO_Q5_0 -> R.string.transcription_model_best_small_download
         TranscriptionModel.LARGE_V3_TURBO_Q8_0 -> R.string.transcription_model_best
+        TranscriptionModel.LARGE_V3_Q5_0 -> R.string.transcription_model_highest
     }
 
     /** Maps a language code (or null for auto-detect) to its label. */

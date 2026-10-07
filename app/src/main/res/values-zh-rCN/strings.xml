@@ -305,9 +305,6 @@
     <string name="settings_subsection_phone_calls">电话通话</string>
     <string name="settings_subsection_resilience">弹性</string>
     <string name="settings_subsection_voip">VoIP 通话</string>
-    <string name="settings_support_label">支持开发</string>
-    <string name="settings_support_supporting">在浏览器中打开 Ko-fi</string>
-    <string name="settings_support_value">在 Ko-fi 上请我喝杯咖啡</string>
     <string name="settings_tap_to_select_folder">点我选择录音保存目录…</string>
     <string name="settings_theme_mode">主题样式</string>
     <string name="settings_theme_mode_dark">暗色主题</string>
@@ -388,9 +385,6 @@
     <string name="summary_requirements_time">短通话约一两分钟，长通话更久</string>
     <string name="summary_requirements_title">需要什么</string>
     <string name="summary_requirements_toggle_description">下载前显示摘要模型的资源需求</string>
-    <string name="support_appeal_body">Callrex 由我一个人利用业余时间开发——免费、开源、无广告、无追踪。☕ 如果它对你有用，一点小小的支持能让我继续做下去。无论如何，谢谢！🙏</string>
-    <string name="support_appeal_title">由一个人开发 👋</string>
-    <string name="support_not_now">以后再说</string>
     <string name="transcribe_confirm_dont_ask">不再询问</string>
     <string name="transcribe_confirm_message">转写 %1$s 会占用手机并明显耗电。你可以随时停止。\n\n可在设置的“转写”中重新开启此提示。</string>
     <string name="transcribe_confirm_title">大约需要 %1$s</string>

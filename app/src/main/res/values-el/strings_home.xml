@@ -13,7 +13,6 @@
     <string name="home_hero_pill_no_folder">Απαιτείται ενέργεια</string>
     <string name="home_hero_pill_dev_options_off">Η εγγραφή δεν λειτουργεί</string>
     <string name="home_hero_pill_update_regrant">Απαιτείται ενέργεια</string>
-    <string name="home_support_pill">Υποστήριξη</string>
     <string name="home_usb_advisory_title">Η εγγραφή μπορεί να σταματήσει όταν κλειδώνει η οθόνη</string>
     <string name="home_usb_advisory_text">Το USB είναι ρυθμισμένο σε λειτουργία δεδομένων. Πατήστε για να το ρυθμίσετε σε Μόνο φόρτιση.</string>
     <string name="home_usb_advisory_fix">Διόρθωση</string>

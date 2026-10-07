@@ -13,7 +13,6 @@
     <string name="home_hero_pill_no_folder">نیاز به اقدام</string>
     <string name="home_hero_pill_dev_options_off">ضبط مختل شده</string>
     <string name="home_hero_pill_update_regrant">نیاز به اقدام</string>
-    <string name="home_support_pill">پشتیبانی</string>
     <string name="home_usb_advisory_title">ممکن است با قفل شدن صفحه، ضبط متوقف شود</string>
     <string name="home_usb_advisory_text">USB روی حالت انتقال داده تنظیم شده است. برای تنظیم آن روی «فقط شارژ» ضربه بزنید.</string>
     <string name="home_usb_advisory_fix">رفع</string>

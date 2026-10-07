@@ -29,13 +29,15 @@ object ApkVerifier {
     private const val TAG = "CV:ApkVerifier"
 
     /**
-     * SHA-256 digest of the CallVault release signing certificate — the same cert every published
-     * release (v1.1.0+) is signed with. An update APK signed with anything else is rejected.
+     * SHA-256 digest of the Callrex signing certificate — the same key the delivered builds
+     * (v2.4.x, catbox and F-Droid-track) were signed with, preserved from the historical debug
+     * keystore so in-place updates replace the app without losing any data or the ADB pairing.
+     * An update APK signed with anything else is rejected.
      */
     private const val PINNED_CERT_SHA256 =
-        "c875ffd0122aa6baceca1826eeb6c6ecbabe023ed551f0be856e8b7a80f285ea"
+        "2505c33a52c2687a9ebda44846826f0293c1524198bc674c08294478db7e6cfb"
 
-    /** True when [apkFile] is a genuine CallVault update: right package, newer, right signature. */
+    /** True when [apkFile] is a genuine Callrex update: right package, newer, right signature. */
     fun isValidUpdate(context: Context, apkFile: File): Boolean {
         if (!apkFile.isFile || apkFile.length() == 0L) {
             AppLogger.w(TAG, "Update APK missing or empty: ${apkFile.path}")

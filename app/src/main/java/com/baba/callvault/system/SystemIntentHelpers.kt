@@ -42,24 +42,10 @@ private const val TAG = "CV:SystemIntentHelpers"
 const val ORIGINAL_PROJECT_URL = "https://github.com/kitsumed/ShizuCallRecorder"
 
 /**
- * The maintainer's Ko-fi page. Surfaced as an optional "support development" link on Home and in
- * About. Donations happen entirely on Ko-fi's site (opened in the browser) — no in-app payment SDK.
- */
-const val KOFI_SUPPORT_URL = "https://ko-fi.com/madkongo"
-
-/**
  * The project's Telegram group. Offered in the app because most questions are never asked at all when
  * the only way to ask is to open a GitHub issue.
  */
 const val TELEGRAM_GROUP_URL = "https://t.me/+GmXjAcXxXh42Y2I8"
-
-/**
- * The maintainer's PayPal page, offered next to [KOFI_SUPPORT_URL] because the two are not
- * interchangeable for everyone: Ko-fi's card processing is unavailable or awkward in some countries,
- * and plenty of people simply already have a PayPal balance. Same arrangement — the browser opens
- * their site, no payment SDK ships in the app.
- */
-const val PAYPAL_SUPPORT_URL = "https://paypal.me/MadKongo"
 
 /**
  * A folder-picker that asks for long-term read and write access to the chosen folder.
@@ -175,16 +161,6 @@ fun Context.openOriginalProjectRepo() {
 /** Opens the project's Telegram group, in the Telegram app when it is installed, else the browser. */
 fun Context.openTelegramGroup() {
     launchSmartIntent(Intent(Intent.ACTION_VIEW).apply { data = TELEGRAM_GROUP_URL.toUri() })
-}
-
-/** Opens the maintainer's Ko-fi page in the browser so the user can support development. */
-fun Context.openKofi() {
-    launchSmartIntent(Intent(Intent.ACTION_VIEW).apply { data = KOFI_SUPPORT_URL.toUri() })
-}
-
-/** Opens the maintainer's PayPal page in the browser. The alternative to [openKofi], not a successor. */
-fun Context.openPayPal() {
-    launchSmartIntent(Intent(Intent.ACTION_VIEW).apply { data = PAYPAL_SUPPORT_URL.toUri() })
 }
 
 /**

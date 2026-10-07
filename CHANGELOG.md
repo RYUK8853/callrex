@@ -3,6 +3,35 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.4.6] — 2026-10-08
+
+### Added
+
+- **Your own AI endpoint, for transcription and summary.** Settings → Transcription and the
+  summariser section each gained an engine switch: **On-device (private)** (the default — nothing
+  leaves the phone) or **Cloud (your own API)**. In cloud mode you enter the base URL, API key and
+  model of any OpenAI-compatible server (`/v1/audio/transcriptions` and `/v1/chat/completions` —
+  OpenAI, Groq, DeepInfra, a local faster-whisper proxy, ...). The endpoint, key and model are
+  stored on this device only, are never exported with a settings backup, and are never sent
+  anywhere. Audio or transcript text leaves the phone only to the endpoint you named.
+- **Higher-quality local transcription by default.** The default on-device model is now
+  `large-v3` (Q5_0) — the same class of model that produces the cleanest local transcripts.
+- **Transcript reading polish.** Timestamps are monospaced and speaker labels are set as
+  uppercase, letter-spaced labels, so who said what reads at a glance.
+
+### Changed
+
+- **Updates are mandatory.** When a new version is published, the app asks to update on every
+  launch until the update is installed (the prompt cannot be dismissed by back or scrim; "Remind
+  me later" closes it for this launch only). The in-app installer keeps your recordings,
+  transcripts, settings and ADB pairing — only the app is replaced.
+- The update source is now the Callrex repository (github.com/RYUK8853/callrex).
+
+### Removed
+
+- The "Support development" links (Ko-fi / PayPal) on Home and in Settings → About are removed
+  for the time being.
+
 ## [2.4.5] — 2026-09-30
 
 2.4.4 was published briefly and pulled the same day after the cut-off bug below was found; 2.4.5 is 2.4.4

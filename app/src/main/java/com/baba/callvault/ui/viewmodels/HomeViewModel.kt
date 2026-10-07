@@ -798,16 +798,24 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
      * banner spinner is driven by [observeInstallWork] watching that job's state — never by this
      * call directly — so it can't get stuck if the ViewModel is torn down mid-install.
      */
-    /** The version to prompt about once, or null when there is none or its popup was already shown. */
+    /**
+     * The version to prompt about, or null when there is none.
+     *
+     * Deliberately NOT filtered by a "popup already shown" preference: an update is mandatory, and
+     * the prompt reappears on every launch until the new version is actually installed. What "Remind
+     * me later" in the dialog clears is this in-memory prompt only — the next open of the app asks
+     * again. That is the point of the word "mandatory": a once-per-version popup was how the last
+     * update went uninstalled for a week.
+     */
     private fun updatePopupTag(): String? =
-        preferences.getAvailableUpdateTag()?.takeIf { it != preferences.getUpdatePopupShownTag() }
+        preferences.getAvailableUpdateTag()
 
     /**
-     * Records that the popup has been shown for [tag], so it appears once per version and never nags.
-     * Called when the dialog is first shown; the banner and the notification are left untouched.
+     * Closes the prompt for the rest of this launch. Called when the dialog is first shown; the
+     * banner, the notification and the next launch's prompt are all left untouched — see
+     * [updatePopupTag] for why the "shown" preference was dropped.
      */
     fun markUpdatePopupSeen(tag: String) {
-        preferences.setUpdatePopupShownTag(tag)
         _uiState.update { it.copy(updatePopupTag = null) }
     }
 

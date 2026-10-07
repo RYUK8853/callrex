@@ -305,9 +305,6 @@
     <string name="settings_subsection_phone_calls">Połączenia telefoniczne</string>
     <string name="settings_subsection_resilience">Odporność</string>
     <string name="settings_subsection_voip">Połączenia VoIP</string>
-    <string name="settings_support_label">Wesprzyj rozwój</string>
-    <string name="settings_support_supporting">Otwiera Ko-fi w przeglądarce</string>
-    <string name="settings_support_value">Postaw mi kawę na Ko-fi</string>
     <string name="settings_tap_to_select_folder">Dotknij, aby wybrać folder...</string>
     <string name="settings_theme_mode">Ustawienia motywu</string>
     <string name="settings_theme_mode_dark">Ciemny</string>
@@ -388,9 +385,6 @@
     <string name="summary_requirements_time">Minuta lub dwie dla krótkiej rozmowy, dłużej dla długiej</string>
     <string name="summary_requirements_title">Czego to wymaga</string>
     <string name="summary_requirements_toggle_description">Pokaż, czego wymaga moduł podsumowań, przed pobraniem</string>
-    <string name="support_appeal_body">Tworzę Callrex sam, po godzinach — za darmo, otwartoźródłowo, bez reklam i śledzenia. ☕ Jeśli aplikacja Ci się przydaje, drobne wsparcie pomaga mi działać dalej. Tak czy inaczej — dzięki! 🙏</string>
-    <string name="support_appeal_title">Tworzy to jedna osoba 👋</string>
-    <string name="support_not_now">Nie teraz</string>
     <string name="transcribe_confirm_dont_ask">Nie pytaj ponownie</string>
     <string name="transcribe_confirm_message">Transkrypcja %1$s zajmuje telefon i zauważalnie zużywa baterię. Możesz przerwać w dowolnej chwili.\n\nTo pytanie można włączyć ponownie w sekcji Transkrypcja w Ustawieniach.</string>
     <string name="transcribe_confirm_title">Zajmie to około %1$s</string>

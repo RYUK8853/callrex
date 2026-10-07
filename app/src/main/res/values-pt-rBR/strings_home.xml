@@ -32,7 +32,6 @@
     <string name="home_recordings_count">%1$d salvas</string>
     <string name="home_recordings_empty_hint">Quando o Callrex gravar uma chamada, ela aparece aqui. Faça ou receba uma chamada para começar.</string>
     <string name="home_recordings_empty_title">Nenhuma gravação ainda</string>
-    <string name="home_support_pill">Apoiar</string>
     <string name="home_update_banner_button">Atualizar</string>
     <string name="home_update_banner_downloading">Baixando… %1$d%%</string>
     <string name="home_update_banner_installing">Instalando…</string>

@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.baba.callvault.R
 import com.baba.callvault.data.AppPreferences
 import com.baba.callvault.ui.common.ConfirmDialog
+import com.baba.callvault.ui.common.CloudEndpointFields
 import com.baba.callvault.ui.common.SummaryRequirementsDialog
 import com.baba.callvault.summary.SummaryModel
 import com.baba.callvault.transcription.model.ModelDownloadWorker
@@ -113,14 +114,22 @@ internal fun SummaryRows(
         )
     }
 
+    // The engine and its endpoint are written straight to the preferences — the same way the
+    // "ask me first" toggle in [extraRows] writes its switch — so this section keeps its own tick to
+    // re-read them after a write rather than going through the view model.
+    val cloudTick = remember { mutableStateOf(0) }
+    val engine = remember(updateTrigger, cloudTick.value) { preferences.getSummaryEngine() }
+    val isCloud = engine == AppPreferences.ENGINE_CLOUD
+
     Column {
-        Note(
-            stringResource(
-                R.string.summary_requirements_body,
-                model.sizeBytes.toGigabytes(),
-                model.peakMemoryBytes.toGigabytes()
+        if (!isCloud) {
+            Note(
+                stringResource(
+                    R.string.summary_requirements_body,
+                    model.sizeBytes.toGigabytes(),
+                    model.peakMemoryBytes.toGigabytes()
+                )
             )
-        )
 
         when (val current = state) {
             ModelDownloadState.Installed -> NavigationRow(
@@ -197,13 +206,34 @@ internal fun SummaryRows(
                 )
             }
         }
+        }
+
+        if (isCloud) {
+            CloudEndpointFields(
+                engineLabel = stringResource(R.string.summary_engine_label),
+                engine = engine,
+                baseUrl = preferences.getSummaryCloudBaseUrl(),
+                apiKey = preferences.getSummaryCloudApiKey(),
+                model = preferences.getSummaryCloudModel(),
+                onEngineChange = {
+                    preferences.setSummaryEngine(it)
+                    cloudTick.value++
+                },
+                onBaseUrlChange = { preferences.setSummaryCloudBaseUrl(it) },
+                onApiKeyChange = { preferences.setSummaryCloudApiKey(it) },
+                onModelChange = { preferences.setSummaryCloudModel(it) },
+                onClear = { preferences.clearCloudSettings(); cloudTick.value++ }
+            )
+        }
 
         extraRows()
 
         // Named where it can be read before the download starts. CallVault never ships the weights,
         // so its own licensing is unaffected — but the person accepting Google's terms is entitled
         // to know that is what they are doing.
-        Note(stringResource(R.string.summary_model_licence))
+        if (!isCloud) {
+            Note(stringResource(R.string.summary_model_licence))
+        }
     }
 }
 

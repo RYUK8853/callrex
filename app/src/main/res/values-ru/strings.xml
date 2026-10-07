@@ -305,9 +305,6 @@
     <string name="settings_subsection_phone_calls">Телефонные звонки</string>
     <string name="settings_subsection_resilience">Устойчивость</string>
     <string name="settings_subsection_voip">Звонки VoIP</string>
-    <string name="settings_support_label">Поддержать разработку</string>
-    <string name="settings_support_supporting">Откроет Ko-fi в браузере</string>
-    <string name="settings_support_value">Купить мне кофе на Ko-fi</string>
     <string name="settings_tap_to_select_folder">Нажмите, чтобы выбрать папку...</string>
     <string name="settings_theme_mode">Тема</string>
     <string name="settings_theme_mode_dark">Тёмная</string>
@@ -388,9 +385,6 @@
     <string name="summary_requirements_time">Минута-две для короткого звонка, дольше для длинного</string>
     <string name="summary_requirements_title">Что для этого нужно</string>
     <string name="summary_requirements_toggle_description">Показывать, чего требует модуль сводок, перед скачиванием</string>
-    <string name="support_appeal_body">Я разрабатываю Callrex один, в свободное время — бесплатно, с открытым кодом, без рекламы и слежки. ☕ Если приложение полезно, небольшая поддержка помогает продолжать. В любом случае — спасибо! 🙏</string>
-    <string name="support_appeal_title">Делает один человек 👋</string>
-    <string name="support_not_now">Не сейчас</string>
     <string name="transcribe_confirm_dont_ask">Больше не спрашивать</string>
     <string name="transcribe_confirm_message">Расшифровка %1$s займёт телефон и заметно потратит заряд. Остановить можно в любой момент.\n\nЭтот вопрос можно вернуть в разделе «Расшифровка» в настройках.</string>
     <string name="transcribe_confirm_title">Это займёт около %1$s</string>

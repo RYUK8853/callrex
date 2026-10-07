@@ -320,9 +320,6 @@
     <!-- Settings Screen: About/Server Section -->
     <string name="settings_copy_version">Αντιγραφή έκδοσης</string>
     <string name="settings_view_licenses">Προβολή αδειών χρήσης</string>
-    <string name="settings_support_label">Υποστήριξη ανάπτυξης</string>
-    <string name="settings_support_value">Κεράστε μου έναν καφέ στο Ko-fi</string>
-    <string name="settings_support_supporting">Ανοίγει το Ko-fi στο πρόγραμμα περιήγησής σας</string>
 
     <!-- ContactSelection Dialog -->
     <string name="contact_search_hint">Αναζήτηση κατά όνομα ή αριθμό...</string>
@@ -489,9 +486,6 @@
     <string name="settings_section_updates">Ενημερώσεις</string>
     <string name="settings_update_check_label">Έλεγχος για ενημερώσεις</string>
     <string name="settings_update_check_description">Μία φορά την ημέρα, αναζήτηση νέας έκδοσης στο GitHub.</string>
-    <string name="support_appeal_title">Φτιάχτηκε από ένα άτομο 👋</string>
-    <string name="support_appeal_body">Φτιάχνω το Callrex μόνος μου, στον ελεύθερο χρόνο μου — δωρεάν, ανοιχτού κώδικα, χωρίς διαφημίσεις, χωρίς παρακολούθηση. ☕ Αν σας είναι χρήσιμο, μια μικρή φιλοδώρηση με βοηθά να συνεχίζω. Έτσι κι αλλιώς, ευχαριστώ! 🙏</string>
-    <string name="support_not_now">Όχι τώρα</string>
     <string name="home_bulk_delete_message">Αυτό δεν μπορεί να αναιρεθεί.</string>
     <string name="home_bulk_delete_scope_message">Ορισμένες είναι αποθηκευμένες τόσο σε αυτή τη συσκευή όσο και στο Drive.</string>
     <string name="home_bulk_delete_device_only">Μόνο συσκευή</string>

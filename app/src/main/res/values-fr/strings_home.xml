@@ -33,7 +33,6 @@
     <string name="home_recordings_count">%1$d enregistré(s)</string>
     <string name="home_recordings_empty_hint">Lorsque Callrex enregistre un appel, il apparaît ici. Passez ou recevez un appel pour commencer.</string>
     <string name="home_recordings_empty_title">Aucun enregistrement pour l\'instant</string>
-    <string name="home_support_pill">Soutenir</string>
     <string name="home_update_banner_button">Mettre à jour</string>
     <string name="home_update_banner_downloading">Téléchargement… %1$d%%</string>
     <string name="home_update_banner_installing">Installation…</string>

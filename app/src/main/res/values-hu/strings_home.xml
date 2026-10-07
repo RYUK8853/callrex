@@ -32,7 +32,6 @@
     <string name="home_recordings_count">%1$d mentve</string>
     <string name="home_recordings_empty_hint">Amikor a Callrex rögzít egy hívást, az itt jelenik meg. Kezdje el egy hívás indításával vagy fogadásával.</string>
     <string name="home_recordings_empty_title">Még nincsenek felvételek</string>
-    <string name="home_support_pill">Támogatás</string>
     <string name="home_update_banner_button">Frissítés</string>
     <string name="home_update_banner_downloading">Letöltés… %1$d%%</string>
     <string name="home_update_banner_installing">Telepítés…</string>

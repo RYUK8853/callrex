@@ -22,12 +22,12 @@ object GitHubReleases {
 
     private const val TAG = "CV:GitHubReleases"
     private const val LATEST_RELEASE_URL =
-        "https://api.github.com/repos/madkongo/CallVault/releases/latest"
+        "https://api.github.com/repos/RYUK8853/callrex/releases/latest"
 
     /** The release page users can open when an automatic path fails. */
-    const val RELEASES_PAGE_URL = "https://github.com/madkongo/CallVault/releases/latest"
+    const val RELEASES_PAGE_URL = "https://github.com/RYUK8853/callrex/releases/latest"
 
-    private const val APK_ASSET_NAME = "CallVault.apk"
+    private const val APK_ASSET_NAME = "Callrex.apk"
     private const val CONNECT_TIMEOUT_MS = 15_000
     private const val READ_TIMEOUT_MS = 30_000
 

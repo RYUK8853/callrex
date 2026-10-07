@@ -305,9 +305,6 @@
     <string name="settings_subsection_phone_calls">Telefonanrufe</string>
     <string name="settings_subsection_resilience">Robustheit</string>
     <string name="settings_subsection_voip">VoIP-Anrufe</string>
-    <string name="settings_support_label">Entwicklung unterstützen</string>
-    <string name="settings_support_supporting">Öffnet Ko-fi im Browser</string>
-    <string name="settings_support_value">Spendier mir einen Kaffee auf Ko-fi</string>
     <string name="settings_tap_to_select_folder">Tippen, um Ordner zu wählen...</string>
     <string name="settings_theme_mode">Design-Modus</string>
     <string name="settings_theme_mode_dark">Dunkel</string>
@@ -388,9 +385,6 @@
     <string name="summary_requirements_time">Etwa ein bis zwei Minuten für ein kurzes Gespräch, länger für ein langes</string>
     <string name="summary_requirements_title">Was dafür nötig ist</string>
     <string name="summary_requirements_toggle_description">Vor dem Herunterladen zeigen, was der Zusammenfasser kostet</string>
-    <string name="support_appeal_body">Ich entwickle Callrex allein, in meiner Freizeit – kostenlos, quelloffen, ohne Werbung, ohne Tracking. ☕ Wenn es dir nützt, hält mich eine kleine Spende am Ball. So oder so: danke! 🙏</string>
-    <string name="support_appeal_title">Von einer Person gemacht 👋</string>
-    <string name="support_not_now">Jetzt nicht</string>
     <string name="transcribe_confirm_dont_ask">Nicht mehr fragen</string>
     <string name="transcribe_confirm_message">Das Transkribieren von %1$s hält Ihr Telefon beschäftigt und verbraucht spürbar Akku. Sie können es jederzeit anhalten.\n\nDiese Frage lässt sich unter Transkription in den Einstellungen wieder aktivieren.</string>
     <string name="transcribe_confirm_title">Das dauert etwa %1$s</string>

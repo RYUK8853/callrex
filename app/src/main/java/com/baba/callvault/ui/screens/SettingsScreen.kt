@@ -79,9 +79,7 @@ import com.baba.callvault.system.copyToClipboard
 import com.baba.callvault.system.openOriginalProjectRepo
 import com.baba.callvault.system.diagnostics.SystemLogCollector
 import com.baba.callvault.system.shareLogFiles
-import com.baba.callvault.system.openKofi
 import com.baba.callvault.ui.common.formatByteSize
-import com.baba.callvault.ui.common.SupportDialog
 import com.baba.callvault.system.shareLogFile
 import com.baba.callvault.server.RecorderBackend
 import com.baba.callvault.utils.AppLogger
@@ -126,6 +124,7 @@ import com.baba.callvault.system.takePersistableFolderPermission
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.baba.callvault.ui.common.ContactSelectionDialog
 import com.baba.callvault.ui.common.CvCard
+import com.baba.callvault.ui.common.CloudEndpointFields
 import com.baba.callvault.ui.common.OemGateNotice
 import com.baba.callvault.ui.common.CvDestructiveButton
 import com.baba.callvault.ui.common.CvPrimaryButton
@@ -1099,6 +1098,8 @@ private fun TranscriptionSection(
     val modelId = remember(updateTrigger) { preferences.getTranscriptionModelId() }
     val language = remember(updateTrigger) { preferences.getTranscriptionLanguage() }
     val askLanguage = remember(updateTrigger) { preferences.getTranscriptionAskLanguage() }
+    val engine = remember(updateTrigger) { preferences.getTranscriptionEngine() }
+    val isCloud = engine == AppPreferences.ENGINE_CLOUD
 
     val selectedModel = TranscriptionModel.fromId(modelId) ?: TranscriptionModel.DEFAULT
 
@@ -1166,10 +1167,27 @@ private fun TranscriptionSection(
             )
         }
 
-        TranscriptionModelField(
-            modelId = modelId,
-            onModelChange = { actions.setTranscriptionModelId(it) }
+        // The engine comes first: it decides where the audio goes, and everything below is either
+        // about the on-device model (hidden when it does not run) or about both.
+        CloudEndpointFields(
+            engineLabel = stringResource(R.string.transcription_engine_label),
+            engine = engine,
+            baseUrl = preferences.getTranscriptionCloudBaseUrl(),
+            apiKey = preferences.getTranscriptionCloudApiKey(),
+            model = preferences.getTranscriptionCloudModel(),
+            onEngineChange = { actions.setTranscriptionEngine(it) },
+            onBaseUrlChange = { actions.setTranscriptionCloudBaseUrl(it) },
+            onApiKeyChange = { actions.setTranscriptionCloudApiKey(it) },
+            onModelChange = { actions.setTranscriptionCloudModel(it) },
+            onClear = { actions.clearCloudSettings() }
         )
+
+        if (!isCloud) {
+            TranscriptionModelField(
+                modelId = modelId,
+                onModelChange = { actions.setTranscriptionModelId(it) }
+            )
+        }
 
         TranscriptionLanguageField(
             language = language,
@@ -1206,14 +1224,17 @@ private fun TranscriptionSection(
         // Shared with the wizard, which now offers the same download. These rows also replaced a
         // pair that read `installedModels` once per updateTrigger: a download that ran while this
         // section was open showed nothing at all, and only reached "Downloaded and ready" if some
-        // unrelated setting happened to bump the trigger.
-        TranscriptionModelRows(
-            model = selectedModel,
-            updateTrigger = updateTrigger,
-            onDownload = { actions.downloadTranscriptionModel(it) },
-            onCancel = { actions.cancelTranscriptionModelDownload(it) },
-            onDelete = { actions.deleteTranscriptionModel(it) }
-        )
+        // unrelated setting happened to bump the trigger. Hidden while the cloud engine runs —
+        // the on-device model does no work then, and a 1 GB download offer for it would be noise.
+        if (!isCloud) {
+            TranscriptionModelRows(
+                model = selectedModel,
+                updateTrigger = updateTrigger,
+                onDownload = { actions.downloadTranscriptionModel(it) },
+                onCancel = { actions.cancelTranscriptionModelDownload(it) },
+                onDelete = { actions.deleteTranscriptionModel(it) }
+            )
+        }
 
         Text(
             text = stringResource(
@@ -2850,11 +2871,6 @@ private fun AboutSection(
 ) {
     val context = LocalContext.current
     val serverVersion = ScrcpyConfig.SCRCPY_VERSION
-    var showSupportDialog by remember { mutableStateOf(false) }
-
-    if (showSupportDialog) {
-        SupportDialog(onDismiss = { showSupportDialog = false })
-    }
 
     SettingsSection(title = stringResource(R.string.settings_section_about), expanded = expanded, onToggle = onToggle) {
         NavigationRow(
@@ -2874,17 +2890,6 @@ private fun AboutSection(
             value = stringResource(R.string.settings_fork_attribution_supporting),
             supporting = stringResource(R.string.settings_ui_open_repo_hint),
             onClick = { context.openOriginalProjectRepo() }
-        )
-
-        SettingsDivider()
-
-        // Optional "support development" link. Offers Ko-fi and PayPal; both open in the browser.
-        NavigationRow(
-            icon = Icons.Filled.Favorite,
-            label = stringResource(R.string.settings_support_label),
-            value = stringResource(R.string.settings_support_value),
-            supporting = stringResource(R.string.settings_support_supporting),
-            onClick = { showSupportDialog = true }
         )
 
         Row(
@@ -3360,6 +3365,15 @@ private fun SettingsScreenPreview() {
             override fun setTranscriptionLanguage(language: String?) {}
             override fun setTranscriptionAskLanguage(ask: Boolean) {}
             override fun downloadTranscriptionModel(model: TranscriptionModel) {}
+            override fun setTranscriptionEngine(engine: String) {}
+            override fun setTranscriptionCloudBaseUrl(url: String) {}
+            override fun setTranscriptionCloudApiKey(key: String) {}
+            override fun setTranscriptionCloudModel(model: String) {}
+            override fun setSummaryEngine(engine: String) {}
+            override fun setSummaryCloudBaseUrl(url: String) {}
+            override fun setSummaryCloudApiKey(key: String) {}
+            override fun setSummaryCloudModel(model: String) {}
+            override fun clearCloudSettings() {}
             override fun cancelTranscriptionModelDownload(model: TranscriptionModel) {}
             override fun deleteTranscriptionModel(model: TranscriptionModel) {}
             override fun downloadSummaryModel(model: SummaryModel) {}

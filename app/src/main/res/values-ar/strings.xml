@@ -268,9 +268,6 @@
     <string name="debug_notification_text">انقر لفتح Callrex وإيقاف تشغيله عند الانتهاء.</string>
     <string name="settings_copy_version">نسخ الإصدار</string>
     <string name="settings_view_licenses">عرض التراخيص</string>
-    <string name="settings_support_label">دعم التطوير</string>
-    <string name="settings_support_value">اشترِ لي قهوة على Ko-fi</string>
-    <string name="settings_support_supporting">يفتح Ko-fi في متصفحك</string>
     <string name="contact_search_hint">البحث بالاسم أو الرقم...</string>
     <string name="contact_select_all">تحديد الكل</string>
     <string name="contact_unselect_all">إلغاء تحديد الكل</string>
@@ -381,9 +378,6 @@
     <string name="settings_section_updates">التحديثات</string>
     <string name="settings_update_check_label">التحقق من وجود تحديثات</string>
     <string name="settings_update_check_description">مرة واحدة يوميًا، ابحث عن إصدار جديد على GitHub.</string>
-    <string name="support_appeal_title">صنع بواسطة شخص واحد 👋</string>
-    <string name="support_appeal_body">أقوم ببناء Callrex بنفسي، في وقت فراغي — مجاني ومفتوح المصدر وبدون إعلانات وبدون تتبع. ☕ إذا كان مفيدًا لك، فإن نصيحة صغيرة تبقيني مستمرًا. في كلتا الحالتين، شكرًا! 🙏</string>
-    <string name="support_not_now">ليس الآن</string>
     <string name="home_bulk_delete_message">لا يمكن التراجع عن هذا.</string>
     <string name="home_bulk_delete_scope_message">تم حفظ بعضها على هذا الجهاز وفي Drive.</string>
     <string name="home_bulk_delete_device_only">الجهاز فقط</string>

@@ -22,7 +22,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -54,9 +56,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.baba.callvault.R
 import com.baba.callvault.data.ChannelMap
 import com.baba.callvault.data.SpeakerNames
@@ -734,18 +739,25 @@ private fun TranscriptLine(
         ) {
             Text(
                 text = TranscriptTimestamp.format(segment.startMs),
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.width(TIMESTAMP_WIDTH)
             )
 
             Column(modifier = Modifier.weight(1f)) {
                 speaker?.let { name ->
+                    // Small caps, letter-spaced: the speaker is a label, not a sentence — the same
+                    // treatment Nothing gives its status lines, and it keeps a name from reading as
+                    // a second line of the transcript itself.
                     Text(
-                        text = name,
-                        style = MaterialTheme.typography.labelSmall,
+                        text = name.uppercase(),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.06.sp
+                        ),
                         color = MaterialTheme.colorScheme.primary
                     )
+                    Spacer(Modifier.height(2.dp))
                 }
                 Text(
                     text = segment.text,

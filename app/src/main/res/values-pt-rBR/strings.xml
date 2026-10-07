@@ -308,9 +308,6 @@
     <string name="settings_subsection_phone_calls">Chamadas telefônicas</string>
     <string name="settings_subsection_resilience">Resiliência</string>
     <string name="settings_subsection_voip">Chamadas VoIP</string>
-    <string name="settings_support_label">Apoiar o desenvolvimento</string>
-    <string name="settings_support_supporting">Abre o Ko-fi no seu navegador</string>
-    <string name="settings_support_value">Pague um café no Ko-fi</string>
     <string name="settings_tap_to_select_folder">Toque para escolher a pasta...</string>
     <string name="settings_theme_mode">Modo do tema</string>
     <string name="settings_theme_mode_dark">Escuro</string>
@@ -391,9 +388,6 @@
     <string name="summary_requirements_time">Um ou dois minutos para uma chamada curta, mais para uma longa</string>
     <string name="summary_requirements_title">O que isso exige</string>
     <string name="summary_requirements_toggle_description">Mostrar o que o resumidor custa antes de baixá-lo</string>
-    <string name="support_appeal_body">Eu desenvolvo o Callrex sozinho, no meu tempo livre — grátis, código aberto, sem anúncios nem rastreamento. ☕ Se ele te é útil, uma pequena contribuição me ajuda a continuar. De todo modo, obrigado! 🙏</string>
-    <string name="support_appeal_title">Feito por uma pessoa só 👋</string>
-    <string name="support_not_now">Agora não</string>
     <string name="transcribe_confirm_dont_ask">Não perguntar de novo</string>
     <string name="transcribe_confirm_message">Transcrever %1$s mantém o telefone ocupado e consome bateria de forma perceptível. Você pode parar quando quiser.\n\nEsta pergunta pode ser reativada em Transcrição, nas Configurações.</string>
     <string name="transcribe_confirm_title">Isso vai levar cerca de %1$s</string>

@@ -12,7 +12,6 @@
     <string name="home_hero_pill_no_folder">الإجراء مطلوب</string>
     <string name="home_hero_pill_dev_options_off">التسجيل معطل</string>
     <string name="home_hero_pill_update_regrant">الإجراء مطلوب</string>
-    <string name="home_support_pill">الدعم</string>
     <string name="home_usb_advisory_title">قد يتوقف التسجيل عند قفل الشاشة</string>
     <string name="home_usb_advisory_text">تم تعيين USB على وضع البيانات. انقر لتعيينه على الشحن فقط.</string>
     <string name="home_usb_advisory_fix">إصلاح</string>

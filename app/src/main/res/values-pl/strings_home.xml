@@ -32,7 +32,6 @@
     <string name="home_recordings_count">%1$d zapisanych</string>
     <string name="home_recordings_empty_hint">Gdy Callrex nagra rozmowę, pojawi się ona tutaj. Wykonaj lub odbierz połączenie, aby rozpocząć.</string>
     <string name="home_recordings_empty_title">Brak nagrań</string>
-    <string name="home_support_pill">Wesprzyj</string>
     <string name="home_update_banner_button">Aktualizuj</string>
     <string name="home_update_banner_downloading">Pobieranie… %1$d%%</string>
     <string name="home_update_banner_installing">Instalowanie…</string>

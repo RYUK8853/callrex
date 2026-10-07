@@ -369,9 +369,6 @@
     <string name="settings_scrcpy_server" translatable="false">Scrcpy-Server: %1$s</string>
     <string name="settings_fork_attribution" translatable="false">Callrex is a fork of ShizuCallRecorder</string>
     <string name="settings_fork_attribution_supporting" translatable="false">github.com/kitsumed/ShizuCallRecorder</string>
-    <string name="settings_support_label">Support development</string>
-    <string name="settings_support_value">Buy me a coffee on Ko-fi</string>
-    <string name="settings_support_supporting">Opens Ko-fi in your browser</string>
 
     <!-- ContactSelection Dialog -->
     <string name="contact_search_hint">Search by name or number...</string>
@@ -538,11 +535,6 @@
     <string name="settings_section_updates">Updates</string>
     <string name="settings_update_check_label">Check for updates</string>
     <string name="settings_update_check_description">Once a day, look for a new version on GitHub.</string>
-    <string name="support_appeal_title">Made by one person 👋</string>
-    <string name="support_appeal_body">I build Callrex on my own, in my free time — free, open source, no ads, no tracking. ☕ If it\'s useful to you, a small tip keeps me going. Either way, thanks! 🙏</string>
-    <string name="support_kofi" translatable="false">Ko-fi</string>
-    <string name="support_paypal" translatable="false">PayPal</string>
-    <string name="support_not_now">Not now</string>
     <string name="home_bulk_delete_message">This cannot be undone.</string>
     <string name="home_bulk_delete_scope_message">Some are saved both on this device and in Drive.</string>
     <string name="home_bulk_delete_device_only">Device only</string>
@@ -601,6 +593,7 @@
     -->
     <string name="transcription_model_best">Best quality</string>
     <string name="transcription_model_best_small_download">Best quality, smaller download</string>
+    <string name="transcription_model_highest">Highest quality (larger model)</string>
     <string name="transcription_model_download">Download model</string>
     <string name="transcription_model_download_subtitle">%1$d MB, over Wi-Fi only</string>
     <string name="transcription_model_delete">Delete model</string>
@@ -920,7 +913,22 @@
     <string name="notif_turned_off_for_android_title">Some settings were turned off</string>
     <string name="notif_turned_off_for_android_text">%1$s: this needs a newer Android version than the one on this phone (Android %2$s), so it was switched off. Phone calls still record.</string>
     <string name="update_popup_title">Callrex %1$s is available</string>
-    <string name="update_popup_text">A new version is ready to install. Updating keeps recording reliable and brings the latest fixes.</string>
+    <string name="update_popup_text">A new version is ready to install. Your recordings, transcripts and settings stay on the phone — only the app is replaced.</string>
     <string name="update_popup_update_now">Update now</string>
-    <string name="update_popup_later">Later</string>
+    <string name="update_popup_later">Remind me later</string>
+
+    <!-- Cloud AI (the user's own endpoint) -->
+    <string name="transcription_engine_label">Transcription engine</string>
+    <string name="summary_engine_label">Summariser engine</string>
+    <string name="cloud_engine_local">On-device (private)</string>
+    <string name="cloud_engine_cloud">Cloud (your own API)</string>
+    <string name="cloud_local_note">Everything runs on this phone. Nothing about your calls ever leaves it.</string>
+    <string name="cloud_url_label">Endpoint URL</string>
+    <string name="cloud_url_hint" translatable="false">https://api.example.com/v1</string>
+    <string name="cloud_api_key_label">API key</string>
+    <string name="cloud_api_key_hint" translatable="false">sk-…</string>
+    <string name="cloud_model_label">Model name</string>
+    <string name="cloud_model_hint" translatable="false">e.g. whisper-large-v3</string>
+    <string name="cloud_privacy_note">Audio and transcript text are sent only to the endpoint you enter, over HTTPS, with your key. Nothing is sent anywhere else, and the endpoint, key and model are stored only on this device.</string>
+    <string name="cloud_clear">Clear saved endpoint</string>
 </resources>

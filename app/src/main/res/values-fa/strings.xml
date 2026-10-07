@@ -320,9 +320,6 @@
     <!-- Settings Screen: About/Server Section -->
     <string name="settings_copy_version">کپی نسخه</string>
     <string name="settings_view_licenses">مشاهده مجوزها</string>
-    <string name="settings_support_label">حمایت از توسعه</string>
-    <string name="settings_support_value">در Ko-fi برایم یک قهوه بخر</string>
-    <string name="settings_support_supporting">Ko-fi را در مرورگر شما باز می‌کند</string>
 
     <!-- ContactSelection Dialog -->
     <string name="contact_search_hint">جستجو بر اساس نام یا شماره...</string>
@@ -460,9 +457,6 @@
     <string name="settings_section_updates">به‌روزرسانی‌ها</string>
     <string name="settings_update_check_label">بررسی به‌روزرسانی‌ها</string>
     <string name="settings_update_check_description">روزی یک‌بار، در GitHub به‌دنبال نسخه جدید بگرد.</string>
-    <string name="support_appeal_title">ساخته یک نفر 👋</string>
-    <string name="support_appeal_body">Callrex را به‌تنهایی و در وقت آزادم می‌سازم — رایگان، متن‌باز، بدون تبلیغ، بدون ردیابی. ☕ اگر برایتان مفید است، یک انعام کوچک مرا سرِ پا نگه می‌دارد. در هر صورت، ممنون! 🙏</string>
-    <string name="support_not_now">حالا نه</string>
     <string name="home_bulk_delete_message">این کار قابل بازگشت نیست.</string>
     <string name="home_bulk_delete_scope_message">برخی هم روی این دستگاه و هم در Drive ذخیره شده‌اند.</string>
     <string name="home_bulk_delete_device_only">فقط دستگاه</string>

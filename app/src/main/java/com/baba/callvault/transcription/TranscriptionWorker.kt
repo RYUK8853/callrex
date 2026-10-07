@@ -62,16 +62,33 @@ class TranscriptionWorker(
 
         val prefs = AppPreferences(applicationContext)
 
+        // Which engine the user chose, and whether the cloud half of it is actually usable.
+        // A cloud selection without a configured endpoint falls back to the on-device model rather
+        // than retrying forever on a request that can never be built.
+        val cloudConfig = prefs.getTranscriptionCloudConfig().takeIf {
+            prefs.getTranscriptionEngine() == AppPreferences.ENGINE_CLOUD
+        }
+        if (prefs.getTranscriptionEngine() == AppPreferences.ENGINE_CLOUD && cloudConfig == null) {
+            AppLogger.w(TAG, "Cloud engine is selected but not configured; using the on-device model")
+        }
+
         val model = TranscriptionModel.fromId(prefs.getTranscriptionModelId())
             ?: TranscriptionModel.DEFAULT
 
-        // Retry rather than fail: the model may still be downloading, and the work should pick up
-        // once it lands instead of the user having to ask again.
-        val modelPath = ModelRepository.pathFor(applicationContext, model)?.absolutePath
-            ?: run {
-                AppLogger.i(TAG, "Model ${model.id} is not installed yet; will retry")
-                return@withContext Result.retry()
-            }
+        // The local model's file is only needed when the local engine actually runs. A cloud run
+        // has no model to install, and retrying on its absence would block a working endpoint.
+        val modelPath = if (cloudConfig != null) {
+            ""
+        } else {
+            // Retry rather than fail: the model may still be downloading, and the work should pick
+            // up once it lands instead of the user having to ask again.
+            ModelRepository.pathFor(applicationContext, model)?.absolutePath
+                ?: run {
+                    AppLogger.i(TAG, "Model ${model.id} is not installed yet; will retry")
+                    return@withContext Result.retry()
+                }
+        }
+        val modelId = cloudConfig?.let { "cloud:${it.model}" } ?: model.id
 
         val single = inputData.getString(KEY_DISPLAY_NAME)
         val names = if (single != null) {
@@ -85,7 +102,7 @@ class TranscriptionWorker(
             return@withContext Result.success()
         }
 
-        AppLogger.i(TAG, "Transcribing ${names.size} recording(s) with ${model.id}")
+        AppLogger.i(TAG, "Transcribing ${names.size} recording(s) with $modelId")
 
         if (userRequested) {
             // A user request always names one recording. Its length is read from the container, which
@@ -148,8 +165,15 @@ class TranscriptionWorker(
             }
         }
 
-        val transcribed = TranscriptionRunner(applicationContext).runBatch(
-            modelId = model.id,
+        val runner = if (cloudConfig != null) {
+            // Same runner, same storage, same wrong-script retry — only the transcriber differs.
+            TranscriptionRunner(applicationContext, transcriber = CloudTranscriber(cloudConfig))
+        } else {
+            TranscriptionRunner(applicationContext)
+        }
+
+        val transcribed = runner.runBatch(
+            modelId = modelId,
             modelPath = modelPath,
             language = TranscriptionLanguageChoice.resolve(
                 chosen = inputData.getString(KEY_LANGUAGE),
