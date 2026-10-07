@@ -1,0 +1,19 @@
+Current AppOps Service state:
+  Uid 2000:
+    state=cch
+    Package com.android.shell:
+      RECORD_AUDIO (allow): 
+        null=[
+          Access: [cch-s] 2026-09-03 14:39:43.486 (-53ms) duration=+78ms
+          Running start at: +53ms
+        ]
+      RECORD_AUDIO_OUTPUT (allow): 
+        null=[
+          Access: [cch-s] 2026-09-03 14:39:43.400 (-140ms) duration=+120ms
+        ]
+  Uid 10119:
+    Package com.google.android.projection.gearhead:
+      RECORD_AUDIO_OUTPUT (allow): 
+        null=[
+          Running start at: +9s
+        ]

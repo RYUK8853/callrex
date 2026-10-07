@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-completed notification translations. -->
+<resources>
+    <string name="notif_call_monitor_channel">Surveillance des appels</string>
+    <string name="notif_pairing_action_enter_code">Saisir le code d\'association</string>
+    <string name="notif_pairing_action_stop">Arrêter</string>
+    <string name="notif_pairing_channel">Association ADB</string>
+    <string name="notif_pairing_failed_title">Échec de l\'association</string>
+    <string name="notif_pairing_found_text">Saisissez le code d\'association à 6 chiffres.</string>
+    <string name="notif_pairing_found_title">Service d\'association trouvé</string>
+    <string name="notif_pairing_remote_input_label">Code d\'association</string>
+    <string name="notif_pairing_searching_text">Ouvrez la boîte de dialogue « Associer l\'appareil à l\'aide d\'un code d\'association » du téléphone.</string>
+    <string name="notif_pairing_searching_title">Recherche du service d\'association…</string>
+    <string name="notif_pairing_success_text">Débogage sans fil associé. Appuyez pour terminer la configuration de Callrex.</string>
+    <string name="notif_pairing_success_title">Associé ✓</string>
+    <string name="notif_pairing_waiting_wd_text">Activez le débogage sans fil pour démarrer l\'association.</string>
+    <string name="notif_pairing_waiting_wd_title">En attente du débogage sans fil…</string>
+    <string name="notif_pairing_working_text">Configuration de Callrex. Cela prend quelques secondes.</string>
+    <string name="notif_pairing_working_title">Association en cours…</string>
+    <string name="notif_readiness_channel">État de l\'enregistreur d\'appels</string>
+    <string name="notif_readiness_ready_text">L\'enregistreur est connecté.</string>
+    <string name="notif_readiness_ready_title">Prêt à enregistrer les appels</string>
+    <string name="notif_readiness_reboot_ready_text">En écoute des appels après le redémarrage.</string>
+    <string name="notif_readiness_starting_text">Connexion de l\'enregistreur — les appels ne seront pas enregistrés tant que ce n\'est pas terminé.</string>
+    <string name="notif_readiness_starting_title">Démarrage de l\'enregistreur d\'appels…</string>
+    <string name="notif_startup_channel">Démarrage</string>
+    <string name="notif_startup_preparing">Préparation de l\'enregistreur d\'appels…</string>
+    <string name="notif_usb_check_unavailable">Si cela ne se termine pas, réglez « USB au déverrouillage » sur Recharge uniquement dans Paramètres ▸ Expérimental — sur certains téléphones, un mode USB de données empêche l\'enregistreur de se connecter.</string>
+    <string name="notif_usb_lock_warning">Verrouiller l\'écran pendant un appel peut arrêter l\'enregistrement. Dans Paramètres ▸ Expérimental, réglez « USB au déverrouillage » sur Recharge uniquement.</string>
+    <string name="update_notif_available_text">Ouvrez l\'application et appuyez sur Mettre à jour pour l\'installer.</string>
+    <string name="update_notif_available_title">Callrex %1$s est disponible</string>
+    <string name="update_notif_channel">Mises à jour de l\'application</string>
+    <string name="update_notif_downloading_title">Téléchargement de la mise à jour…</string>
+    <string name="update_notif_failure_download_text">La mise à jour n\'a pas pu être téléchargée. Appuyez pour l\'obtenir depuis GitHub.</string>
+    <string name="update_notif_failure_install_text">La mise à jour n\'a pas pu être installée. Appuyez pour l\'obtenir depuis GitHub.</string>
+    <string name="update_notif_failure_title">Échec de la mise à jour</string>
+    <string name="update_notif_failure_verify_text">La mise à jour téléchargée a échoué au contrôle de sécurité et a été supprimée. Appuyez pour l\'obtenir depuis GitHub.</string>
+    <string name="update_notif_installing_title">Installation de la mise à jour…</string>
+    <string name="update_notif_success_text">Callrex est maintenant en version %1$s.</string>
+    <string name="update_notif_success_title">Mise à jour installée</string>
+    <string name="notif_readiness_down_title">Les appels ne sont pas enregistrés</string>
+    <string name="notif_readiness_no_debugging_text">Le débogage USB et le débogage sans fil sont tous deux désactivés. Réactivez-en un dans les Options pour les développeurs.</string>
+    <string name="notif_readiness_needs_wifi_text">Le débogage USB est désactivé et il n\'y a pas de Wi-Fi. Connectez-vous au Wi-Fi ou activez le débogage USB.</string>
+    <string name="notif_readiness_stuck_text">L\'enregistreur n\'arrive pas à démarrer. Ouvrez Callrex pour en voir la raison.</string>
+    <string name="notif_readiness_needs_wifi_restart_text">L\'enregistreur s\'est arrêté et a besoin du Wi-Fi pour redémarrer. Activez l\'enregistrement hors ligne lorsque vous êtes en Wi-Fi pour l\'éviter.</string>
+    <string name="notif_readiness_wd_off_by_user_text">Vous avez désactivé le débogage sans fil, et Callrex n\'a aucun autre moyen de redémarrer l\'enregistreur. Réactivez-le, ou activez le débogage USB.</string>
+    <string name="notif_readiness_offline_paused_text">L\'enregistrement hors Wi-Fi est en pause : il nécessite le débogage USB. Les appels en Wi-Fi sont toujours enregistrés.</string>
+    <string name="notif_action_turn_wd_on">Activer le débogage sans fil</string>
+
+    <!-- Transcription finished / didn't finish -->
+    <string name="transcript_notice_channel">Transcriptions</string>
+    <string name="transcript_notice_ready_title">Transcription prête</string>
+    <string name="transcript_notice_ready_deleted_text">%1$s — l\'audio a été supprimé, comme demandé.</string>
+    <string name="transcript_notice_ready_many_title">Transcriptions prêtes : %1$d</string>
+    <string name="transcript_notice_ready_many_text">Appuyez pour les lire.</string>
+    <string name="transcript_notice_failed_title">La transcription n\'a pas abouti</string>
+    <string name="transcript_notice_failed_text">%1$s. Appuyez pour réessayer.</string>
+    <string name="transcript_notice_failed_many_title">Transcriptions non abouties : %1$d</string>
+    <string name="transcript_notice_failed_many_text">Appuyez pour les voir.</string>
+</resources>

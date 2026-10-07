@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ CallVault: FOSS call recording, self-contained over embedded ADB
+  ~  Copyright (C) 2026-present The CallVault Authors
+  ~  This software is licensed under the GNU General Public License v3 or later, with additional terms as permitted under Section 7.
+  ~  The full license text is available in the LICENSE file at the root of this project.
+  ~  This software is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  -->
+<resources>
+
+    <!-- Source facet (chip label + options). %1$s = current value shown on the chip. -->
+    <string name="home_filter_source_label">Πηγή</string>
+    <string name="home_filter_source_chip">Πηγή: %1$s</string>
+    <string name="home_filter_source_all">Όλες</string>
+    <string name="home_filter_source_local">Μόνο τοπικά</string>
+    <string name="home_filter_source_drive">Μόνο στο Drive</string>
+
+    <!-- Direction facet (chip label + options). %1$s = current value shown on the chip. -->
+    <string name="home_filter_direction_label">Κατεύθυνση</string>
+    <string name="home_filter_direction_chip">Κατεύθυνση: %1$s</string>
+    <string name="home_filter_direction_all">Όλες</string>
+    <string name="home_filter_direction_incoming">Εισερχόμενες</string>
+    <string name="home_filter_direction_outgoing">Εξερχόμενες</string>
+
+
+    <!-- Date facet (chip label + "all" option). %1$s = current value shown on the chip. -->
+    <string name="home_filter_date_label">Ημερομηνία</string>
+    <string name="home_filter_date_chip">Ημερομηνία: %1$s</string>
+    <string name="home_filter_date_all">Όλες οι ημερομηνίες</string>
+    <!-- Compact value shown on the Date chip itself, so it fits one line. -->
+    <string name="home_filter_date_all_short">Όλες</string>
+
+    <!-- Per-row storage-source badge labels -->
+    <string name="home_source_badge_local">Συσκευή</string>
+    <string name="home_source_badge_drive">Drive</string>
+    <string name="home_source_badge_both">Συσκευή + Drive</string>
+
+    <!-- Device + Drive row: expandable per-copy section -->
+    <string name="home_copy_device">Συσκευή</string>
+    <string name="home_copy_drive">Drive</string>
+
+    <!-- Per-copy delete (Device + Drive row). %1$s = recording name. -->
+    <string name="home_delete_confirm_device_message">Διαγραφή του αντιγράφου Συσκευής του %1$s; Το αντίγραφο στο Drive διατηρείται.</string>
+    <string name="home_delete_confirm_drive_message">Διαγραφή του αντιγράφου Drive του %1$s; Το αντίγραφο στη Συσκευή διατηρείται.</string>
+    <string name="home_delete_copy_device_content_desc">Διαγραφή αντιγράφου Συσκευής</string>
+    <string name="home_delete_copy_drive_content_desc">Διαγραφή αντιγράφου Drive</string>
+
+
+    <!-- Tag facet (chip label + "all" option). %1$s = current value shown on the chip. -->
+    <string name="home_filter_tag_label">Ετικέτα</string>
+    <string name="home_filter_tag_chip">Ετικέτα: %1$s</string>
+    <string name="home_filter_tag_all">Όλες οι ετικέτες</string>
+    <string name="home_filter_tag_all_short">Όλες</string>
+
+</resources>

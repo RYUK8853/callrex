@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Community Support for CallVault
+    url: https://github.com/madkongo/CallVault/discussions
+    about: Please ask and answer other users questions here. THIS IS NOT FOR BUG REPORTS.
+  - name: Setup and troubleshooting docs
+    url: https://github.com/madkongo/CallVault/blob/main/docs/SUPPORT.md
+    about: Installation, permissions, and the common "recording didn't start" causes.

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Recorder readiness notification (cold-start status) -->
+    <string name="notif_readiness_channel">Ετοιμότητα καταγραφέα κλήσεων</string>
+    <string name="notif_readiness_ready_title">Έτοιμο για καταγραφή κλήσεων</string>
+    <string name="notif_readiness_starting_title">Εκκίνηση καταγραφέα κλήσεων…</string>
+    <string name="notif_readiness_ready_text">Ο καταγραφέας είναι συνδεδεμένος.</string>
+    <string name="notif_readiness_starting_text">Σύνδεση του καταγραφέα — οι κλήσεις δεν θα καταγράφονται μέχρι να ολοκληρωθεί αυτό.</string>
+    <string name="notif_usb_lock_warning">Το κλείδωμα της οθόνης κατά τη διάρκεια μιας κλήσης μπορεί να σταματήσει την καταγραφή. Στις Ρυθμίσεις ▸ Πειραματικά, ορίστε το «USB όταν ξεκλειδώνει η οθόνη» σε Μόνο φόρτιση.</string>
+    <string name="notif_usb_check_unavailable">Αν αυτό δεν ολοκληρωθεί, ορίστε το «USB όταν ξεκλειδώνει η οθόνη» σε Μόνο φόρτιση στις Ρυθμίσεις ▸ Πειραματικά — σε ορισμένα τηλέφωνα μια λειτουργία USB δεδομένων εμποδίζει τη σύνδεση του καταγραφέα.</string>
+
+    <!-- ADB wireless-debugging pairing notifications -->
+    <string name="notif_pairing_channel">Σύζευξη ADB</string>
+    <string name="notif_pairing_searching_title">Αναζήτηση υπηρεσίας σύζευξης…</string>
+    <string name="notif_pairing_searching_text">Ανοίξτε στο τηλέφωνο το παράθυρο «Σύζευξη συσκευής με κωδικό σύζευξης».</string>
+    <string name="notif_pairing_waiting_wd_title">Αναμονή για Ασύρματο εντοπισμό σφαλμάτων…</string>
+    <string name="notif_pairing_waiting_wd_text">Ενεργοποιήστε τον Ασύρματο εντοπισμό σφαλμάτων για να ξεκινήσει η σύζευξη.</string>
+    <string name="notif_pairing_found_title">Βρέθηκε υπηρεσία σύζευξης</string>
+    <string name="notif_pairing_found_text">Εισαγάγετε τον 6ψήφιο κωδικό σύζευξης.</string>
+    <string name="notif_pairing_working_title">Σύζευξη…</string>
+    <string name="notif_pairing_working_text">Ρύθμιση του Callrex. Αυτό διαρκεί μερικά δευτερόλεπτα.</string>
+    <string name="notif_pairing_success_title">Έγινε σύζευξη ✓</string>
+    <string name="notif_pairing_success_text">Έγινε σύζευξη Ασύρματου εντοπισμού σφαλμάτων. Πατήστε για να ολοκληρώσετε τη ρύθμιση του Callrex.</string>
+    <string name="notif_pairing_failed_title">Η σύζευξη απέτυχε</string>
+    <string name="notif_pairing_action_stop">Διακοπή</string>
+    <string name="notif_pairing_action_enter_code">Εισαγωγή κωδικού σύζευξης</string>
+    <string name="notif_pairing_remote_input_label">Κωδικός σύζευξης</string>
+    <string name="notif_call_monitor_channel">Παρακολούθηση κλήσεων</string>
+    <string name="notif_readiness_reboot_ready_text">Ακρόαση για κλήσεις μετά την επανεκκίνηση.</string>
+    <string name="notif_startup_channel">Εκκίνηση</string>
+    <string name="notif_startup_preparing">Προετοιμασία καταγραφέα κλήσεων…</string>
+    <string name="update_notif_channel">Ενημερώσεις εφαρμογής</string>
+    <string name="update_notif_available_title">Το Callrex %1$s είναι διαθέσιμο</string>
+    <string name="update_notif_available_text">Ανοίξτε την εφαρμογή και πατήστε Ενημέρωση για να την εγκαταστήσετε.</string>
+    <string name="update_notif_success_title">Η ενημέρωση εγκαταστάθηκε</string>
+    <string name="update_notif_success_text">Το Callrex είναι τώρα στην έκδοση %1$s.</string>
+    <string name="update_notif_failure_title">Η ενημέρωση απέτυχε</string>
+    <string name="update_notif_failure_download_text">Η ενημέρωση δεν ήταν δυνατό να ληφθεί. Πατήστε για να τη λάβετε από το GitHub.</string>
+    <string name="update_notif_failure_verify_text">Η ληφθείσα ενημέρωση απέτυχε στον έλεγχο ασφαλείας και απορρίφθηκε. Πατήστε για να τη λάβετε από το GitHub.</string>
+    <string name="update_notif_failure_install_text">Η ενημέρωση δεν ήταν δυνατό να εγκατασταθεί. Πατήστε για να τη λάβετε από το GitHub.</string>
+    <string name="update_notif_downloading_title">Λήψη ενημέρωσης…</string>
+    <string name="update_notif_installing_title">Εγκατάσταση ενημέρωσης…</string>
+    <string name="notif_readiness_down_title">Οι κλήσεις δεν καταγράφονται</string>
+    <string name="notif_readiness_no_debugging_text">Ο εντοπισμός σφαλμάτων USB και ο Ασύρματος εντοπισμός σφαλμάτων είναι και οι δύο απενεργοποιημένοι. Ενεργοποιήστε ξανά έναν από τους δύο στις Επιλογές προγραμματιστή.</string>
+    <string name="notif_readiness_needs_wifi_text">Ο εντοπισμός σφαλμάτων USB είναι απενεργοποιημένος και δεν υπάρχει Wi-Fi. Συνδεθείτε σε Wi-Fi ή ενεργοποιήστε τον εντοπισμό σφαλμάτων USB.</string>
+    <string name="notif_readiness_stuck_text">Ο καταγραφέας αποτυγχάνει συνεχώς να ξεκινήσει. Ανοίξτε το Callrex για να δείτε γιατί.</string>
+    <string name="notif_readiness_needs_wifi_restart_text">Ο καταγραφέας σταμάτησε και χρειάζεται Wi-Fi για να ξεκινήσει ξανά. Η ενεργοποίηση της Καταγραφής εκτός σύνδεσης ενώ είστε σε Wi-Fi αποτρέπει αυτό.</string>
+    <string name="notif_readiness_wd_off_by_user_text">Απενεργοποιήσατε τον Ασύρματο εντοπισμό σφαλμάτων και τίποτε άλλο δεν επιτρέπει στο Callrex να επανεκκινήσει τον καταγραφέα. Ενεργοποιήστε τον ξανά ή ενεργοποιήστε τον εντοπισμό σφαλμάτων USB.</string>
+    <string name="notif_readiness_offline_paused_text">Η καταγραφή εκτός Wi-Fi είναι σε παύση: χρειάζεται εντοπισμό σφαλμάτων USB. Οι κλήσεις σε Wi-Fi εξακολουθούν να καταγράφονται.</string>
+    <string name="notif_action_turn_wd_on">Ενεργοποίηση Ασύρματου εντοπισμού σφαλμάτων</string>
+
+    <!-- Transcription finished / didn't finish -->
+    <string name="transcript_notice_channel">Απομαγνητοφωνήσεις</string>
+    <string name="transcript_notice_ready_title">Η απομαγνητοφώνηση είναι έτοιμη</string>
+    <string name="transcript_notice_ready_deleted_text">%1$s — ο ήχος διαγράφηκε, όπως ζητήσατε.</string>
+    <string name="transcript_notice_ready_many_title">Έτοιμες απομαγνητοφωνήσεις: %1$d</string>
+    <string name="transcript_notice_ready_many_text">Πατήστε για να τις διαβάσετε.</string>
+    <string name="transcript_notice_failed_title">Η απομαγνητοφώνηση δεν ολοκληρώθηκε</string>
+    <string name="transcript_notice_failed_text">%1$s. Πατήστε για να δοκιμάσετε ξανά.</string>
+    <string name="transcript_notice_failed_many_title">Απομαγνητοφωνήσεις που δεν ολοκληρώθηκαν: %1$d</string>
+    <string name="transcript_notice_failed_many_text">Πατήστε για να τις δείτε.</string>
+</resources>

@@ -1,0 +1,113 @@
+/*
+ * CallVault: FOSS call recording, self-contained over embedded ADB
+ *  Copyright (C) 2026-present The CallVault Authors
+ *  This software is licensed under the GNU General Public License v3 or later, with additional terms as permitted under Section 7.
+ *  The full license text is available in the LICENSE file at the root of this project.
+ *  This software is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+package com.baba.callvault.transcription
+
+import android.content.Context
+import android.util.Log
+import androidx.test.core.app.ApplicationProvider
+import androidx.work.Configuration
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.testing.SynchronousExecutor
+import androidx.work.testing.WorkManagerTestInitHelper
+import com.baba.callvault.data.AppPreferences
+import com.baba.callvault.data.TranscriptionMode
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+
+/**
+ * Scheduling, and — the part that is easy to get wrong — stopping.
+ *
+ * WorkManager has no "stop this execution but keep the schedule" call. Cancelling the periodic work
+ * to stop a run in progress also deletes the nightly sweep, so a user who once tapped Cancel would
+ * silently never get another automatic transcription.
+ */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [35])
+class TranscriptionSchedulerTest {
+
+    private val context: Context = ApplicationProvider.getApplicationContext()
+
+    @Before
+    fun setUp() {
+        WorkManagerTestInitHelper.initializeTestWorkManager(
+            context,
+            Configuration.Builder()
+                .setMinimumLoggingLevel(Log.DEBUG)
+                .setExecutor(SynchronousExecutor())
+                .build()
+        )
+    }
+
+    private fun sweepStates(): List<WorkInfo.State> =
+        WorkManager.getInstance(context)
+            .getWorkInfosForUniqueWork(TranscriptionScheduler.WORK_NAME)
+            .get()
+            .map { it.state }
+
+    @Test
+    fun automatic_mode_schedules_the_nightly_sweep() {
+        AppPreferences(context).setTranscriptionMode(TranscriptionMode.AUTOMATIC)
+
+        TranscriptionScheduler.apply(context)
+
+        assertEquals(listOf(WorkInfo.State.ENQUEUED), sweepStates())
+    }
+
+    @Test
+    fun manual_mode_leaves_no_sweep_scheduled() {
+        AppPreferences(context).setTranscriptionMode(TranscriptionMode.MANUAL)
+
+        TranscriptionScheduler.apply(context)
+
+        assertTrue(sweepStates().none { it == WorkInfo.State.ENQUEUED })
+    }
+
+    @Test
+    fun stopping_a_run_in_progress_keeps_the_nightly_sweep() {
+        // The trap: cancelUniqueWork on periodic work removes the schedule along with the run, so
+        // one tap on Cancel would quietly end automatic transcription for good.
+        AppPreferences(context).setTranscriptionMode(TranscriptionMode.AUTOMATIC)
+        TranscriptionScheduler.apply(context)
+
+        runBlocking { TranscriptionScheduler.stopNow(context) }
+
+        assertEquals(listOf(WorkInfo.State.ENQUEUED), sweepStates())
+    }
+
+    @Test
+    fun stopping_a_run_in_manual_mode_does_not_create_a_sweep() {
+        // Re-applying the schedule must respect the mode: someone on Manual asked for no sweeps.
+        AppPreferences(context).setTranscriptionMode(TranscriptionMode.MANUAL)
+        TranscriptionScheduler.runNow(context, "call.ogg")
+
+        runBlocking { TranscriptionScheduler.stopNow(context) }
+
+        assertTrue(sweepStates().none { it == WorkInfo.State.ENQUEUED })
+    }
+
+    @Test
+    fun stopping_cancels_the_user_requested_run() {
+        AppPreferences(context).setTranscriptionMode(TranscriptionMode.MANUAL)
+        TranscriptionScheduler.runNow(context, "call.ogg")
+
+        runBlocking { TranscriptionScheduler.stopNow(context) }
+
+        val manual = WorkManager.getInstance(context)
+            .getWorkInfosForUniqueWork(TranscriptionScheduler.MANUAL_WORK_NAME)
+            .get()
+        assertTrue(manual.all { it.state.isFinished })
+    }
+}

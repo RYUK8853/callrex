@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-completed notification translations. -->
+<resources>
+    <string name="notif_call_monitor_channel">Hívásfigyelés</string>
+    <string name="notif_pairing_action_enter_code">Párosítási kód megadása</string>
+    <string name="notif_pairing_action_stop">Leállítás</string>
+    <string name="notif_pairing_channel">ADB párosítás</string>
+    <string name="notif_pairing_failed_title">A párosítás sikertelen</string>
+    <string name="notif_pairing_found_text">Adja meg a 6 számjegyű párosítási kódot.</string>
+    <string name="notif_pairing_found_title">Párosítási szolgáltatás megtalálva</string>
+    <string name="notif_pairing_remote_input_label">Párosítási kód</string>
+    <string name="notif_pairing_searching_text">Nyissa meg a telefon „Eszköz párosítása párosítási kóddal” párbeszédpanelét.</string>
+    <string name="notif_pairing_searching_title">Párosítási szolgáltatás keresése…</string>
+    <string name="notif_pairing_success_text">A Vezeték nélküli hibakeresés párosítva. Koppintson a Callrex beállításának befejezéséhez.</string>
+    <string name="notif_pairing_success_title">Párosítva ✓</string>
+    <string name="notif_pairing_waiting_wd_text">Kapcsolja be a Vezeték nélküli hibakeresést a párosítás megkezdéséhez.</string>
+    <string name="notif_pairing_waiting_wd_title">Várakozás a Vezeték nélküli hibakeresésre…</string>
+    <string name="notif_pairing_working_text">A Callrex beállítása folyamatban. Ez néhány másodpercet vesz igénybe.</string>
+    <string name="notif_pairing_working_title">Párosítás…</string>
+    <string name="notif_readiness_channel">Hívásrögzítő készenléte</string>
+    <string name="notif_readiness_ready_text">A rögzítő csatlakozva van.</string>
+    <string name="notif_readiness_ready_title">Készen áll a hívások rögzítésére</string>
+    <string name="notif_readiness_reboot_ready_text">Hívások figyelése újraindítás után.</string>
+    <string name="notif_readiness_starting_text">A rögzítő csatlakoztatása folyamatban — a hívások rögzítése csak ennek befejezése után indul el.</string>
+    <string name="notif_readiness_starting_title">A hívásrögzítő indítása…</string>
+    <string name="notif_startup_channel">Indítás</string>
+    <string name="notif_startup_preparing">Hívásrögzítő előkészítése…</string>
+    <string name="notif_usb_check_unavailable">Ha ez nem fejeződik be, állítsd az „USB a képernyő feloldásakor” opciót Csak töltésre a Beállítások ▸ Kísérleti menüben — egyes telefonokon az adatátviteli USB-mód megakadályozza a rögzítő csatlakozását.</string>
+    <string name="notif_usb_lock_warning">Ha hívás közben lezárod a képernyőt, a rögzítés leállhat. A Beállítások ▸ Kísérleti menüben állítsd az „USB a képernyő feloldásakor” opciót Csak töltésre.</string>
+    <string name="update_notif_available_text">Nyissa meg az alkalmazást, és koppintson a Frissítés gombra a telepítéshez.</string>
+    <string name="update_notif_available_title">Elérhető a Callrex %1$s</string>
+    <string name="update_notif_channel">Alkalmazásfrissítések</string>
+    <string name="update_notif_downloading_title">Frissítés letöltése…</string>
+    <string name="update_notif_failure_download_text">A frissítést nem sikerült letölteni. Koppintson a GitHubról való letöltéshez.</string>
+    <string name="update_notif_failure_install_text">A frissítést nem sikerült telepíteni. Koppintson a GitHubról való letöltéshez.</string>
+    <string name="update_notif_failure_title">A frissítés nem sikerült</string>
+    <string name="update_notif_failure_verify_text">A letöltött frissítés nem ment át a biztonsági ellenőrzésen, ezért törölve lett. Koppintson a GitHubról való letöltéshez.</string>
+    <string name="update_notif_installing_title">Frissítés telepítése…</string>
+    <string name="update_notif_success_text">A Callrex mostantól %1$s verziójú.</string>
+    <string name="update_notif_success_title">Frissítés telepítve</string>
+    <string name="notif_readiness_down_title">A hívások rögzítése nem működik</string>
+    <string name="notif_readiness_no_debugging_text">Az USB-hibakeresés és a vezeték nélküli hibakeresés is ki van kapcsolva. Kapcsold vissza az egyiket a Fejlesztői beállításokban.</string>
+    <string name="notif_readiness_needs_wifi_text">Az USB-hibakeresés ki van kapcsolva, és nincs Wi-Fi. Csatlakozz Wi-Fi-hez, vagy kapcsold be az USB-hibakeresést.</string>
+    <string name="notif_readiness_stuck_text">A rögzítő nem tud elindulni. Nyisd meg a Callrexot az okért.</string>
+    <string name="notif_readiness_needs_wifi_restart_text">A rögzítő leállt, és Wi-Fi kell az újraindításához. Ennek elkerüléséhez kapcsold be az offline rögzítést, amíg Wi-Fi-n vagy.</string>
+    <string name="notif_readiness_wd_off_by_user_text">Kikapcsoltad a vezeték nélküli hibakeresést, és a Callrex máshogy nem tudja újraindítani a rögzítőt. Kapcsold vissza, vagy kapcsold be az USB-hibakeresést.</string>
+    <string name="notif_readiness_offline_paused_text">A Wi-Fi nélküli rögzítés szünetel: USB-hibakeresés kell hozzá. A Wi-Fi-n folytatott hívások rögzítése folytatódik.</string>
+    <string name="notif_action_turn_wd_on">Vezeték nélküli hibakeresés bekapcsolása</string>
+
+    <!-- Transcription finished / didn't finish -->
+    <string name="transcript_notice_channel">Átiratok</string>
+    <string name="transcript_notice_ready_title">Az átirat elkészült</string>
+    <string name="transcript_notice_ready_deleted_text">%1$s – a hangfelvételt töröltük, ahogy kérted.</string>
+    <string name="transcript_notice_ready_many_title">Elkészült átiratok: %1$d</string>
+    <string name="transcript_notice_ready_many_text">Koppints az elolvasásukhoz.</string>
+    <string name="transcript_notice_failed_title">Az átírás nem fejeződött be</string>
+    <string name="transcript_notice_failed_text">%1$s. Koppints az újrapróbálkozáshoz.</string>
+    <string name="transcript_notice_failed_many_title">Be nem fejeződött átírások: %1$d</string>
+    <string name="transcript_notice_failed_many_text">Koppints a megtekintésükhöz.</string>
+</resources>

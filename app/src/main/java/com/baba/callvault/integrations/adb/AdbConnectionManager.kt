@@ -1,0 +1,314 @@
+/*
+ * CallVault: FOSS call recording, self-contained over embedded ADB
+ *  Copyright (C) 2026-present The CallVault Authors
+ *  This software is licensed under the GNU General Public License v3 or later, with additional terms as permitted under Section 7.
+ *  The full license text is available in the LICENSE file at the root of this project.
+ *  This software is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+package com.baba.callvault.integrations.adb
+
+import android.content.Context
+import android.os.Build
+import android.util.Base64
+import android.util.Log
+import com.baba.callvault.utils.AppLogger
+import io.github.muntashirakon.adb.AbsAdbConnectionManager
+import io.github.muntashirakon.adb.AdbStream
+import org.bouncycastle.asn1.x509.X509Name
+import org.bouncycastle.x509.X509V3CertificateGenerator
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.math.BigInteger
+import java.security.KeyFactory
+import java.security.KeyPairGenerator
+import java.security.PrivateKey
+import java.security.SecureRandom
+import java.security.cert.Certificate
+import java.security.cert.CertificateFactory
+import java.security.spec.PKCS8EncodedKeySpec
+import java.util.Date
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+
+/**
+ * AdbConnectionManager provides a persisted cryptographic identity (RSA-2048 key + self-signed X.509
+ * certificate) for in-app ADB wireless connections.
+ *
+ * On first use the keypair and certificate are generated and written to the app's private
+ * [Context.getFilesDir]. On subsequent calls they are loaded from disk so the same identity is
+ * presented to the ADB daemon across process death and reboots — ADB remembers authorised public
+ * keys per client identity, so stability of the identity matters.
+ *
+ * Files created under [Context.getFilesDir]:
+ *   - `adbkey`      — raw PKCS#8-encoded RSA private key bytes
+ *   - `adbkey.pem`  — Base64-encoded DER certificate, PEM-wrapped
+ *
+ * Abstract methods required by [AbsAdbConnectionManager] (confirmed via javap on version 3.1.1):
+ *   - [getPrivateKey]  → RSA private key used to sign ADB auth tokens
+ *   - [getCertificate] → X.509 certificate wrapping the public key for TLS
+ *   - [getDeviceName]  → human-readable label shown in the ADB authorisation dialog
+ */
+class AdbConnectionManager private constructor(context: Context) : AbsAdbConnectionManager() {
+
+    private val privateKey: PrivateKey
+    private val certificate: Certificate
+
+    /** How long a stream open may wait for adbd's answer. Settable for tests. */
+    @Volatile
+    internal var openBudgetMs: Long = DEFAULT_OPEN_BUDGET_MS
+
+    init {
+        // Tell the library which Android API level we're running on; it selects TLS vs plain TCP.
+        setApi(Build.VERSION.SDK_INT)
+        // Bound EVERY connect() — the library defaults to an effectively infinite timeout, so a stalled
+        // handshake (e.g. reconnecting to the loopback tcpip port right after adbd restarts) would hang
+        // the caller forever. This covers connectLoopback at call time too.
+        setTimeout(CONNECT_TIMEOUT_SECONDS, java.util.concurrent.TimeUnit.SECONDS)
+
+        val appContext = context.applicationContext
+        val loadedKey = loadPrivateKey(appContext)
+        val loadedCert = loadCertificate(appContext)
+
+        if (loadedKey != null && loadedCert != null) {
+            Log.d(TAG, "Loaded persisted ADB identity from ${appContext.filesDir}")
+            privateKey = loadedKey
+            certificate = loadedCert
+        } else {
+            Log.i(TAG, "No valid persisted identity found — generating new RSA-2048 keypair + self-signed cert")
+            val (key, cert) = generateAndPersistIdentity(appContext)
+            privateKey = key
+            certificate = cert
+            Log.i(TAG, "New ADB identity generated and persisted to ${appContext.filesDir}")
+        }
+    }
+
+    // ---- AbsAdbConnectionManager abstract method implementations ----
+
+    /** Returns the RSA private key used by the library to sign ADB authentication tokens. */
+    override fun getPrivateKey(): PrivateKey = privateKey
+
+    /**
+     * Returns the X.509 certificate wrapping the RSA public key.
+     * Used by the library during TLS handshake (Android 11+ / adb over WiFi).
+     */
+    override fun getCertificate(): Certificate = certificate
+
+    /** Human-readable device name shown in the ADB authorisation dialog on the target device. */
+    override fun getDeviceName(): String = DEVICE_NAME
+
+    // ---- Bounded stream opens ----
+
+    override fun openStream(destination: String): AdbStream =
+        openBounded(destination) { super.openStream(destination) }
+
+    override fun openStream(service: Int, vararg args: String): AdbStream =
+        openBounded("service $service") { super.openStream(service, *args) }
+
+    /**
+     * Runs a library stream open under [openBudgetMs], interrupting the caller if adbd never answers.
+     *
+     * **Why.** libadb's `AdbConnection.open()` sends OPEN and then waits for the OKAY with no timeout and no
+     * condition, while `AbsAdbConnectionManager` holds its connection lock. A lost wakeup, or a reader thread
+     * that died just before the stream was registered, parks that caller forever — and `isConnected`,
+     * `connect` and `disconnect` all need the same lock. On 2026-09-14 one shell probe parked like that took
+     * the OP12's recorder down for six hours: every relaunch, and the keep-alive's own rescue, queued behind
+     * it. Closing the stream from outside cannot help, because the caller has no stream until `open` returns.
+     *
+     * Interrupting works where closing cannot: `Object.wait()` throws, the library unwinds out of its lock,
+     * and every queued caller proceeds. The connection that swallowed an OPEN is not trusted again — it is
+     * dropped before the failure is reported, so the next caller builds a fresh one.
+     */
+    private fun openBounded(what: String, open: () -> AdbStream): AdbStream {
+        val caller = Thread.currentThread()
+        val state = AtomicInteger(OPEN_RUNNING)
+        val budget = openBudgetMs
+        // Counts only time the caller spends NOT queued for the connection lock. A thread blocked on a monitor
+        // entry cannot be interrupted out of it, and an interrupt landed then is spent on its own open the moment
+        // it gets in — so an opener queued behind a stuck one would fail without ever having waited on adbd.
+        val tickMs = (budget / WATCHDOG_TICKS_PER_BUDGET).coerceAtLeast(1)
+        var waitedMs = 0L
+        val watchdog = openWatchdog.scheduleWithFixedDelay({
+            if (caller.state != Thread.State.BLOCKED) waitedMs += tickMs
+            if (waitedMs >= budget && state.compareAndSet(OPEN_RUNNING, OPEN_TIMED_OUT)) {
+                AppLogger.w(TAG, "adbd did not answer an open of '$what' within ${budget}ms — interrupting ${caller.name} to release the connection lock")
+                caller.interrupt()
+            }
+        }, tickMs, tickMs, TimeUnit.MILLISECONDS)
+        try {
+            return open()
+        } catch (e: InterruptedException) {
+            if (state.get() != OPEN_TIMED_OUT) throw e
+            dropUnansweredConnection()
+            throw IOException("adbd did not answer an open of '$what' within ${budget}ms", e)
+        } finally {
+            watchdog.cancel(false)
+            // Lost the race: the watchdog interrupted just as the open returned. Do not leak that interrupt
+            // into the caller's next sleep or wait.
+            if (!state.compareAndSet(OPEN_RUNNING, OPEN_DONE)) Thread.interrupted()
+        }
+    }
+
+    /**
+     * Drops the connection that swallowed an OPEN before the caller hears about it, so a caller that retries
+     * through `isConnected` sees a dead connection rather than the zombie. Closing joins the library's reader
+     * thread with no timeout, so it runs on its own thread under [DROP_UNANSWERED_BUDGET_MS]. The half-registered
+     * stream stays in the old connection's table; it goes when that connection object does.
+     */
+    private fun dropUnansweredConnection() {
+        val dropper = Thread {
+            runCatching { disconnect() }
+                .onFailure { AppLogger.d(TAG, "Dropping the unanswered connection failed: ${it.message}") }
+        }.apply { isDaemon = true; name = "cv-adb-drop-unanswered" }
+        dropper.start()
+        runCatching { dropper.join(DROP_UNANSWERED_BUDGET_MS) }
+    }
+
+    // ---- Singleton ----
+
+    companion object {
+        private const val TAG = "CV:AdbConnectionMgr"
+
+        /** Name shown in the ADB "Allow USB debugging?" / wireless pairing dialog. */
+        private const val DEVICE_NAME = "CallVault"
+
+        /** Upper bound for a single connect() handshake (WD TLS or plain loopback). Generous for TLS,
+         *  but finite so a stalled handshake fails instead of hanging the recording/arming path. */
+        private const val CONNECT_TIMEOUT_SECONDS = 20L
+
+        /**
+         * Longest a stream open waits for adbd's OKAY. A healthy local open answers in milliseconds; the slow
+         * ones are `tcpip:`/`usb:`, where adbd restarts instead of answering, and their callers already give
+         * up after 3 s.
+         */
+        internal const val DEFAULT_OPEN_BUDGET_MS = 5_000L
+
+        /** How long a timed-out open waits for its connection to be dropped before reporting the failure. */
+        private const val DROP_UNANSWERED_BUDGET_MS = 2_000L
+
+        /** Watchdog resolution: it checks the caller this many times per budget. */
+        private const val WATCHDOG_TICKS_PER_BUDGET = 20L
+
+        private const val OPEN_RUNNING = 0
+        private const val OPEN_DONE = 1
+        private const val OPEN_TIMED_OUT = 2
+
+        /** One daemon thread times every open; its tasks only count, flip a flag and interrupt. */
+        private val openWatchdog = Executors.newSingleThreadScheduledExecutor { r ->
+            Thread(r, "cv-adb-open-watchdog").apply { isDaemon = true }
+        }
+
+        private const val PRIVATE_KEY_FILE = "adbkey"
+        private const val CERTIFICATE_FILE = "adbkey.pem"
+
+        private const val CERT_SUBJECT = "CN=CallVault"
+        private const val CERT_ALGO = "SHA512withRSA"
+
+        /** 10-year validity so the same identity survives reinstalls / long gaps between uses. */
+        private const val CERT_VALIDITY_MS = 10L * 365 * 24 * 60 * 60 * 1000
+
+        @Volatile
+        private var instance: AdbConnectionManager? = null
+
+        /**
+         * Returns the thread-safe singleton [AdbConnectionManager].
+         *
+         * Uses double-checked locking; always stores [applicationContext] internally to avoid
+         * Activity leaks.
+         *
+         * @param context Any [Context] — applicationContext is used internally.
+         * @throws Exception if key/cert generation fails on first call.
+         */
+        fun getInstance(context: Context): AdbConnectionManager =
+            instance ?: synchronized(this) {
+                instance ?: AdbConnectionManager(context.applicationContext).also { instance = it }
+            }
+
+        // ---- Key + cert persistence helpers ----
+
+        private fun loadPrivateKey(context: Context): PrivateKey? {
+            val file = File(context.filesDir, PRIVATE_KEY_FILE)
+            if (!file.exists()) return null
+            return runCatching {
+                val bytes = FileInputStream(file).use { it.readBytes() }
+                KeyFactory.getInstance("RSA").generatePrivate(PKCS8EncodedKeySpec(bytes))
+            }.getOrElse { e ->
+                Log.w(TAG, "Failed to load persisted private key — will regenerate: ${e.message}")
+                null
+            }
+        }
+
+        private fun loadCertificate(context: Context): Certificate? {
+            val file = File(context.filesDir, CERTIFICATE_FILE)
+            if (!file.exists()) return null
+            return runCatching {
+                FileInputStream(file).use { CertificateFactory.getInstance("X.509").generateCertificate(it) }
+            }.getOrElse { e ->
+                Log.w(TAG, "Failed to load persisted certificate — will regenerate: ${e.message}")
+                null
+            }
+        }
+
+        /**
+         * Generates a fresh RSA-2048 keypair and a self-signed X.509 certificate, then writes
+         * both to [Context.getFilesDir].
+         *
+         * Uses BouncyCastle's [X509V3CertificateGenerator] — bcprov-jdk15to18 is guaranteed
+         * present at runtime as a transitive dependency of libadb-android.
+         *
+         * @return a [Pair] of (privateKey, certificate).
+         */
+        private fun generateAndPersistIdentity(context: Context): Pair<PrivateKey, Certificate> {
+            // 0. Delete any partial/stale identity files BEFORE writing new ones so that an
+            //    interrupted write never leaves a new private key paired with an old certificate
+            //    (or vice-versa).  If both files are absent the next run regenerates both together.
+            File(context.filesDir, PRIVATE_KEY_FILE).delete()
+            File(context.filesDir, CERTIFICATE_FILE).delete()
+
+            // 1. Generate RSA-2048 keypair.
+            val secureRandom = SecureRandom()
+            val keyPairGen = KeyPairGenerator.getInstance("RSA")
+            keyPairGen.initialize(2048, secureRandom)
+            val keyPair = keyPairGen.generateKeyPair()
+            val privateKey = keyPair.private
+            val publicKey = keyPair.public
+
+            // 2. Build a self-signed X.509 v3 certificate using BouncyCastle.
+            //    bcprov-jdk15to18 is a runtime transitive dep of libadb-android (v1.81).
+            val now = Date()
+            val notAfter = Date(System.currentTimeMillis() + CERT_VALIDITY_MS)
+            @Suppress("DEPRECATION")
+            val dn = X509Name(CERT_SUBJECT)
+            @Suppress("DEPRECATION")
+            val certGen = X509V3CertificateGenerator().apply {
+                setSerialNumber(BigInteger.valueOf(secureRandom.nextLong() and Long.MAX_VALUE))
+                setIssuerDN(dn)
+                setSubjectDN(dn)
+                setNotBefore(now)
+                setNotAfter(notAfter)
+                setPublicKey(publicKey)
+                setSignatureAlgorithm(CERT_ALGO)
+            }
+            @Suppress("DEPRECATION")
+            val certificate = certGen.generate(privateKey)
+
+            // 3. Persist private key as raw PKCS#8 bytes.
+            FileOutputStream(File(context.filesDir, PRIVATE_KEY_FILE)).use {
+                it.write(privateKey.encoded)
+            }
+
+            // 4. Persist certificate in PEM format (Base64-encoded DER with standard headers).
+            val pemBody = Base64.encodeToString(certificate.encoded, Base64.DEFAULT)
+            FileOutputStream(File(context.filesDir, CERTIFICATE_FILE)).use { os ->
+                os.write("-----BEGIN CERTIFICATE-----\n".toByteArray(Charsets.UTF_8))
+                os.write(pemBody.toByteArray(Charsets.UTF_8))
+                os.write("-----END CERTIFICATE-----\n".toByteArray(Charsets.UTF_8))
+            }
+
+            return Pair(privateKey, certificate)
+        }
+    }
+}

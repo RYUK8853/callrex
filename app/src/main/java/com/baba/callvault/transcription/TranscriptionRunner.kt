@@ -1,0 +1,465 @@
+/*
+ * CallVault: FOSS call recording, self-contained over embedded ADB
+ *  Copyright (C) 2026-present The CallVault Authors
+ *  This software is licensed under the GNU General Public License v3 or later, with additional terms as permitted under Section 7.
+ *  The full license text is available in the LICENSE file at the root of this project.
+ *  This software is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+package com.baba.callvault.transcription
+
+import android.content.Context
+import android.net.Uri
+import android.os.SystemClock
+import androidx.core.net.toUri
+import com.baba.callvault.data.AppPreferences
+import com.baba.callvault.system.interop.TranscriptSidecar
+import com.baba.callvault.data.recordings.ImportedRecording
+import com.baba.callvault.data.recordings.RecordingCatalog
+import com.baba.callvault.data.recordings.RecordingsRepository
+import com.baba.callvault.data.recordings.TranscribeOnlyAudio
+import com.baba.callvault.data.transcripts.SpeakerTurnsRepository
+import com.baba.callvault.data.transcripts.db.TranscriptDatabase
+import com.baba.callvault.data.transcripts.db.TranscriptEntry
+import com.baba.callvault.data.transcripts.db.TranscriptSegmentEntry
+import com.baba.callvault.data.transcripts.db.TranscriptState
+import com.baba.callvault.transcription.model.TranscriptionModel
+import com.baba.callvault.server.speakers.OfflineSpeakerLabeller
+import com.baba.callvault.utils.AppLogger
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
+
+/**
+ * Turns audio into stored segments. Substituted in tests, because the real one loads a native
+ * library a JVM test cannot.
+ */
+fun interface Transcriber {
+    suspend fun transcribe(
+        context: Context,
+        uri: Uri,
+        modelPath: String,
+        language: String?,
+        prompt: String?,
+        /**
+         * Offered every decoded chunk before the mono downmix, so who-spoke can be read out of the
+         * decode that is happening anyway (issue #38). Null for none.
+         */
+        speakers: OfflineSpeakerLabeller?,
+        /**
+         * How to decode. [DecodeSettings.DEFAULT] for every ordinary run; something else only when
+         * [WrongScriptRetry] is decoding a recording again because the first attempt came back in the
+         * wrong alphabet.
+         */
+        settings: DecodeSettings,
+    ): List<TranscriptSegment>
+}
+
+/**
+ * Runs transcription over a list of recordings, one at a time, recording state as it goes.
+ *
+ * Everything here exists because the work is *slow*: a 30-minute call costs about 30 minutes of CPU
+ * with the small model and over an hour with turbo. That single fact drives the design — progress is
+ * committed per recording so an interrupted run resumes rather than restarts, one bad file cannot
+ * stall the rest, and a stop request is honoured between recordings instead of an hour later.
+ */
+class TranscriptionRunner(
+    private val context: Context,
+    /** Whether the attempt that just ended was stopped rather than finished. Injected for tests. */
+    private val wasAborted: () -> Boolean = { TranscriptionEngine.wasAborted() },
+    /** One recording's length. Injected for tests, which have no real audio to measure. */
+    private val audioDurationMs: (Uri) -> Long = { uri -> AudioDecoder.durationMs(context, uri) },
+    /**
+     * Told how each recording ended, so something can say so out loud. Injected for tests, which have
+     * no NotificationManager and must not need one to assert what a run stored.
+     *
+     * Only the three endings a user is owed a word about reach it — see [TranscriptNotice.Outcome].
+     */
+    private val onFinished: suspend (String, TranscriptNotice.Outcome) -> Unit =
+        { displayName, outcome -> TranscriptNotifier.announce(context, displayName, outcome) },
+    // Last, so `TranscriptionRunner(context) { ... }` still reads as "a runner with this transcriber".
+    // A lambda rather than `TranscriptionEngine::transcribe`: the engine's `settings` parameter sits
+    // between `prompt` and `speakers`, so a method reference no longer lines up with this interface.
+    private val transcriber: Transcriber =
+        Transcriber { ctx, uri, modelPath, language, prompt, speakers, settings ->
+            TranscriptionEngine.transcribe(ctx, uri, modelPath, language, prompt, settings, speakers = speakers)
+        }
+) {
+
+    private val dao get() = TranscriptDatabase.get(context).transcriptDao()
+
+    /**
+     * Transcribes each of [displayNames] in turn.
+     *
+     * @param shouldStop consulted between recordings; when it returns true the batch ends early and
+     *   whatever finished stays finished.
+     * @param onProgress announced before each recording is started, so something on screen can say
+     *   what is happening during a run that may last hours.
+     * @return how many recordings were transcribed.
+     */
+    suspend fun runBatch(
+        modelId: String,
+        modelPath: String,
+        language: String?,
+        displayNames: List<String>,
+        shouldStop: () -> Boolean = { false },
+        onProgress: suspend (completed: Int, total: Int, current: String) -> Unit = { _, _, _ -> }
+    ): Int {
+        var transcribed = 0
+        var reached = 0
+
+        for (displayName in displayNames) {
+            if (shouldStop()) {
+                AppLogger.i(TAG, "Stopping after $transcribed recording(s); the rest stay queued")
+                break
+            }
+            // Count recordings reached rather than transcribed: a skipped or failed one still moves
+            // the run forward, and a counter that stalls on a bad file looks like a hang.
+            onProgress(reached, displayNames.size, displayName)
+            reached++
+            if (runOne(modelId, modelPath, language, displayName, shouldStop)) transcribed++
+        }
+
+        return transcribed
+    }
+
+    /**
+     * Transcribes one recording. Returns true when it finished and was stored.
+     *
+     * @param shouldStop consulted only if the attempt throws, to tell an interruption apart from a
+     *   genuine failure. It cannot be inferred from the exception: `whisper_full` is a blocking
+     *   native call that coroutine cancellation cannot interrupt, so a stopped run surfaces as
+     *   whatever the engine throws on the way out, not as a [CancellationException].
+     */
+    suspend fun runOne(
+        modelId: String,
+        modelPath: String,
+        language: String?,
+        displayName: String,
+        shouldStop: () -> Boolean = { false }
+    ): Boolean {
+        // The checkpoint. A resumed run re-offers everything it was given, so finished work must be
+        // recognised and skipped rather than paid for twice.
+        if (dao.findTranscript(displayName)?.state == TranscriptState.DONE) {
+            AppLogger.i(TAG, "$displayName is already transcribed; skipping")
+            return false
+        }
+
+        val uri = localUriFor(displayName) ?: run {
+            // Deleted between being queued and being reached. Nothing to decode and nothing to say.
+            AppLogger.i(TAG, "$displayName is no longer in the catalog; skipping")
+            return false
+        }
+
+        // Length before anything is marked or decoded. Transcription decodes the whole recording into
+        // memory before the model sees any of it, so past a point the job dies — after a long wait —
+        // having produced nothing. Every route into transcription arrives here: the nightly sweep, the
+        // per-call run when a call ends, and a tap. Refusing at this one funnel is what stops the check
+        // from being a thing three callers each have to remember, which is how the automatic paths came
+        // to attempt 50-minute recordings while only the tap refused them.
+        val audioMs = audioDurationMs(uri)
+        if (TranscriptionLengthLimit.isTooLong(audioMs)) {
+            // Left with no row at all, as a stopped run is. FAILED would bar the recording from every
+            // future automatic run — including the ones that become possible when decoding is chunked
+            // and this limit goes away — and QUEUED, which a tap writes before enqueuing, would spin on
+            // the busy indicator for ever with nothing behind it.
+            dao.deleteFor(displayName)
+            AppLogger.w(
+                TAG,
+                "Skipped $displayName: ${audioMs / MS_PER_MINUTE} minutes is over the " +
+                    "${TranscriptionLengthLimit.MAX_MINUTES}-minute transcription limit"
+            )
+            return false
+        }
+
+        mark(displayName, TranscriptState.RUNNING, modelId, language)
+
+        // Monotonic, like every other duration in this app. The wall clock can be corrected by NTP
+        // or changed by the user mid-run, and this number is not merely displayed — it is divided by
+        // the audio length and stored as this phone's permanent speed, so a clock jump would be
+        // learned as a property of the hardware and quoted back for the next dozen runs.
+        val startedAt = SystemClock.elapsedRealtime()
+        // Named before the words are decoded, so a brand or a contact is spelled rather than
+        // guessed at. Best-effort: no glossary and no resolvable name simply means no prompt.
+        val prompt = runCatching { promptFor(displayName, language) }.getOrNull()
+        // Length only, never the words: the prompt is a contact's name. Logged because a prompt in the
+        // wrong script can turn the language pin off, and without this line a transcript in the wrong
+        // language cannot be told apart from one that was never primed at all.
+        AppLogger.i(TAG, "Prompt: ${prompt?.length ?: 0} char(s), language ${language ?: "auto"}")
+        // Claimed for exactly as long as the engine is busy with this recording, so a delete
+        // arriving mid-run knows there is something to abandon — see [TranscriptionInFlight].
+        TranscriptionInFlight.claim(displayName)
+        // Rides on the decode the transcription is about to do anyway, so a Shizuku recording gets
+        // speaker labels for free -- its live capture never saw the raw channels (issue #38). Produces
+        // nothing for a mono recording, which is every standalone one, and nothing where the encode
+        // collapsed the channels. See OfflineSpeakerLabeller.
+        val speakers = OfflineSpeakerLabeller()
+        val attempt = try {
+            runCatching {
+                val first = transcriber.transcribe(
+                    context, uri, modelPath, language, prompt, speakers, DecodeSettings.DEFAULT,
+                )
+                // The language pin is a hint to whisper, not a guarantee: a Hebrew call came back in
+                // English on two phones with nothing in the pipeline broken. See WrongScriptRetry.
+                // Retries get no speaker detector — the first decode already heard the whole file, and
+                // feeding it again would count every turn twice.
+                if (!WrongScriptRetry.shouldRetry(first, language, audioMs)) first
+                else {
+                    AppLogger.w(TAG, "Transcript is not in the pinned language's script ($language); decoding again")
+                    WrongScriptRetry.recover(first, language) { settings ->
+                        transcriber.transcribe(context, uri, modelPath, language, prompt, null, settings)
+                    }
+                }
+            }
+        } finally {
+            TranscriptionInFlight.release(displayName)
+        }
+
+        // A stop is not a result, and neither the exception nor `shouldStop` can be trusted to say so:
+        //  - an aborted `whisper_full` returns NORMALLY with a partial result, so a stop can arrive
+        //    dressed as success. Storing it would mark the call DONE with a transcript of its first
+        //    few minutes, and nothing ever re-offers a DONE recording.
+        //  - Stop aborts the engine before WorkManager marks the worker stopped, so a run unwinding in
+        //    that window sees shouldStop() == false and used to be recorded as FAILED — the red error
+        //    icon that appeared after an ordinary Stop.
+        // Removing the row restores exactly the state before the run: the row offers "Transcribe"
+        // again, and a recording with no row is what the queue counts as pending.
+        val error = attempt.exceptionOrNull()
+        if (wasAborted() || shouldStop() || error is CancellationException) {
+            // NonCancellable: by now the coroutine is usually cancelled, and a plain suspend call
+            // would abandon the very cleanup this exists to do.
+            withContext(NonCancellable) { dao.deleteFor(displayName) }
+            AppLogger.i(TAG, "Transcription of $displayName was stopped; left for a later run")
+            if (error is CancellationException) throw error
+            return false
+        }
+
+        return attempt.fold(
+            onSuccess = { segments ->
+                // BEFORE `labelled()`, which reads the turns straight back out to put a speaker on
+                // each segment. Storing them after -- where this first went -- left the turns in the
+                // database and every segment unlabelled: the data was right and arrived too late to
+                // be used. Measured on the OP9, 2026-09-20: 31 turns stored, 0 segments labelled.
+                //
+                // Guarded, so a failure here costs the labels and never the transcript.
+                withContext(NonCancellable) {
+                    runCatching {
+                        val turns = speakers.finish()
+                        AppLogger.i(TAG, "Speaker channels read as ${speakers.separation()}; ${turns.size} turn(s)")
+                        SpeakerTurnsRepository.storeFromRecording(context, displayName, turns)
+                    }.onFailure { AppLogger.w(TAG, "Speaker labels skipped: ${it.message}") }
+                }
+                dao.replaceSegments(displayName, segments.labelled(displayName))
+                mark(displayName, TranscriptState.DONE, modelId, language)
+                // Mirror the finished transcript (+ notes/summary) to a file beside the audio, when the
+                // user has turned on sidecar backups. Guarded inside; NonCancellable so a stopping worker
+                // still writes it.
+                withContext(NonCancellable) { TranscriptSidecar.writeOrClear(context, displayName) }
+                // A file the user imported to read rather than to keep loses its audio HERE, and
+                // nowhere else — after the words and the DONE row are both written, on the success
+                // path alone. Every other way out of this function (a stop, an abort, a failure, a
+                // refusal for length) has already returned, so none of them can destroy the only
+                // copy of a recording in exchange for nothing.
+                //
+                // NonCancellable for the same reason the abort cleanup above is: by the time this
+                // runs the worker may already be stopping, and a half-done delete would leave a file
+                // with no catalog row — invisible to the app and to every sweep that walks the
+                // catalog rather than the folder.
+                withContext(NonCancellable) {
+                    TranscribeOnlyAudio.deleteAfterTranscript(context, displayName)
+                }
+                // Whether the audio is gone is asked of the CATALOG, not of that call's return value.
+                // It answers "a file was found and removed", which is false on a phone where the file
+                // had already been deleted by hand — and the user's library has still lost the
+                // recording, because `forgetName` ran either way. Observing the outcome also cannot
+                // drift from TranscribeOnlyAudio's own verdict, where re-deriving "it was an import
+                // and it produced words" here would be a second copy of a rule that decides whether
+                // somebody's only copy of a file is destroyed.
+                val audioGone = ImportedRecording.isTranscribeOnly(displayName) &&
+                    withContext(NonCancellable) { localUriFor(displayName) } == null
+                // What it really cost on this phone, so the next estimate is measured rather than
+                // inherited from whatever hardware the published figure came from.
+                recordSpeed(modelId, audioMs, SystemClock.elapsedRealtime() - startedAt)
+                // Count, never content: a transcript is the substance of a private call.
+                AppLogger.i(TAG, "Transcribed $displayName (${segments.size} segment(s))")
+                // After the words, the DONE row and the audio decision are all settled, so the
+                // notification can never be the first thing to claim a transcript exists. Inside
+                // NonCancellable and guarded: a shade that cannot be written to is not a reason to
+                // unwind a finished transcription.
+                withContext(NonCancellable) {
+                    announce(
+                        displayName,
+                        if (audioGone) TranscriptNotice.Outcome.StoredAndAudioDeleted
+                        else TranscriptNotice.Outcome.Stored,
+                    )
+                }
+                true
+            },
+            onFailure = { failure ->
+                AppLogger.w(TAG, "Failed to transcribe $displayName: ${failure.message}")
+                mark(displayName, TranscriptState.FAILED, modelId, language, failure.message)
+                // A failure was as silent as a success until now: the row gained a red icon on a
+                // page the user had been given no reason to open. Only a real failure reaches here
+                // — a stop, an abort and a refusal for length have all returned above.
+                announce(displayName, TranscriptNotice.Outcome.Failed)
+                false
+            }
+        )
+    }
+
+    /**
+     * Tells [onFinished] how one recording ended, never letting that reporting break the run.
+     *
+     * Wrapped because the report is the least important thing that happens here: the transcript is
+     * already stored, and a NotificationManager that throws — a phone with notifications disabled at
+     * the OS level, a binder call that fails while the system is busy — must not turn a finished
+     * transcription into a failed batch entry.
+     */
+    private suspend fun announce(displayName: String, outcome: TranscriptNotice.Outcome) {
+        runCatching { onFinished(displayName, outcome) }
+            .onFailure {
+                // Cancellation is not a reporting failure and must never be swallowed here: this is
+                // a suspend call, so a stop arriving mid-report surfaces as a CancellationException,
+                // and catching it would leave the coroutine running after it had been cancelled.
+                if (it is CancellationException) throw it
+                AppLogger.w(TAG, "Could not report $displayName as $outcome: ${it.message}")
+            }
+    }
+
+    /** Folds one run's observed cost into this phone's stored figures for [modelId]. */
+    private fun recordSpeed(modelId: String, audioMs: Long, elapsedMs: Long) {
+        // The two halves of a run, learned separately because they scale differently: setup costs
+        // the same whatever the call's length, and only the rest is per-second work. A run that
+        // never reported its setup leaves this at zero, which charges the whole run as work — the
+        // old behaviour, and pessimistic rather than wrong.
+        val setupMs = TranscriptionEngine.lastSetupMs.coerceIn(0L, elapsedMs)
+        val workMs = elapsedMs - setupMs
+
+        val measured = TranscriptionEstimate.measure(audioMs, workMs) ?: return
+        val prefs = AppPreferences(context)
+        // Speeds measured under a different thread policy describe a machine that no longer exists.
+        // Discarded here rather than averaged away, which would quote a wrong estimate on each of
+        // the next several runs while it converged.
+        //
+        // The count the run ACTUALLY used, not a fresh reading: preferredThreadCount() derives from
+        // online cores, which a phone varies with thermal state, so asking again here could report a
+        // policy no run ever used and wipe every stored figure on the strength of it.
+        prefs.setRtfCalibrationThreads(
+            TranscriptionEngine.lastThreadCount.takeIf { it > 0 }
+                ?: TranscriptionEngine.preferredThreadCount()
+        )
+        val model = TranscriptionModel.fromId(modelId)
+        val blended = TranscriptionEstimate.blend(
+            stored = prefs.getTranscriptionRtf(modelId),
+            measured = measured,
+            // The MODEL'S published figure, never `measured`. Passing the measurement here handed
+            // `blend` its own rejected value as the safe default, so an impossible reading — a
+            // half-second clip that paid a full model load, say — was stored as this phone's
+            // permanent speed and quoted back as "about 3 hours" for a two-minute call (issue #26).
+            fallback = model?.realTimeFactor ?: TranscriptionEstimate.DEFAULT_RTF,
+        )
+        prefs.setTranscriptionRtf(modelId, blended)
+
+        // Only learned when the engine actually reported it; a zero means "not timed", and storing
+        // that as a fixed cost of nothing would under-quote every short call from here on.
+        val blendedLoad = if (setupMs > 0L) {
+            TranscriptionEstimate.blendLoadMs(
+                stored = prefs.getTranscriptionLoadMs(modelId),
+                measured = setupMs,
+                fallback = model?.seedLoadMs ?: setupMs,
+            ).also { prefs.setTranscriptionLoadMs(modelId, it) }
+        } else {
+            prefs.getTranscriptionLoadMs(modelId)
+        }
+
+        AppLogger.i(
+            TAG,
+            "Measured %.2fx real time for %s (setup %d ms, work %d ms over %d ms of audio); stored %.2fx, load %s"
+                .format(measured, modelId, setupMs, workMs, audioMs, blended, blendedLoad?.toString() ?: "unmeasured")
+        )
+    }
+
+    /**
+     * The words to expect for [displayName]: who the call is with.
+     *
+     * The contact is looked up the same way the list does it, so the prompt names the person by the
+     * name shown on screen rather than by a number.
+     */
+    private suspend fun promptFor(displayName: String, language: String?): String? {
+        val contact = RecordingsRepository.listRecordings(context)
+            .firstOrNull { it.displayName == displayName }
+            ?.contactName
+        return TranscriptionPrompt.build(contact, language)
+    }
+
+    private suspend fun localUriFor(displayName: String): Uri? =
+        RecordingCatalog.all(context)
+            .firstOrNull { it.displayName == displayName }
+            ?.localUri
+            ?.toUri()
+
+    private suspend fun mark(
+        displayName: String,
+        state: TranscriptState,
+        modelId: String,
+        language: String?,
+        errorMessage: String? = null
+    ) {
+        dao.upsertTranscript(
+            TranscriptEntry(
+                displayName = displayName,
+                state = state,
+                modelId = modelId,
+                language = language,
+                updatedAt = System.currentTimeMillis(),
+                errorMessage = errorMessage
+            )
+        )
+    }
+
+    /**
+     * Turns whisper's segments into rows, attributing each to the side that spoke it where the
+     * capture recorded who was talking.
+     *
+     * The turns are read once per recording rather than per segment, and their absence is the
+     * ordinary case rather than an error: a mono capture, a daemon too old to report them, or any
+     * call recorded before speaker tracking existed simply yields unlabelled rows — which is what
+     * every transcript looked like until now.
+     *
+     * Labels are the neutral `A`/`B`, never a name. Which side is the user is resolved when the
+     * transcript is displayed, so a mapping learned tomorrow improves the transcripts stored today
+     * and a mapping lost never leaves a wrong name behind.
+     */
+    private suspend fun List<TranscriptSegment>.labelled(
+        displayName: String
+    ): List<TranscriptSegmentEntry> {
+        val turns = SpeakerLabeller.decode(SpeakerTurnsRepository.turnsFor(context, displayName))
+        // A line both people share is cut at the pause between them BEFORE it is labelled — shared, it
+        // belongs to neither and gets no name at all. Measured on the OP9: the same call was two
+        // labelled lines in English and one unlabelled line in Hebrew. See SpeakerSeamSplit.
+        // ...and then the rows one person holds are joined, so a turn is one row rather than one row
+        // per sentence. In that order: a shared row has to be cut before its halves can join anything.
+        val lines = SpeakerTurnLines.merge(flatMap { SpeakerSeamSplit.joinSameSpeaker(it, turns) }, turns)
+        if (lines.size != size) {
+            AppLogger.i(TAG, "Laid $size segment(s) out as ${lines.size} row(s), one per turn")
+        }
+        val speakers = SpeakerLabeller.labelAll(turns, lines.map { it.startMs to it.endMs })
+
+        return lines.mapIndexed { index, segment ->
+            TranscriptSegmentEntry(
+                displayName = displayName,
+                startMs = segment.startMs,
+                endMs = segment.endMs,
+                text = segment.text,
+                speaker = speakers.getOrNull(index)
+            )
+        }
+    }
+
+    private companion object {
+        const val TAG = "CV:TranscriptionRunner"
+
+        /** Only ever used to say a refused length out loud in minutes. */
+        const val MS_PER_MINUTE = 60_000L
+    }
+}

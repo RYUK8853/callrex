@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-completed notification translations. -->
+<resources>
+    <string name="notif_call_monitor_channel">Отслеживание вызовов</string>
+    <string name="notif_pairing_action_enter_code">Ввести код подключения</string>
+    <string name="notif_pairing_action_stop">Остановить</string>
+    <string name="notif_pairing_channel">Подключение по ADB</string>
+    <string name="notif_pairing_failed_title">Не удалось подключить</string>
+    <string name="notif_pairing_found_text">Введите 6-значный код подключения.</string>
+    <string name="notif_pairing_found_title">Сервис подключения найден</string>
+    <string name="notif_pairing_remote_input_label">Код подключения</string>
+    <string name="notif_pairing_searching_text">Откройте на телефоне диалог «Подключить устройство с помощью кода подключения».</string>
+    <string name="notif_pairing_searching_title">Поиск сервиса подключения…</string>
+    <string name="notif_pairing_success_text">Беспроводная отладка подключена. Нажмите, чтобы завершить настройку Callrex.</string>
+    <string name="notif_pairing_success_title">Подключено ✓</string>
+    <string name="notif_pairing_waiting_wd_text">Включите беспроводную отладку, чтобы начать подключение.</string>
+    <string name="notif_pairing_waiting_wd_title">Ожидание беспроводной отладки…</string>
+    <string name="notif_pairing_working_text">Настройка Callrex. Это займёт несколько секунд.</string>
+    <string name="notif_pairing_working_title">Подключение…</string>
+    <string name="notif_readiness_channel">Готовность записи звонков</string>
+    <string name="notif_readiness_ready_text">Запись подключена.</string>
+    <string name="notif_readiness_ready_title">Готово к записи звонков</string>
+    <string name="notif_readiness_reboot_ready_text">Ожидание вызовов после перезагрузки.</string>
+    <string name="notif_readiness_starting_text">Подключение записи — до завершения звонки не записываются.</string>
+    <string name="notif_readiness_starting_title">Запуск записи звонков…</string>
+    <string name="notif_startup_channel">Запуск</string>
+    <string name="notif_startup_preparing">Подготовка записи звонков…</string>
+    <string name="notif_usb_check_unavailable">Если это не завершится, установите «USB при разблокировке» в режим «Только зарядка» в Настройки ▸ Экспериментальные — на некоторых телефонах режим передачи данных по USB мешает рекордеру подключиться.</string>
+    <string name="notif_usb_lock_warning">Блокировка экрана во время звонка может остановить запись. В Настройки ▸ Экспериментальные установите «USB при разблокировке» в режим «Только зарядка».</string>
+    <string name="update_notif_available_text">Откройте приложение и нажмите «Обновить», чтобы установить.</string>
+    <string name="update_notif_available_title">Доступна версия Callrex %1$s</string>
+    <string name="update_notif_channel">Обновления приложения</string>
+    <string name="update_notif_downloading_title">Загрузка обновления…</string>
+    <string name="update_notif_failure_download_text">Не удалось загрузить обновление. Нажмите, чтобы скачать его с GitHub.</string>
+    <string name="update_notif_failure_install_text">Не удалось установить обновление. Нажмите, чтобы скачать его с GitHub.</string>
+    <string name="update_notif_failure_title">Не удалось обновить</string>
+    <string name="update_notif_failure_verify_text">Загруженное обновление не прошло проверку безопасности и было удалено. Нажмите, чтобы скачать его с GitHub.</string>
+    <string name="update_notif_installing_title">Установка обновления…</string>
+    <string name="update_notif_success_text">Callrex обновлён до версии %1$s.</string>
+    <string name="update_notif_success_title">Обновление установлено</string>
+    <string name="notif_readiness_down_title">Звонки не записываются</string>
+    <string name="notif_readiness_no_debugging_text">Отладка по USB и отладка по Wi-Fi выключены. Включите одну из них в параметрах разработчика.</string>
+    <string name="notif_readiness_needs_wifi_text">Отладка по USB выключена, а Wi-Fi нет. Подключитесь к Wi-Fi или включите отладку по USB.</string>
+    <string name="notif_readiness_stuck_text">Рекордер не может запуститься. Откройте Callrex, чтобы узнать причину.</string>
+    <string name="notif_readiness_needs_wifi_restart_text">Рекордер остановился, и для перезапуска нужен Wi-Fi. Чтобы этого избежать, включите офлайн-запись, пока вы подключены к Wi-Fi.</string>
+    <string name="notif_readiness_wd_off_by_user_text">Вы выключили отладку по Wi-Fi, и у Callrex нет другого способа перезапустить рекордер. Включите её снова или включите отладку по USB.</string>
+    <string name="notif_readiness_offline_paused_text">Запись без Wi-Fi приостановлена: для неё нужна отладка по USB. Звонки через Wi-Fi по-прежнему записываются.</string>
+    <string name="notif_action_turn_wd_on">Включить отладку по Wi-Fi</string>
+
+    <!-- Transcription finished / didn't finish -->
+    <string name="transcript_notice_channel">Расшифровки</string>
+    <string name="transcript_notice_ready_title">Расшифровка готова</string>
+    <string name="transcript_notice_ready_deleted_text">%1$s — аудио удалено, как вы и просили.</string>
+    <string name="transcript_notice_ready_many_title">Готовых расшифровок: %1$d</string>
+    <string name="transcript_notice_ready_many_text">Нажмите, чтобы прочитать их.</string>
+    <string name="transcript_notice_failed_title">Расшифровка не завершилась</string>
+    <string name="transcript_notice_failed_text">%1$s. Нажмите, чтобы повторить.</string>
+    <string name="transcript_notice_failed_many_title">Незавершённых расшифровок: %1$d</string>
+    <string name="transcript_notice_failed_many_text">Нажмите, чтобы посмотреть их.</string>
+</resources>

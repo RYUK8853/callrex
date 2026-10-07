@@ -1,0 +1,10 @@
+Current AppOps Service state:
+  Uid 2000:
+    state=cch
+    Package com.android.shell:
+      RECORD_AUDIO (allow): 
+        null=[
+          Access: [bg-s] 2026-07-12 18:52:56.975 (-52d19h37m52s312ms) duration=+7s61ms
+          Access: [cch-s] 2026-09-03 13:55:50.695 (-34m58s592ms) duration=+19s261ms
+        ]
+      READ_CLIPBOARD (allow): 

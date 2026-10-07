@@ -1,0 +1,122 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["Type: Bug","Waiting For Contributors Review"]
+assignees: []
+
+body:
+  - type: checkboxes
+    id: prechecks
+    attributes:
+      label: Checklist
+      description: Please confirm the following before continuing
+      options:
+        - label: I have searched existing [issues](https://github.com/madkongo/CallVault/issues) and [discussions](https://github.com/madkongo/CallVault/discussions/categories/community-support) and this is not a duplicate
+          required: true
+        - label: I am using the latest version of the project
+          required: true
+        - label: I am reporting an issue with CallVault itself, NOT with another app
+          required: true
+        - label: I have read the application [docs](https://github.com/madkongo/CallVault/blob/main/docs/SUPPORT.md).
+          required: true
+
+  - type: input
+    id: appVersion
+    attributes:
+      label: CallVault Version
+      description: Shown in Settings → About. Please ensure you tried the latest version.
+      placeholder: e.g. v1.5.1
+    validations:
+      required: true
+
+  - type: input
+    id: androidVersion
+    attributes:
+      label: Android Version
+      description: The version of Android your phone is running.
+      placeholder: e.g. Android 16
+    validations:
+      required: true
+
+  - type: input
+    id: phoneModel
+    attributes:
+      label: The model of your device
+      description: The name and model of your device, with its OEM skin version if possible.
+      placeholder: e.g. Samsung Galaxy S24 FE | One UI 8
+    validations:
+      required: true
+
+  - type: dropdown
+    id: debuggingState
+    attributes:
+      label: Debugging switches at the time of the problem
+      description: |
+        CallVault reaches the system over the device's own ADB, which only runs while one of these is
+        enabled. Most reliability problems trace back to this, so please check rather than guess —
+        Developer Options → USB debugging / Wireless debugging.
+      options:
+        - USB debugging ON, Wireless debugging OFF
+        - USB debugging OFF, Wireless debugging ON
+        - Both ON
+        - Both OFF
+        - I don't know
+    validations:
+      required: true
+
+  - type: dropdown
+    id: callType
+    attributes:
+      label: What kind of call was it?
+      options:
+        - Carrier call (normal phone call)
+        - App call / VoIP (WhatsApp, Telegram, Signal, …)
+        - Not related to a specific call
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: experimental
+    attributes:
+      label: Experimental features enabled
+      description: Settings → Experimental. Tick any that were on.
+      options:
+        - label: VoIP (app call) recording
+        - label: Resilient recording
+        - label: Record without Wi-Fi (offline recording)
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Explain the bug
+      description: Describe the issue
+      placeholder: A clear and concise description of the bug. What actually happened? What should have happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce the issue?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Screenshots
+      description: Add logs, error messages, screenshots, and video, if available
+      placeholder: |
+        If you have a file, please upload it in one of the prior steps instead of pasting its raw content here.
+
+        To export logs: Settings → Debug → "Enable log recording", reproduce the problem, turn it off,
+        then "Share debug logs". Phone numbers are redacted automatically, but please check the report
+        before posting it.
+      render: shell
+    validations:
+      required: false

@@ -1,0 +1,2 @@
+u0_a546       8483 com.baba.callvault
+shell        13035 app_process / com.baba.callvault.server.RecorderServer /data/app/~~B9mbgq8lBwZh2kCfxkeVRg==/com.baba.callvault-Ju24PrFwLjJgG29lCaWGfA==/base.apk

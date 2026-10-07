@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brazilian Portuguese. Do not hand-edit placeholders (%1$s etc.).
+     Android system labels (Opções do desenvolvedor, Depuração sem fio, Número da versão) match the
+     wording the phone itself uses in pt-BR, because these strings tell the user what to go and find. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="disclaimer_ui_body_header">Aviso legal</string>
+    <string name="disclaimer_ui_hero_subtitle">Gravação de chamadas livre e de código aberto, nos seus termos. Leia o aviso legal antes de continuar.</string>
+    <string name="disclaimer_ui_scroll_hint">Role até o fim para liberar a caixa de seleção.</string>
+    <string name="permission_adb_desc_short">Necessário para configurar o gravador. Precisa de Wi-Fi.</string>
+    <string name="permission_adb_hint">Toque em Autorizar e digite o código de pareamento que aparece na notificação.</string>
+    <string name="permission_adb_hint_wd_on">Toque em Autorizar e digite o código de pareamento que aparece na tela Depuração sem fio.</string>
+    <string name="permission_adb_open_device_info">Abrir informações do dispositivo</string>
+    <string name="permission_adb_open_wd">Abrir Depuração sem fio</string>
+    <string name="permission_adb_pair">Parear</string>
+    <string name="permission_devmode_enable_hint">Para ativar: Configurações → Sobre o telefone → toque 7 vezes em Número da versão.</string>
+    <string name="permission_devmode_off">As Opções do desenvolvedor estão desativadas</string>
+    <string name="permission_devmode_on">Opções do desenvolvedor: ativadas</string>
+    <string name="permission_devmode_open_device_info">Abrir informações do dispositivo</string>
+    <string name="permission_devmode_open_wd">Abrir Depuração sem fio</string>
+    <string name="permission_wd_enable_hint">Para ativar: Opções do desenvolvedor → Depuração sem fio.</string>
+    <string name="permission_wd_off">A Depuração sem fio está desativada</string>
+    <string name="permission_wd_on">Depuração sem fio: ativada</string>
+    <string name="permissions_status_adb_connected">Conectado</string>
+    <string name="permissions_status_adb_not_connected">Não conectado</string>
+    <string name="permissions_ui_eyebrow">Configuração</string>
+    <string name="permissions_ui_hero_subtitle">Algumas permissões para o Callrex gravar e identificar suas chamadas. Aprove cada item abaixo.</string>
+    <string name="permissions_ui_hero_title">Vamos configurar</string>
+    <string name="permissions_ui_section_label">Permissões</string>
+</resources>

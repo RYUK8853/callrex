@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brazilian Portuguese. Do not hand-edit placeholders (%1$s etc.). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wizard_ui_auto_incoming_desc">Começar a gravar automaticamente quando você receber uma chamada.</string>
+    <string name="wizard_ui_auto_outgoing_desc">Começar a gravar automaticamente quando você fizer uma chamada.</string>
+    <string name="wizard_ui_eyebrow">Configuração</string>
+    <string name="wizard_ui_folder_choose">Escolher pasta</string>
+    <string name="wizard_ui_schedule_daily_desc">Juntar as chamadas do dia e enviar uma vez por dia.</string>
+    <string name="wizard_ui_schedule_immediate_desc">Enviar cada chamada assim que ela terminar.</string>
+    <string name="wizard_ui_schedule_weekly_desc">Juntar as chamadas da semana e enviar uma vez por semana.</string>
+    <string name="wizard_ui_storage_both_desc">Manter uma cópia neste celular e fazer backup no Google Drive.</string>
+    <string name="wizard_ui_storage_drive_desc">As gravações são enviadas para a sua pasta do Google Drive e depois apagadas deste celular.</string>
+    <string name="wizard_ui_storage_local_desc">As gravações ficam neste celular. Nada sai do dispositivo.</string>
+</resources>

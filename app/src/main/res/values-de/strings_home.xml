@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-completed translations. Do not hand-edit placeholders (%1$s etc.). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="home_date_today">Heute</string>
+    <string name="home_date_yesterday">Gestern</string>
+    <string name="home_health_call_not_recorded">Ein Anruf wurde nicht aufgezeichnet — %1$s, %2$s.</string>
+    <string name="home_health_call_not_recorded_unnamed">Ein Anruf wurde nicht aufgezeichnet — %1$s.</string>
+    <string name="home_health_failed_daemon">Die Aufnahme wurde während Ihres letzten Anrufs beendet.</string>
+    <string name="home_health_failed_empty">Ihr letzter Anruf ergab eine leere Aufnahme (0 Bytes).</string>
+    <string name="home_health_failed_no_audio">Ihr letzter Anruf wurde gespeichert, enthält aber keine Audiodaten.</string>
+    <string name="home_health_failed_one_sided">Bei Ihrem letzten App-Anruf wurde nur Ihre Seite aufgezeichnet.</string>
+    <string name="home_health_failed_one_sided_vivo">Bei Ihrem letzten App-Anruf wurde nur Ihre Seite aufgenommen. Auf vivo: App „Recorder“ öffnen → In-App-Anrufaufnahme einschalten (samt automatischem Aufnahmestart).</string>
+    <string name="home_health_missed_adb_pairing">Ein Anruf wurde nicht aufgezeichnet — die Einrichtung war zu diesem Zeitpunkt nicht abgeschlossen, %1$s.</string>
+    <string name="home_health_missed_adb_pairing_unnamed">Ein Anruf wurde nicht aufgezeichnet — die Einrichtung war zu diesem Zeitpunkt nicht abgeschlossen.</string>
+    <string name="home_health_missed_developer_options">Ein Anruf wurde nicht aufgezeichnet — die Entwickleroptionen waren zu diesem Zeitpunkt deaktiviert, %1$s.</string>
+    <string name="home_health_missed_developer_options_unnamed">Ein Anruf wurde nicht aufgezeichnet — die Entwickleroptionen waren zu diesem Zeitpunkt deaktiviert.</string>
+    <string name="home_health_missed_recording_folder">Ein Anruf wurde nicht aufgezeichnet — es war zu diesem Zeitpunkt kein Aufnahmeordner festgelegt, %1$s.</string>
+    <string name="home_health_missed_recording_folder_unnamed">Ein Anruf wurde nicht aufgezeichnet — es war zu diesem Zeitpunkt kein Aufnahmeordner festgelegt.</string>
+    <string name="home_health_missed_secure_settings">Ein Anruf wurde nicht aufgezeichnet — Callrex hatte die Berechtigung verloren, die Aufnahme zu starten, %1$s.</string>
+    <string name="home_health_missed_secure_settings_unnamed">Ein Anruf wurde nicht aufgezeichnet — Callrex hatte die Berechtigung verloren, die Aufnahme zu starten.</string>
+    <string name="home_health_setup_changed">Die Einrichtung hat sich seit Ihrem letzten Anruf geändert — Ihr nächster Anruf bestätigt, ob sie weiterhin funktioniert.</string>
+    <string name="home_health_unverified">Ihr nächster Anruf bestätigt, dass die Aufnahme funktioniert.</string>
+    <string name="home_health_verified">Zuletzt bestätigt %1$s.</string>
+    <string name="home_health_verified_just_now">Gerade eben bestätigt.</string>
+    <string name="home_hero_pill_dev_options_off">Aufnahme nicht möglich</string>
+    <string name="home_hero_pill_no_folder">Aktion erforderlich</string>
+    <string name="home_hero_pill_not_paired">Aktion erforderlich</string>
+    <string name="home_hero_pill_ready">Aktiv</string>
+    <string name="home_hero_pill_update_regrant">Aktion erforderlich</string>
+    <string name="home_hero_status_label">Status</string>
+    <string name="home_play_recording">Aufnahme abspielen</string>
+    <string name="home_recordings_count">%1$d gespeichert</string>
+    <string name="home_recordings_empty_hint">Wenn Callrex einen Anruf aufzeichnet, erscheint er hier. Tätigen oder nehmen Sie einen Anruf an, um zu beginnen.</string>
+    <string name="home_recordings_empty_title">Noch keine Aufnahmen</string>
+    <string name="home_support_pill">Unterstützen</string>
+    <string name="home_update_banner_button">Aktualisieren</string>
+    <string name="home_update_banner_downloading">Wird heruntergeladen… %1$d%%</string>
+    <string name="home_update_banner_installing">Wird installiert…</string>
+    <string name="home_update_banner_text">Eine neue Version steht auf GitHub zum Download bereit.</string>
+    <string name="home_update_banner_title">Update verfügbar: %1$s</string>
+    <string name="home_updated_banner_text">Callrex wurde auf %1$s aktualisiert</string>
+    <string name="home_usb_advisory_fix">Beheben</string>
+    <string name="home_usb_advisory_text">USB ist auf einen Datenmodus eingestellt. Tippe, um „Nur Laden“ zu wählen.</string>
+    <string name="home_usb_advisory_title">Aufnahme kann bei Sperrbildschirm stoppen</string>
+    <string name="home_whatsnew_body">• Die Aufnahme erholt sich jetzt von selbst, falls sie hängen bleibt\n• Die Startseite sagt Bescheid, wenn nicht aufgezeichnet wird, statt zu schweigen\n• Ein Telefonanruf wird nicht mehr für einen App-Anruf gehalten</string>
+    <string name="home_whatsnew_offline_cta">Aufnahme ohne Wi-Fi aktivieren</string>
+    <string name="home_whatsnew_offline_enabled">Offline-Aufnahme aktiviert.</string>
+    <string name="home_whatsnew_offline_enabling">Aufnahme ohne Wi-Fi wird aktiviert…</string>
+    <string name="offline_failed_needs_wd">Nicht aktiviert — Drahtloses Debugging ist aus und Callrex konnte es nicht einschalten. Schalte es in den Entwickleroptionen ein und versuche es erneut.</string>
+    <string name="offline_failed_no_service">Nicht aktiviert — Callrex konnte den Debugging-Dienst des Telefons nicht erreichen. Prüfe WLAN und drahtloses Debugging und versuche es erneut.</string>
+    <string name="offline_failed_port">Nicht aktiviert — der lokale Port kam nicht zurück. Versuche es gleich noch einmal.</string>
+    <string name="home_whatsnew_resilient_body">Macht die Anrufaufnahme widerstandsfähiger gegen Unterbrechungen.\n\nAndroid kann Callrexs Hintergrunddienst jederzeit stoppen. Wenn dies aktiviert ist, bleibt eine bereits laufende Aufnahme davon unberührt.\n\nStandardmäßig ausgeschaltet — du kannst sie auch später unter Einstellungen ▸ Zuverlässigkeit aktivieren.</string>
+    <string name="home_whatsnew_resilient_cta">Aktivieren</string>
+    <string name="home_whatsnew_resilient_enabled">Robuste Aufnahme ist aktiv. Eine bereits laufende Aufnahme bleibt unberührt, wenn Android Callrexs Hintergrunddienst stoppt.</string>
+    <string name="home_whatsnew_resilient_title">Neu: Robuste Aufnahme</string>
+    <string name="home_whatsnew_settings_cta">Einstellungen öffnen</string>
+    <string name="home_whatsnew_title">Neu</string>
+    <string name="offline_recording_disabling">Aufnahme ohne Wi-Fi wird deaktiviert…</string>
+    <string name="offline_recording_on">Aufnahme ohne Wi-Fi ist aktiv.</string>
+    <string name="whatsnew_145_body">Auf vielen Telefonen wurde die Aufnahme mitten im Gespräch gestoppt, wenn der Bildschirm gesperrt wurde. Das ist behoben, und Callrex warnt Sie jetzt, wenn die USB-Einstellung Ihres Telefons die Ursache ist.</string>
+    <string name="whatsnew_145_title">Aufnahme läuft weiter, wenn der Bildschirm gesperrt wird</string>
+    <string name="whatsnew_146_body">Android kann den Hintergrunddienst von Callrex jederzeit beenden, was eine Aufnahme früher abbrach und Ihnen ein halbes Gespräch hinterließ. Wenn dies aktiviert ist, läuft eine bereits begonnene Aufnahme trotzdem bis zum Ende weiter.</string>
+    <string name="whatsnew_146_title">Robuste Aufnahme</string>
+    <string name="whatsnew_146_where">Einstellungen ▸ Experimentell ▸ Robustheit</string>
+    <string name="whatsnew_147_body">Callrex kann jetzt Anrufe aufzeichnen, die in Apps wie WhatsApp, Signal und Telegram geführt werden — beide Seiten des Gesprächs, nicht nur Ihre eigene Stimme. Die Aufnahmen zeigen, in welcher App der Anruf geführt wurde, und den Namen des Kontakts, sofern die App ihn bereitstellt.\n\nExperimentell: Es funktioniert mit manchen Apps und mit anderen nicht, und eine App kann die Aufzeichnung jederzeit mit einem Update unterbinden.</string>
+    <string name="whatsnew_147_title">App-Anrufe aufzeichnen (VoIP)</string>
+    <string name="whatsnew_147_where">Einstellungen ▸ Experimentell ▸ VoIP-Anrufe</string>
+    <string name="whatsnew_148_body">Auf manchen Telefonen schaltete Callrex das drahtlose Debugging immer wieder ein und aus, ohne jemals aufnahmebereit zu werden. Das ist behoben. Wo das drahtlose Debugging der einzige Zugang ist, lässt Callrex es jetzt eingeschaltet und nennt Ihnen die Einstellung, mit der es sich wieder abschalten ließe.\n\nEbenfalls behoben: Ein App-Anruf konnte einen Fehler melden, obwohl er einwandfrei aufgezeichnet wurde, und er konnte der falschen App zugeordnet werden.</string>
+    <string name="whatsnew_148_title">Zuverlässigerer Start</string>
+    <string name="whatsnew_150_body">Wenn Sie das USB-Debugging aktivieren, kann Callrex das drahtlose Debugging abschalten und abgeschaltet lassen. Ein Kabel ist nicht nötig, und anders als das drahtlose Debugging öffnet es keinen Netzwerkport — es ist also das sicherere der beiden, um es aktiviert zu lassen. Optional: Die Aufnahme funktioniert so oder so.\n\nEbenfalls behoben: Das Deaktivieren des USB-Debuggings konnte dazu führen, dass Callrex nicht mehr aufnehmen konnte, ohne dies mitzuteilen.</string>
+    <string name="whatsnew_150_title">Drahtloses Debugging abschalten</string>
+    <string name="whatsnew_150_where">Einstellungen ▸ Experimentell ▸ USB-Debugging</string>
+    <string name="whatsnew_153_body">Die Statuskarte zeigt Ihnen jetzt, ob die Aufnahme tatsächlich funktioniert hat — anhand Ihrer echten Anrufe statt eines grünen Lichts, das nur bedeutet, dass die App gestartet ist. Wenn ein Anruf nicht aufgezeichnet wurde, sagt sie es und nennt den Grund: ein nie festgelegter Ordner, deaktivierte Entwickleroptionen, eine durch ein Update verlorene Berechtigung.\n\nAußerdem: Callrex spricht jetzt brasilianisches Portugiesisch, und alle anderen Sprachen wurden aktualisiert.</string>
+    <string name="whatsnew_153_title">Ihre Einrichtung, geprüft von Ihren eigenen Anrufen</string>
+    <string name="whatsnew_154_body">Eine seltene Störung der Verbindung zum Recorder konnte die Aufnahme stillschweigend deaktivieren, bis die App neu gestartet wurde – ohne jeden Hinweis auf dem Bildschirm. Das läuft jetzt in eine Zeitüberschreitung und stellt sich selbst wieder her.\n\nAußerdem können Sie wählen, wann Aufnahmen zu Drive hochgeladen werden: sofort, täglich oder wöchentlich. Zu finden unter Einstellungen ▸ Speicher, zusammen mit der Aufbewahrung, die in denselben Bereich umgezogen ist.</string>
+    <string name="whatsnew_154_title">Aufnahme, die sich selbst wiederherstellt</string>
+    <string name="whatsnew_155_body">Die Einstellungen schieben sich jetzt über die App, statt sie zu ersetzen, und sind so gruppiert, dass jeder Bereich eine kurze Liste ist. Aufnahmen zeigen, wann das Gespräch war und wie lange es dauerte.\n\nDarunter: mehrere Wege, auf denen eine Aufnahme verloren gehen oder leiden konnte, sind behoben — darunter knisternder Ton bei der robusten Aufnahme und eine fehlende Gesprächsseite bei VoIP-Anrufen auf Samsung-Geräten.</string>
+    <string name="whatsnew_155_title">Einstellungen als Panel, und zuverlässigere Aufnahmen</string>
+    <string name="whatsnew_156_body">Telefon- und App-Anrufe können jeweils automatisch aufnehmen, vorher fragen oder ganz ignoriert werden – „nur App-Anrufe“ ist damit eine echte Einstellung statt einer Kombination, die man sich zusammenreimen musste.\n\nAufnahmen lassen sich teilen und per Gedrückthalten mehrfach auswählen, um sie zu teilen oder zu löschen. Beim Löschen einer Aufnahme, die auf dem Gerät und in Drive liegt, wird gefragt, welche Kopien entfernt werden.</string>
+    <string name="whatsnew_156_title">Entscheiden, was aufgenommen wird – und Aufnahmen aufräumen</string>
+    <string name="whatsnew_156_where">Einstellungen ▸ Aufnahme ▸ Telefonanrufe</string>
+    <string name="whatsnew_157_body">Wenn Sie Aufnahmen automatisch löschen lassen, blieben manche stillschweigend für immer erhalten — die Prüfung sah nur Aufnahmen, von denen Callrex noch wusste; alle anderen wurden nie entfernt, egal wie alt sie waren. Auf einem Telefon mit einer Woche Aufbewahrung hatten 131 Dateien diese Frist überdauert.\n\nDie tägliche Prüfung liest nun auch Ihre Aufnahmeordner, sodass allein das Alter entscheidet. Angefasst werden nur Dateien, die Callrex selbst benannt hat, und alles ohne feststellbares Datum bleibt unberührt.\n\nEine Änderung der Uhrzeit wirkt außerdem sofort statt erst am nächsten Tag.</string>
+    <string name="whatsnew_157_title">Das automatische Löschen entfernt jetzt alles, was es soll</string>
+    <string name="whatsnew_157_where">Einstellungen ▸ Speicher ▸ Aufbewahrung</string>
+    <string name="whatsnew_200_body">Zwei große Neuerungen, beide vollständig auf Ihrem Telefon. Nichts wird hochgeladen, und beides funktioniert ganz ohne Netz.\n\nDie Transkription macht aus einer Aufnahme lesbaren und durchsuchbaren Text in vierzehn Sprachen. Tippen Sie eine Zeile an, um zu dieser Stelle im Gespräch zu springen.\n\nZusammenfassungen gehen weiter: worum es ging, was entschieden wurde und was wer zugesagt hat – mit Zeitangaben bei den Punkten, die eine haben, sodass ein Tippen direkt dorthin springt.\n\nFür beides wird zuerst ein Modell über WLAN geladen; die App nennt vorher die Kosten.</string>
+    <string name="whatsnew_200_title">Ihre Gespräche als Text – und als Zusammenfassung</string>
+    <string name="whatsnew_200_where">Einstellungen ▸ Transkription und Einstellungen ▸ Gesprächszusammenfassungen</string>
+    <string name="whatsnew_210_body">Ab jetzt aufgezeichnete Anrufe werden mit dem Sprecher neben jeder Zeile transkribiert.\n\nDas wird während der Aufnahme aus dem Anruf selbst gelesen — Ihr Telefon hält beide Seiten getrennt, bevor es sie zusammenmischt — es kostet also keine zusätzliche Zeit, keinen zusätzlichen Download und kein Raten. Für bereits gespeicherte Anrufe ist das nicht möglich, denn diese Information besteht nur während der Aufnahme.\n\nZunächst heißen die beiden Seiten Sprecher A und Sprecher B. Sobald zwei ausgehende Anrufe übereinstimmen, welche Seite welche ist, werden daraus Sie und Ihr Gesprächspartner — im Transkript, beim Kopieren oder Teilen und in der Zusammenfassung.</string>
+    <string name="whatsnew_210_title">Transkripte zeigen, wer gesprochen hat</string>
+    <string name="whatsnew_210_where">Jeder ab jetzt aufgezeichnete Anruf, in seinem Transkript</string>
+    <string name="whatsnew_211_body">Die Transkription überspringt jetzt die Stille, bevor das Modell einen Anruf liest, und wägt mehrere mögliche Transkriptionen gegeneinander ab, statt das erstbeste Wort zu nehmen. Trotz der zusätzlichen Arbeit ist sie dabei etwas schneller geworden als zuvor, und in einem Testanruf holte sie einen ganzen Satz zurück, den die vorherige Version verschluckt hatte.\n\nZusammenfassungen wiederholen sich nicht mehr — das lag daran, dass die Liste der Punkte keine echte Grenze hatte. Sie dürfen jetzt auch mehr sagen: Die Punkte waren auf fünf begrenzt und jeder sollte eine einzige kurze Zeile sein, und beides wurde auf Kosten des Inhalts befolgt. Eine lange Zusammenfassung in einer Sprache, die mehr Worte braucht — Deutsch gehört dazu —, wird nicht mehr verworfen, weil der Platz ausging.\n\nAußerdem wurden Aufnahmen auf dem Weg hinein still verschlechtert: Sie auf die Abtastrate herunterzurechnen, die das Modell erwartet, fügte der Sprache Rauschen hinzu, statt es herauszufiltern. Am stärksten betroffen waren ausgehende Anrufe, denn sie enthalten am meisten von Ihrer eigenen Stimme.</string>
+    <string name="whatsnew_211_title">Bessere Transkripte, bessere Zusammenfassungen</string>
+    <plurals name="merge_row_badge">
+        <item quantity="one">%1$d Anruf</item>
+        <item quantity="other">%1$d Anrufe</item>
+    </plurals>
+    <plurals name="merge_summary">
+        <item quantity="one">%1$d Anruf · %2$s</item>
+        <item quantity="other">%1$d Anrufe · %2$s</item>
+    </plurals>
+    <string name="merge_confirm">Zusammenführen</string>
+    <string name="merge_menu_action">Mit einem anderen Anruf zusammenführen</string>
+    <string name="merge_menu_take_apart">Wieder trennen</string>
+    <string name="merge_no_candidates">Es gibt keine weiteren Anrufe mit dieser Nummer auf dem Telefon.</string>
+    <string name="merge_only_in_drive">Nur in Drive</string>
+    <string name="merge_pick_hint">Haken Sie an, was ihn fortsetzt. Die Nummern folgen der Reihenfolge Ihrer Auswahl.</string>
+    <string name="merge_primary_hint">Beginnt den zusammengeführten Anruf</string>
+    <string name="merge_title">Anrufe mit %1$s zusammenführen</string>
+    <string name="settings_merge_keep_originals_description">Nach dem Zusammenführen die Anrufe, aus denen er entstanden ist, ebenfalls auf dem Telefon lassen. Standardmäßig aus, sodass eine Zusammenführung eine einzige Aufnahme hinterlässt. Das Trennen funktioniert in beiden Fällen.</string>
+    <string name="settings_merge_keep_originals_title">Ursprüngliche Anrufe behalten</string>
+    <string name="unmerge_confirm">Trennen</string>
+    <string name="unmerge_message">Er wird wieder zu diesen Anrufen, jeweils mit dem Transkript und den Markierungen, die er hatte:</string>
+    <string name="unmerge_title">Diesen Anruf wieder trennen?</string>
+    <string name="merge_note_will_delete">Die anderen Anrufe werden entfernt. Ein späteres Trennen holt sie zurück.</string>
+    <string name="merge_note_will_keep">Die anderen Anrufe bleiben ebenfalls auf dem Telefon.</string>
+    <string name="home_scroll_to_top">Nach oben</string>
+    <string name="home_whatsnew_full_notes">Vollständige Versionshinweise</string>
+    <string name="whatsnew_245_title">Neue Sprachen, Sicherungen und mehr</string>
+    <string-array name="whatsnew_245_items">
+        <item>Persisch und Arabisch — zwei neue App-Sprachen, von rechts nach links</item>
+        <item>vivo-App-Anrufe — um die andere Person aufzunehmen, in vivos „Recorder“ → In-App-Anrufaufnahme einschalten</item>
+        <item>Transkript-Sicherungen — Transkripte und Notizen als Text neben jeder Aufnahme speichern</item>
+        <item>Dateinamenvorlagen — neue Reihenfolgen mit Kontakt oder Nummer zuerst</item>
+        <item>Export und Import — sichere deine Einstellungen in einer Datei</item>
+        <item>Behoben — keine falsche Meldung „Ein Anruf wurde abgeschnitten“ mehr</item>
+    </string-array>
+    <string name="whatsnew_244_title">Zuverlässigeres Aufnehmen, einfaches Neu-Koppeln und Update-Hinweise</string>
+    <string name="whatsnew_244_where">Einstellungen ▸ Zuverlässigkeit ▸ Erneut koppeln</string>
+    <string-array name="whatsnew_244_items">
+        <item>Neu — Schließt dein Handy Callrex während eines Anrufs, wird der bis dahin aufgenommene Teil gespeichert und du wirst informiert</item>
+        <item>Neu — In den Einstellungen erneut koppeln, wenn die Rekorder-Verbindung verloren geht, ohne Neuinstallation</item>
+        <item>Neu — Ein Popup und häufigere Prüfungen melden dir sofort eine neue Version</item>
+        <item>Geändert — Einstellungen, die deine Android-Version nicht unterstützt, sind ausgegraut, mit Begründung</item>
+    </string-array>
+    <string name="whatsnew_243_title">App-Anrufe bleiben synchron, Notizen werden beim Tippen gespeichert, nur gewählte Kontakte aufnehmen</string>
+    <string name="whatsnew_243_where">Einstellungen ▸ Aufnahme ▸ Eingehende Anrufe ▸ Nur ausgewählte Kontakte aufnehmen</string>
+    <string-array name="whatsnew_243_items">
+        <item>Neu — Nur ausgewählte Kontakte aufnehmen, bei eingehenden oder ausgehenden Anrufen</item>
+        <item>Behoben — Bei App-Anrufen gerät die andere Person nicht mehr aus dem Takt mit Ihnen</item>
+        <item>Behoben — Beim Tippen einer Notiz geht kein Buchstabe verloren, und sie zeigt „Gespeichert“</item>
+        <item>Behoben — Nach einem Anruf bleibt keine Anruf-Benachrichtigung mehr stehen</item>
+        <item>Behoben — Wer eine Testversion installiert hat, bekommt das endgültige Update angeboten</item>
+        <item>Behoben — Ein fehlerhafter Modell-Download wird bereinigt und neu geladen, statt als beschädigt abzubrechen</item>
+        <item>Behoben — Mit „Robuste Aufnahme“ verloren manche Telefone jeden zweiten Anruf</item>
+        <item>Behoben — App-Anrufe werden auf vivo- und iQOO-Telefonen aufgenommen</item>
+    </string-array>
+    <string name="whatsnew_241_title">Suche auf jeder Seite, und Aufnahme erst bei Annahme</string>
+    <string-array name="whatsnew_241_items">
+        <item>Neu — Eine Suchzeile bei Aufnahmen, Transkripten und Zusammenfassungen: ein Kontakt oder ein gesagtes Wort</item>
+        <item>Neu — Ausgehende Anrufe erst aufnehmen, wenn die Gegenseite abhebt (standardmäßig aus)</item>
+        <item>Neu — Shizuku-Aufnahmen bekommen Sprecherkennzeichnungen</item>
+        <item>Behoben — App-Anrufe auf Android 14 und älter tragen den Kontaktnamen</item>
+        <item>Behoben — Ein Update im Shizuku-Modus kostet nicht mehr den nächsten Anruf</item>
+        <item>Behoben — Eine von beiden Sprechern geteilte Zeile wird beim Sprecherwechsel getrennt</item>
+        <item>Behoben — Ein Transkript im falschen Alphabet wird erneut dekodiert</item>
+        <item>Behoben — Eine Zeile, in der nur eine Person sprach, bleibt nicht mehr unbenannt</item>
+    </string-array>
+    <string name="whatsnew_241_where">Einstellungen ▸ Aufnahme ▸ Ausgehende Anrufe ▸ Erst bei Annahme starten</string>
+    <string name="whatsnew_240_title">Aufnahmen, Transkripte und Zusammenfassungen haben jetzt ihren eigenen Ort</string>
+    <string-array name="whatsnew_240_items">
+        <item>Neu — Ein Startbildschirm mit Aufnahmen, Transkripten und Zusammenfassungen, der dort öffnet, wo du warst</item>
+        <item>Neu — Eine Audiodatei importieren oder aus einer anderen App an Callrex teilen</item>
+        <item>Neu — Nur für den Text importieren: Die Audiodatei wird gelöscht, sobald das Transkript fertig ist</item>
+        <item>Neu — Ein Transkript auf einer eigenen Seite lesen und mit einer Notiz versehen</item>
+        <item>Neu — Mehrere Transkripte oder Zusammenfassungen auf einmal löschen, teilen oder speichern</item>
+        <item>Neu — Eine Benachrichtigung, wenn eine Transkription fertig ist</item>
+        <item>Behoben — Ein Neustart lässt das Telefon nicht mehr ohne Aufnahme zurück</item>
+        <item>Behoben — Shizuku wird wieder gestartet, wenn Callrex es beenden muss</item>
+        <item>Behoben — Die Einrichtung funktioniert unter Android 17</item>
+    </string-array>
+    <string name="whatsnew_240_where">Start ▸ Transkripte ▸ Audio importieren</string>
+    <string name="whatsnew_230_title">Anrufe, die ein Gespräch waren, können eine Aufnahme sein</string>
+    <string-array name="whatsnew_230_items">
+        <item>Neu — Anrufe eines Gesprächs zu einer Aufnahme zusammenführen</item>
+        <item>Neu — Fehlerbericht in einem Ordner deiner Wahl speichern</item>
+        <item>Behoben — Drehen des Telefons behält deine Position</item>
+        <item>Behoben — Kein Knistern mehr in Aufnahmen</item>
+        <item>Behoben — Eine Aufnahme, die nicht startet, sagt es jetzt</item>
+        <item>Behoben — Wechsel zu AAC behält den nächsten Anruf</item>
+        <item>Behoben — Mailbox gilt nicht mehr als fehlgeschlagener Anruf</item>
+        <item>Behoben — Transkript-Zeitstempel nach langer Pause stimmen</item>
+        <item>Behoben — Update behält die Aufnahme des nächsten Anrufs</item>
+        <item>Behoben — Shizuku-Versteckmodus wird unterstützt</item>
+        <item>Behoben — Selbst eingeschaltetes drahtloses Debugging bleibt an</item>
+        <item>Behoben — Off-WLAN-Aufnahme nennt den echten Fehler</item>
+        <item>Behoben — Das Mikrofonsymbol bleibt nach dem Anruf nicht mehr an</item>
+        <item>Behoben — Der Transkriptionsfortschritt startet beim Drehen nicht mehr neu</item>
+        <item>Behoben — Ein gelöschter Anruf beendet seine Transkription</item>
+        <item>Behoben — Keine Wärme-Benachrichtigung mehr bei selbst gestarteter Transkription</item>
+        <item>Behoben — Automatisch aufgenommene Anrufe zeigen nicht mehr kurz eine Aufnahmetaste</item>
+        <item>Behoben — Der Transkriptionsfortschritt bleibt nicht mehr bei drei Vierteln stehen</item>
+        <item>Behoben — Ein aufgenommener Anruf zeigt eine Benachrichtigung statt zwei</item>
+        <item>Behoben — Die Log-Ansicht füllt den Bildschirm und bricht lange Zeilen um</item>
+    </string-array>
+    <string name="whatsnew_230_where">Das ⋮-Menü einer Aufnahme ▸ Mit einem anderen Anruf zusammenführen</string>
+    <string name="merge_progress_title">Wird zusammengeführt</string>
+    <string name="unmerge_progress_title">Wird getrennt</string>
+    <string name="merge_progress_step">Anruf %1$d von %2$d</string>
+    <string name="merge_progress_done">Erfolgreich zusammengeführt</string>
+    <string name="unmerge_progress_done">Erfolgreich getrennt</string>
+    <string name="progress_closing_in">Schließt in %1$d s</string>
+    <string name="merge_progress_working">Anrufe werden verbunden</string>
+    <string name="unmerge_progress_working">Anrufe werden getrennt</string>
+    <string name="whatsnew_220_body">Markieren Sie einen Moment, während Sie noch sprechen. Eine Schaltfläche in der Anrufbenachrichtigung setzt ein Lesezeichen genau dort, wo Sie drücken; die Aufnahme zeigt sie als Chips, die von dieser Stelle abspielen – bei Telefonaten wie bei App-Anrufen. App-Anrufe haben überhaupt erst Bedienelemente: Pause, Fortsetzen, Stopp und Markieren, wo sich vorher nur starten und beenden ließ.\n\nEin Gespräch wiederzufinden ist einfacher: Markieren Sie die wichtigen mit einem Stern, vergeben Sie eigene Schlagworte, und suchen Sie auch in Zusammenfassungen und eigenen Notizen statt nur im gesprochenen Wort. Transkripte lassen sich als Text, Markdown, SRT, VTT oder JSON exportieren.\n\nCallrex meldet sich außerdem, wenn es unbemerkt aufgehört hat zu funktionieren – wenn die Aufnahme nach einem Neustart nicht anläuft oder Aufnahmen Drive nicht mehr erreichen. Beides blieb bisher stumm. Neue Aufräumoptionen begrenzen den Speicherplatz oder verwerfen sehr kurze Aufnahmen. Alles ist standardmäßig aus, und eine markierte Aufnahme wird nie automatisch gelöscht.</string>
+    <string name="whatsnew_220_title">Ein Gespräch wiederfinden – und es steuern, während es läuft</string>
+    <string name="whatsnew_220_where">Einstellungen ▸ Speicher ▸ Aufbewahrung für die Aufräumoptionen</string>
+    <string name="whatsnew_221_body">Callrex öffnet sich wieder schnell und bleibt schnell, egal wie viele Anrufe Sie aufbewahren. 2.2.0 las die Länge jeder Aufnahme bei jedem Aufbau der Liste neu ein, sodass die Liste bei einigen Dutzend Anrufen so träge wurde, dass ein Minuten zuvor aufgezeichneter Anruf aussah, als wäre er nie aufgenommen worden.\n\nDie Warnung, dass Aufnahmen Google Drive nicht mehr erreichen, erscheint nicht mehr, wenn das gar nicht zutrifft. Zwei Personen wurde ein fehlgeschlagenes Backup gemeldet, während jede Aufnahme einwandfrei ankam.\n\nDie Überschriften in einem exportierten Transkript, die Anzahl der ausgewählten Apps und die Zurück-Schaltfläche folgen jetzt der von Ihnen gewählten Sprache, statt auf Englisch zu bleiben. Der Fehlerbericht kann außerdem nennen, welche App das Mikrofon belegt — für ein Problem, das sich bisher nur schwer einfangen lässt.</string>
+    <string name="whatsnew_221_title">Schneller zu öffnen, und leiser bei Problemen, die es nicht gibt</string>
+    <string name="offline_failed_no_wifi">Aktivierung fehlgeschlagen – du bist nicht mit einem WLAN verbunden. Verbinde dich einmal mit einem beliebigen WLAN und versuche es erneut.</string>
+    <string name="offline_failed_wd_refused">Aktivierung fehlgeschlagen – Android hat WLAN-Debugging in diesem Netzwerk nicht erlaubt. Schalte es einmal in den Entwickleroptionen ein, bestätige die Abfrage und versuche es erneut.</string>
+    <string name="offline_failed_needs_usb">Schalte zuerst USB-Debugging ein – ohne es funktioniert die Aufnahme ohne WLAN nicht. Einstellungen ▸ Experimentell ▸ USB-Debugging.</string>
+
+    <!-- Home: the hub of cards, and the two sections its cards open -->
+    <string name="home_hub_library_title">Bibliothek</string>
+    <string name="home_hub_recordings_body">Jeder Anruf, den Callrex aufgezeichnet hat.</string>
+    <string name="home_hub_transcripts_body">Deine Anrufe als Worte – und jedes Audio, das du mitbringst.</string>
+    <string name="home_hub_summaries_body">KI-Zusammenfassungen, auf deinem Telefon erstellt.</string>
+    <string name="home_transcripts_title">Transkripte</string>
+    <string name="home_summaries_title">Zusammenfassungen</string>
+    <string name="home_transcripts_count">%1$d transkribiert</string>
+    <string name="home_summaries_count">%1$d zusammengefasst</string>
+    <string name="home_transcripts_empty_title">Noch nichts transkribiert</string>
+    <string name="home_transcripts_empty_hint">Fordere im Menü einer Aufnahme ein Transkript an oder importiere oben eine Audiodatei – beides erscheint hier, sobald es geschrieben ist.</string>
+    <string name="home_summaries_empty_title">Noch nichts zusammengefasst</string>
+    <string name="home_summaries_empty_hint">Öffne einen Anruf mit Transkript und fordere eine Zusammenfassung an; sobald sie geschrieben ist, erscheint sie hier.</string>
+
+    <!-- Transcripts: the two headings above the finished transcripts -->
+    <string name="transcripts_working_header">Wird transkribiert</string>
+    <string name="transcripts_failed_header">Nicht fertig geworden</string>
+    <string name="transcripts_failed_hint">Tippe eines an, um es erneut zu versuchen.</string>
+    <string name="transcripts_waiting_header">Wartet auf Transkription</string>
+    <string name="transcripts_waiting_hint">Diese hast du zum Lesen geteilt, nicht zum Behalten. Tippe eine an, um zu starten, oder öffne sie, um sie anzuhören oder zu löschen.</string>
+    <string name="summaries_working_header">Wird zusammengefasst</string>
+    <string name="summaries_failed_header">Nicht fertig geworden</string>
+    <string name="summaries_failed_hint">Öffne eines, um es erneut anzufordern.</string>
+    <!-- Transcripts: bringing in audio Callrex did not record -->
+    <string name="transcripts_import_title">Audio importieren</string>
+    <string name="transcripts_import_working">Wird importiert…</string>
+    <string name="transcripts_import_body">Transkribiere eine Sprachnachricht oder eine beliebige andere Audiodatei auf deinem Telefon.</string>
+    <string name="import_failed_title">Datei konnte nicht importiert werden</string>
+    <string name="import_failed_not_audio">Callrex kann diese Art von Datei nicht lesen. Versuche es mit einer .opus-, .ogg-, .m4a-, .mp3- oder .wav-Aufnahme.</string>
+    <string name="import_failed_empty">Die Datei ist leer – es gäbe nichts zu transkribieren.</string>
+    <string name="import_failed_no_folder">Es gibt keinen Aufnahmeordner, in dem sie liegen könnte. Wähle in den Einstellungen einen aus und versuche es erneut.</string>
+    <string name="import_failed_copy">Die Datei konnte nicht in deinen Aufnahmeordner geschrieben werden. Prüfe, ob auf dem Telefon Platz ist und der Ordner noch verfügbar ist.</string>
+    <string name="import_failed_undecodable">Dieses Telefon kann das Audio in dieser Datei nicht lesen, sie könnte also nie transkribiert werden. Vielleicht ist sie beschädigt oder in einem Format, das Android nicht dekodiert.</string>
+    <string name="home_row_imported">Importiert</string>
+    <string name="home_row_text_only">Nur Text</string>
+    <!-- Teilen-Menü: Audio, das aus einer anderen App an Callrex geschickt wird -->
+    <string name="share_import_label">Audio importieren</string>
+    <string name="share_import_working_body">Wird kopiert; dabei wird geprüft, ob dieses Telefon sie lesen kann.</string>
+    <string name="share_import_done_title">Zu deinen Aufnahmen hinzugefügt</string>
+    <string name="share_import_done_body">Die Datei ist jetzt in Callrex. Öffne sie zum Anhören oder um eine Transkription anzufordern.</string>
+    <string name="share_import_open">Öffnen</string>
+    <string name="share_import_open_app">Callrex öffnen</string>
+    <string name="share_import_close">Schließen</string>
+    <string name="share_import_nothing">Mit dieser Freigabe kam nichts an. Teile die Audiodatei selbst statt der Nachricht, in der sie steckt.</string>
+    <string name="share_import_not_set_up_title">Richte Callrex zuerst fertig ein</string>
+    <string name="share_import_not_set_up_body">Callrex hat seine einmalige Einrichtung noch nicht abgeschlossen, es gibt also noch keinen Platz für diese Datei. Öffne die App, schließe die Einrichtung ab und teile die Datei dann erneut.</string>
+    <string name="share_import_choice_title">Was soll Callrex damit machen?</string>
+    <string name="share_import_choice_unnamed">Die geteilte Audiodatei</string>
+    <string name="import_choice_keep">Importieren &amp; transkribieren</string>
+    <string name="import_choice_keep_hint">Behält die Audiodatei in deinen Aufnahmen und transkribiert sie.</string>
+    <string name="import_choice_transcribe_only">Nur transkribieren</string>
+    <string name="import_choice_transcribe_only_hint">Transkribiert sie und löscht die Audiodatei danach. Sie erscheint nie in deinen Aufnahmen — nur der Text, unter Transkripte.</string>
+    <string name="share_import_queued_keep_title">Hinzugefügt und eingereiht</string>
+    <string name="share_import_queued_keep_body">Sie ist in deinen Aufnahmen. Das Transkript erscheint unter Transkripte, sobald es fertig ist.</string>
+    <string name="share_import_queued_only_title">Für die Transkription eingereiht</string>
+    <string name="share_import_queued_only_body">Den Text findest du unter Transkripte. Die Audiodatei wird gelöscht, sobald das Transkript gespeichert ist.</string>
+    <string name="share_import_kept_title">Gespeichert, aber nicht transkribiert</string>
+    <string name="share_import_kept_body">Sie ist in deinen Aufnahmen. Du kannst das Transkript jederzeit von dort aus starten.</string>
+    <string name="share_import_kept_only_body">Sie wartet unter Transkripte. Starte sie dort, wann du willst, oder lösche sie an derselben Stelle.</string>
+    <string name="share_import_too_long">Diese Audiodatei ist %1$d Minuten lang, und Callrex kann höchstens %2$d Minuten am Stück transkribieren. Die Datei wurde gespeichert, du kannst sie also weiterhin anhören.</string>
+    <string name="share_import_no_model">Es ist noch kein Transkriptionsmodell installiert, daher kann Callrex das nicht lesen. Die Audiodatei wurde gespeichert — installiere in den Einstellungen ein Modell und starte sie dann unter Transkripte.</string>
+</resources>

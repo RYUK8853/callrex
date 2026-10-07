@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ CallVault: FOSS call recording, self-contained over embedded ADB
+  ~  Copyright (C) 2026-present The CallVault Authors
+  ~  This software is licensed under the GNU General Public License v3 or later, with additional terms as permitted under Section 7.
+  ~  The full license text is available in the LICENSE file at the root of this project.
+  ~  This software is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  -->
+<resources>
+
+    <!-- Onboarding: redesign-only UI strings for the "Signal" Disclaimer + Permissions screens. -->
+
+    <!-- Disclaimer screen. -->
+    <string name="disclaimer_ui_hero_subtitle">Καταγραφή κλήσεων FOSS, με τους δικούς σας όρους. Παρακαλούμε διαβάστε την αποποίηση ευθύνης πριν συνεχίσετε.</string>
+    <string name="disclaimer_ui_body_header">Αποποίηση ευθύνης</string>
+    <string name="disclaimer_ui_scroll_hint">Κάντε κύλιση μέχρι το τέλος για να ενεργοποιηθεί το πλαίσιο ελέγχου.</string>
+
+    <!-- Permissions screen. -->
+    <string name="permissions_ui_eyebrow">Ρύθμιση</string>
+    <string name="permissions_ui_hero_title">Ας ξεκινήσουμε τη ρύθμιση</string>
+    <string name="permissions_ui_hero_subtitle">Μερικές άδειες ώστε το Callrex να μπορεί να καταγράφει και να επισημαίνει τις κλήσεις σας. Εγκρίνετε κάθε στοιχείο παρακάτω.</string>
+    <string name="permissions_ui_section_label">Άδειες</string>
+    <string name="permission_adb_hint">Πατήστε Εξουσιοδότηση και μετά εισαγάγετε τον κωδικό σύζευξης από την ειδοποίηση.</string>
+    <string name="permission_adb_desc_short">Απαιτείται για τη ρύθμιση του καταγραφέα. Χρειάζεται Wi-Fi.</string>
+    <string name="permissions_status_adb_not_connected">Μη συνδεδεμένο</string>
+    <string name="permissions_status_adb_connected">Συνδεδεμένο</string>
+
+    <!-- ADB card: Developer Options status + deep-link shortcuts. -->
+    <string name="permission_devmode_on">Επιλογές προγραμματιστή: ενεργές</string>
+    <string name="permission_devmode_off">Οι Επιλογές προγραμματιστή είναι ανενεργές</string>
+    <string name="permission_devmode_open_wd">Άνοιγμα Ασύρματου εντοπισμού σφαλμάτων</string>
+    <string name="permission_devmode_enable_hint">Ενεργοποιήστε τες: Ρυθμίσεις → Σχετικά με το τηλέφωνο → πατήστε 7 φορές τον Αριθμό έκδοσης.</string>
+    <string name="permission_devmode_open_device_info">Άνοιγμα πληροφοριών συσκευής</string>
+
+    <!-- ADB card: Wireless debugging state (shown when Developer Options is on). -->
+    <string name="permission_wd_on">Ασύρματος εντοπισμός σφαλμάτων: ενεργός</string>
+    <string name="permission_wd_off">Ο Ασύρματος εντοπισμός σφαλμάτων είναι ανενεργός</string>
+    <string name="permission_wd_enable_hint">Ενεργοποιήστε τον: Επιλογές προγραμματιστή → Ασύρματος εντοπισμός σφαλμάτων.</string>
+    <string name="permission_adb_hint_wd_on">Πατήστε Εξουσιοδότηση και μετά εισαγάγετε τον κωδικό σύζευξης από την οθόνη του Ασύρματου εντοπισμού σφαλμάτων.</string>
+
+    <!-- ADB step: bottom CTA labels that adapt to Wireless-debugging / Developer-Options state. -->
+    <string name="permission_adb_open_device_info">Άνοιγμα πληροφοριών συσκευής</string>
+    <string name="permission_adb_open_wd">Άνοιγμα Ασύρματου εντοπισμού σφαλμάτων</string>
+
+    <string name="permission_adb_pair">Σύζευξη</string>
+</resources>

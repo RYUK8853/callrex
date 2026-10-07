@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Debug-only additions. Never merged into a release build, so nothing here can ship.
+
+    MANAGE_EXTERNAL_STORAGE exists for one reason: the summarisation benchmark needs to read a
+    multi-gigabyte model file that cannot live in the app's own directory. The isolated instrumented
+    build is uninstalled after every run, which would take a 2.6 GB model and the report with it —
+    so both sit in shared storage instead, and reading them from there needs this.
+
+    It is inert until granted, and granting is a deliberate adb command:
+
+        adb shell appops set com.baba.callvault.instrtest MANAGE_EXTERNAL_STORAGE allow
+
+    The real app has never asked for this and must not: it reaches recordings through the folders
+    the user picked, which is the whole point of using the Storage Access Framework.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
+</manifest>

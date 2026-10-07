@@ -1,0 +1,503 @@
+# README impact log
+
+## 2026-09-16 (latest) — Summaries is a page too
+
+🧪 VERIFYING (built and driven on the emulator; nothing seen on a real phone). The Summaries card now
+opens a real page: every call a model has written up, newest first, with headings above it for what
+is being summarised — with a Stop — and what failed. Tapping one opens the **reading view**, the same
+page a transcript opens on, with the summary above the words it was written from.
+
+**What this makes wrong in the README, when this ships:**
+
+- **The Phase 2 entry's "Summaries is a minimal list" caveat no longer applies.** Nothing in this
+  restructure is a placeholder any more.
+- **Anything saying a summary is only reachable from the recording it belongs to.** It now has a list
+  of its own, and that list is also where a summary being written, or one that failed, is visible at
+  all — neither was anywhere in the app before.
+
+**Newly claimable, once the maintainer confirms it:** a summary that failed is visible and can be
+asked for again in one place; and a summary being written can be stopped without hunting for the
+call it belongs to.
+
+**Not claimed, deliberately:** "write it again" is not on the list — it is inside the summary, one
+tap in. Don't describe the page as a place to manage summaries; it is a place to find and read them.
+
+**Not yet claimable:** no real summary has been run — the 3.46 GB model is not on the emulator, so
+the queue rows were seeded.
+
+## 2026-09-16 (earlier) — CallVault can transcribe audio it did not record
+
+🧪 VERIFYING (built and driven on the emulator; nothing seen on a real phone). The Transcripts page
+has an **Import audio** card. It takes a file through the system file picker — a WhatsApp voice note,
+a meeting, anything already on the phone — copies it into the recordings folder and catalogues it, so
+it can be played, transcribed, summarised, tagged, searched and exported like a call.
+
+**What this makes wrong in the README, when this ships:**
+
+- **"Records both sides of a call" is no longer the whole of what the app does with audio.** The
+  tagline is still true; the feature list is now incomplete without a line about importing.
+- **Anything that says CallVault only ever handles what it recorded itself** needs softening. It still
+  only *records* calls.
+- **The permissions section, if it lists what the app can read.** Import adds **no permission**: the
+  picker is SAF and hands back exactly the one file the user chose. `READ_MEDIA_AUDIO` is deliberately
+  not requested and should not appear anywhere, including the F-Droid description.
+- **The privacy story gains a sentence worth making explicitly**: an imported file is **never** copied
+  to Drive, never deleted by the retention period, and never evicted by the storage cap — so the phone
+  holds the only copy, which is both the guarantee and the caveat. The storage-cap setting's own
+  description already says so in all eleven locales.
+
+**Formats to claim, measured rather than assumed** (see the plan's Phase 4 note for the table):
+`.opus`, `.ogg`, `.m4a`, `.mp3` and `.wav` all decode. Anything the phone cannot read is refused at
+import with a reason, so the README should not promise a format list longer than that.
+
+**Not yet claimable:** nothing here has been seen on a real phone, and no real transcription has been
+run on an import — the emulator has no model.
+
+## 2026-09-16 (later) — Transcripts is a page, and a transcript opens on one
+
+🧪 VERIFYING (built and driven on the emulator; nothing seen on a real phone). The Transcripts card
+now opens a real page: everything transcribed, newest first, with headings above it for what is being
+transcribed and what failed, the transcript search raised from it, and the queue's Stop. Tapping a
+transcript opens it as a **page with a back arrow**, not as a bottom sheet.
+
+**What this makes wrong in the README, when this ships:**
+
+- **Any screenshot of the transcript bottom sheet presented as "how you read a transcript".** It is
+  still the sheet from the recordings list and from a recording's own screen, but the route the
+  README would most naturally show — going to your transcripts and opening one — is now a page.
+- Anything saying transcript search is reached only from the recordings list. It is on the Transcripts
+  page too, and from there a hit opens the transcript rather than only playing from the match.
+- The Phase 2 entry's "Transcripts is a minimal list" caveat no longer applies to Transcripts. It
+  still applies to Summaries.
+
+**Newly claimable, once the maintainer confirms it:** a failed transcription is now visible and
+retryable in one place instead of only as a red icon somewhere in the recordings list.
+
+**Not claimed yet, deliberately:** audio import. That is Phase 4 and nothing imports anything.
+
+## 2026-09-16 — Home is a hub of cards, not the recordings list
+
+🧪 VERIFYING (built and driven on the emulator; nothing seen on a real phone). The app no longer
+opens on the recordings list. It opens on a hub — the status card plus three cards, Recordings /
+Transcripts / Summaries, each with a count — and reopens whichever section you were last in. Back from
+a section returns to the hub; back from the hub leaves the app.
+
+**What this makes wrong in the README, when this ships:**
+
+- **Every Home screenshot.** The shot of the status card above a list of calls is no longer what the
+  app opens on, and the list no longer carries the status card at all.
+- Any sentence describing Home as "the recordings list" or "the status card above your recordings".
+- The update banner and the "CallVault updated to X" banner have moved to the hub with the status
+  card. Anything saying the update offer appears above the recordings list is now wrong.
+
+**Not claimed yet, deliberately:** Transcripts and Summaries are real destinations but minimal lists;
+the Transcripts page the plan describes — reading view, import, transcription tools — is Phase 3 and 4.
+Nothing about them should go in the README until then.
+
+
+## 2026-09-14 (later) — switching Wireless debugging off yourself; Shizuku mode
+
+🧪 VERIFYING. Added to "The two debugging switches": CallVault leaves a Wireless-debugging switch you turned off
+alone unless *Keep Wireless debugging on for recording* is on; and a Shizuku-mode paragraph (what stops Shizuku,
+that CallVault warns and reconnects, that Shizuku started after USB debugging is off keeps running). Measured as
+E3/E4 (emulator) and S4/S5/R11 (OP9). Only true once `fix/adb-transport-dead-ends` ships.
+
+## 2026-09-14 — the two debugging switches (#23, #24, #39)
+
+🧪 VERIFYING. New section "The two debugging switches" under Install, and the away-from-Wi-Fi note now says it
+needs USB debugging. Every claim comes from measurements in
+`docs/dev-notes/2026-09-14-debugging-switches-model.md` (emulator + OP9): turning USB debugging off stops
+adbd even with Wireless debugging on; Wireless debugging needs Wi-Fi; recording away from Wi-Fi needs USB
+debugging; with the `fix/adb-transport-dead-ends` build CallVault restarts adbd on Wi-Fi within seconds.
+The "within a few seconds" claim is only true once that branch ships — it is false for 2.3.0.
+
+## ✅ THE README IS PUBLISHED — 2026-08-30
+
+`README.md` on `main` is the rewrite (`3a2cb00`), 3,439 words → 1,832. The artifact
+(`30a4b18b-128a-4717-bbfd-d042a501f3b3`) is kept in step with it and is no longer a preview of
+something unpublished.
+
+**This file's job has changed.** It is no longer a queue of things waiting to go in; it is the record
+of what is claimed publicly and what is deliberately not. Keep logging claim-affecting changes here —
+the README can now be *wrong* rather than merely incomplete, which is a higher bar.
+
+**Two further corrections found only while converting to Markdown**, after the artifact had already
+been reviewed twice:
+
+- *"Transcribing long calls — anything over 15 minutes is refused today"* survived as a **roadmap
+  item** even after the same claim was fixed in the body. It was promising work that shipped in
+  2.2.0. Lesson: fixing a stale claim once is not enough — grep the whole document for it.
+- The summary model is **2.6 GB**, not 3.5 GB, since the quantisation-aware build landed in 2.2.0.
+  Appeared three times.
+
+**Still deliberately NOT claimed:** that an app call interrupted by a phone call stays one recording
+(R30). It shipped in 2.2.0 untested.
+
+
+The README rewrite is **approved and held** — 1,450 words down from 3,439, screenshots staged, not to
+be published until the maintainer gives the go-ahead on a release. Work has continued since it was
+approved, so this file tracks what would need to change in it *before* it goes up.
+
+**Rule: every change that alters what the README claims gets a line here, in the same turn it is made.**
+An approved document that quietly goes stale is worse than one that was never written, because nobody
+re-reads it before publishing.
+
+Status markers follow the global convention: 🧪 VERIFYING · ✅ VERIFIED · ❌ NOT WORKING · 📐 CALCULATED.
+
+---
+
+## Needs a README change
+
+| # | Change | What the README needs | Status |
+|---|---|---|---|
+| R1 | **Licence-server death at paid rivals** — a paid recorder's domain lapsed and *retroactively* capped "lifetime" users to 30-second recordings; three of five paid incumbents are now 404 on Play US. | A line in the positioning. This is the strongest FOSS argument found in the whole research pass and the README currently does not make it. It reframes free software from a *preference* (privacy, price) into avoiding a *loss*: "I paid, I complied, and I lost it anyway." | ✅ evidence verified from reviews |
+| R2 | **Setup wall is a trust failure, not a difficulty failure.** Complaints about rivals are about *disclosure order* — "they don't tell you until after you subscribed", "all my UPI apps stopped working". | The setup section should state consequences **before** the steps, including any effect on other apps. A reader who decides against it there is a success, not a lost install. | ✅ evidence verified |
+| R3 | **We are the only FOSS recorder that is stock-unrooted, needs no companion app, records both sides of VoIP, and transcribes on-device.** Not "best at" — only. | The comparison table already exists; this claim should be stated plainly rather than left for the reader to infer. BCR lists unrooted stock support as a *non-feature*. | ✅ verified against their docs |
+| R4 | **Off-Wi-Fi recording shipped in v1.4.0**, not parked. | If the README describes Wi-Fi as a requirement anywhere, that is wrong. Note the real limit instead: tcpip clears on reboot and re-arming needs Wi-Fi once. | ✅ verified in source and in the v1.5.8 tag |
+| R9 | **Works with self-hosted sync** — recordings are staged privately and only appear in the folder once complete, so Syncthing, FolderSync and Nextcloud can never pick up a truncated or 0-byte file. | Worth stating plainly: this is a concrete, checkable advantage over recorders that mux straight into the destination, and it needs no network code of ours. | ✅ VERIFIED 2026-08-27 |
+| R10 | **App calls now carry speaker labels**, not just carrier calls. | If the README describes speaker attribution, it should not imply carrier-only. | ✅ VERIFIED 2026-08-27 |
+| R11 | **Transcription limit is 60 minutes**, not 15 and no longer 20. Chunked passes bound peak memory by one ≈ 6-minute chunk, so length stopped driving the heap. | Any stated limit must match. Write **60**. The earlier 20 in this row was correct on 2026-08-27 and was superseded the next day — noted so nobody trusts a stale row. | 🧪 60 is 📐 CALCULATED, not measured — hold until a real long call completes |
+| R5 | **Bluetooth headsets work** — field-proven by the maintainer's daily AirPods use. LE Audio/LC3 is untested. | Worth stating, since "does it work with my headphones" is an obvious pre-install question. Do not claim LE Audio. | ✅ VERIFIED by daily use / LE Audio 🧪 untested |
+
+| R14 | **Search covers summaries and notes**, not just the spoken transcript. A call is findable by the words its summary used for the outcome — which are often not words anyone said aloud — and by the note the user typed themselves. | If the README describes search, it must not say "search your transcripts"; it searches transcripts, summaries and notes. Worth stating, because the summary is where a decision is recorded in plain language. | ✅ VERIFIED 2026-08-29 — searching the maintainer's own library finds calls by their summary text |
+
+| R15 | **Transcripts export as TXT, Markdown, SRT, VTT or JSON.** Subtitle formats mean a recording and its transcript can be opened together in a player or editor; Markdown carries the summary and the note with it. | If the README lists what you can do with a transcript, it currently implies copy and share only. Worth stating the subtitle formats specifically — no other FOSS recorder in the survey exports them. | ✅ VERIFIED 2026-08-29 — SRT exported and opened successfully. 🧪 Markdown and JSON now also carry the note and the tags (2026-08-29, after the first version silently omitted the note), which is unconfirmed. Markdown, VTT and JSON are still only unit-tested; SRT is the strictest of the five, so this is good evidence rather than proof for the rest |
+
+| R16 | **Optional app lock.** The device's own unlock is required before recordings and transcripts are shown, and the content is kept out of screenshots and the app switcher. Off by default; refuses to turn on when the phone has no screen lock. | Worth a line in whatever the README says about privacy, and it should say the lock is a **door, not encryption** — the audio stays readable by a file manager and by whatever syncs it. Overstating this would be the worst kind of README error. | ✅ VERIFIED 2026-08-29 — used on the OP12; lock and recents blanking both behave |
+
+| R17 | **Tags.** Recordings can be labelled and the list filtered by a label. | Worth stating, and worth stating *why*: a contact name cannot find a call with a number that is in no address book, which is a large share of the calls people most want to find again. The comparison table should note it — `bcr-gui` has an open request for exactly this. | ✅ VERIFIED 2026-08-29 — tagging and filtering used on the maintainer's own library. 🧪 Rename-everywhere and delete-everywhere added the same day, unconfirmed. Tags also travel in Markdown and JSON exports |
+
+| R18 | **The transcript has one Share button**, offering plain text or a file format, and **long-pressing a line copies that sentence** with the speaker's name. | Minor, but if the README walks through the transcript screen it should not describe a separate Copy button. | ✅ VERIFIED 2026-08-29 |
+
+| R19 | **The off-Wi-Fi reboot limitation is real and permanent.** Off-Wi-Fi recording works, but `adb tcpip` clears on reboot and cannot be re-armed without reaching a Wi-Fi network once. | State it plainly in the setup section rather than letting a user discover it by missing a call. Four escapes were tested and all are shut — including on AOSP — so this is a platform limit, not a gap we intend to close. Saying so is more honest than silence, and the research says disclosure order is what this audience actually punishes. | ✅ VERIFIED 2026-08-29 by spike + a hand test |
+
+| R12 | **CallVault says when a recording contains no audio.** | Safe to state, but state it *narrowly*: it catches a file with no audio samples, **not** a full-length recording of silence. An over-broad claim here would manufacture exactly the false confidence the fix exists to remove. | ✅ VERIFIED 2026-08-27 |
+
+| R20 | **A recording can be starred**, and Home has a "Starred" filter chip that appears once anything is. | Small feature, but it is load-bearing for R21 and R22: a starred recording is exempt from both automatic deletes. If the README describes either of those, it must say the star is the escape hatch. | ✅ VERIFIED 2026-08-30 — star, filter chip and the Settings rows confirmed on the OP12 by the maintainer |
+
+| R21 | **Recordings shorter than a chosen length can be discarded automatically** (off by default). | Safe to describe once confirmed, but state the default plainly: it deletes nothing unless the user turns it on. Applies to carrier and app calls alike. | ✅ VERIFIED 2026-08-30 — setting present and working on the OP12. Note: no *short call* has been through it yet, so the README may describe the setting, not yet claim a measured discard |
+
+| R22 | **A size cap on how much of the phone recordings may fill** (off by default), oldest deleted first, starred never taken, Drive copies untouched. | Three qualifications the README must not drop: off by default, device-only, and starred recordings are never deleted even if the cap cannot be met. Any of them omitted turns an opt-in tidy-up into an unexpected data-loss claim. | ✅ VERIFIED 2026-08-30 — setting present and working on the OP12. Note: no cap sweep has actually *fired* yet, so the oldest-first and starred-exempt behaviours remain proven by unit test only |
+
+| R23 | **CallVault now says when it has stopped working**: a notification after a reboot when the recorder could not come up, and one when recordings have stopped reaching Drive. Both self-clearing, both mode-aware. | This changes what R19 has to say. The off-Wi-Fi limitation is still real and permanent, but it is no longer *silent* — the README should describe the limitation **and** the warning together, or it understates the app. | 🧪 VERIFYING — built and unit-tested 2026-08-30; needs a reboot off Wi-Fi to fire for real |
+
+| R24 | **The recovery wording is corrected everywhere it appears**: joining a Wi-Fi network for a few seconds, not "having internet". Stated in Settings up front for anyone with offline recording on. | R19 must not be written using the old framing. The gate is a Wi-Fi *association*; any access point does, with no internet at all. Describing it as an internet requirement turns a ten-second fix into a trip home and makes the limitation sound far worse than it is. | ✅ VERIFIED 2026-08-29 by the E3 spike; the copy change itself is 🧪 VERIFYING |
+
+| R25 | **The call notification offers Stop as well as Pause/Resume.** | Minor, but the README should not describe the notification as pause-only. Pause and Resume were always there; Stop is new. | 🧪 VERIFYING — built 2026-08-30 |
+
+| R26 | **Optional BCR-compatible `.json` details file beside each recording** (off by default). | This upgrades an existing claim. `docs/SUPPORT.md` already says we replicate BCR's *filename* format; with this we also write their metadata file, so tools like `bcr-gui` get the number, contact and direction rather than only a file listing. State it as opt-in. | 🧪 VERIFYING — schema copied from BCR's README and unit-tested against the literal key names 2026-08-30; not yet read by an actual bcr-gui install |
+
+| R27 | **Mark a moment mid-call**, from the notification, on carrier and app calls alike; marks appear on the playback screen as chips that seek. | New capability worth stating. Note the marks are positions in the saved audio, so they stay correct across pauses. | 🧪 VERIFYING — built and unit-tested 2026-08-30 |
+
+| R28 | **App calls now have an ongoing notification with Stop and Mark.** | This closes a gap the README should not have to admit later: before this, a VoIP recording in progress had no controls at all. Worth stating positively rather than as a fix. | 🧪 VERIFYING — built 2026-08-30, needs a real WhatsApp call |
+
+| R29 | **Per-app choice of which apps' calls are recorded** (all on by default). | Directly relevant to the consent/legal paragraph: it is the answer to "I want this for some apps but not others", and it is worth saying that the default records everything so nobody assumes an opt-in they did not make. | 🧪 VERIFYING — built and unit-tested 2026-08-30 |
+
+| R30 | **An app call interrupted by a phone call stays ONE recording.** The app-call capture is held open across the phone call and continues into the same file. | Worth stating plainly — it is the kind of detail that separates a call recorder that has been used from one that has been written. State the limit honestly too: the held stretch is absent from the file rather than recorded, because the microphone genuinely has to be released for the phone call's own recording to be correct. | 🧪 VERIFYING — built and the state machine unit-tested 2026-08-30; needs a real switched call, listened to |
+
+## Folded into the README — 2026-08-30
+
+The artifact was updated on 2026-08-30 (`30a4b18b`). Folded in: **R5** (Bluetooth), **R9**
+(self-hosted sync), **R14** (search covers summaries and notes), **R15** (export), **R16** (app
+lock), **R17** (tags) plus **R20** (stars), **R21**/**R22** (housekeeping: age, size cap, minimum
+length), **R19**+**R24** (the off-Wi-Fi reboot limit, in the corrected "any network, no internet"
+wording), **R23** (says when it has stopped working), **R25**/**R27**/**R28** (in-call controls and
+marking a moment), **R26** (BCR metadata file), **R29** (per-app choice).
+
+**Two corrections made in the same pass:**
+
+- The README said *"Calls over 15 minutes can't be transcribed yet."* The shipped code has
+  `TranscriptionLengthLimit.MAX_MINUTES = 60`, so that understated the app fourfold. Replaced with a
+  non-numeric sentence — the 60-minute figure itself stays held under R11/R13, so no number is
+  published in either direction.
+- An earlier session's note that D2 ("record private, publish complete") was unimplemented was
+  **wrong**. `SafHelper.createAudioFile` is explicit: *"ALWAYS staged, and the destination file is
+  NOT created yet."* R9 was right all along; the doc was not.
+
+**Shizuku was promoted.** It had appeared only as a column of ❌ in a comparison, which read as a
+lesser fallback. It is now a named mode under "Two ways to run it", with the table relabelled
+*Built-in mode / Shizuku mode*. A claim that speaker labels "work the same" in Shizuku mode was
+caught and removed before publishing — the table says ❌ for that row, because speaker labels come
+from the capture channels and are genuinely mode-dependent.
+
+**Published but NOT yet device-verified**, so worth pulling if any of it proves wrong: R23, R26,
+R29. Each is a visible setting or a warning the user can check; none was invented.
+
+## Folded into the README — 2026-08-30, second pass: the ColorOS setup wall
+
+**R31 — OPPO, OnePlus and Realme phones need one Developer-options switch before CallVault can work
+at all.** Published as a new `### On OPPO, OnePlus and Realme phones` subsection under *Install*,
+plus a pointer from the Requirements callout. Deliberately published **ahead of any code fix**, at
+the maintainer's instruction, because a user hitting this today has no way to know what is wrong.
+
+What the README now says, and why each part is there:
+
+- **It affects Shizuku mode too.** Verified: the block is on the shell uid, and Shizuku *is* shell.
+  Omitting this would send OPPO users to Shizuku as a workaround that cannot work.
+- **Both names for the switch** — *Disable system optimization* (current) and *Disable permission
+  monitoring* (older builds). Searching for the wrong one finds nothing.
+- **The switch on our own OP9 Pro is confirmed working** (2026-08-24, and re-measured 2026-08-30:
+  with it on, `appops set`, `pm grant` and `WRITE_SECURE_SETTINGS` all succeed).
+- **The English-language trap** — the item is hidden in some translations. This is 🧪 field-reported
+  from `RikkaApps/Shizuku` #374 and #2149, **not** reproduced by us; two independent reporters,
+  including one whose "ColorOS 16.0.7 removed it" bug closed when they found it in English. Published
+  because the cost of a wrong instruction here is a user switching their language back and forth for
+  nothing, while the cost of silence is a user concluding the app is broken.
+
+**Not published, on purpose:** the underlying property (`persist.sys.permission.enable`). It is an
+implementation detail, its polarity is inferred rather than proven, and it is unwritable from shell —
+so telling a user about it offers them nothing they can act on. See the memory
+`coloros-toggle-renamed-and-hidden` for the measurements.
+
+## Blocked on verification — do not write these into the README yet
+
+| # | Change | Why it is held |
+|---|---|---|
+| R30 | **An app call interrupted by a phone call stays ONE recording.** | Deliberately NOT published on 2026-08-30. It is the riskiest change in the release — it edits the daemon's capture loop — and the maintainer could not test the switch scenario. Publish only after a real switched call has been listened to in both directions. |
+
+| R13 | **Long calls can be transcribed** — chunked passes removed the length ceiling that used to refuse anything over 15 minutes. | The regression that killed the first attempt is confirmed gone, but on **one** call, by **one** user, in **one** language (Hebrew, 26:41, 2026-08-28). Agreed with the maintainer that this is not enough to publish a claim on. Needs the French tester on a call that crosses a chunk seam, plus one call over 20 minutes from someone other than the maintainer. See `2026-08-27-decode-memory-and-silent-failure.md`. |
+| R11 | The **60-minute** figure itself. | Same hold as R13, and additionally the number is arithmetic rather than a measurement — no call anywhere near 60 minutes has been transcribed. Publishing a limit we have never reached invites exactly the bug report it would cause. |
+
+## Explicitly NOT going in the README
+
+- **Consent beeps / recording announcements.** No public API at any privilege level we can reach — the
+  platform dialer uses a HAL path unavailable even at shell uid. If the README mentions legal
+  compliance, it should say we cannot inject a beep rather than implying we might.
+- **Wear OS, launcher-icon hiding.** Zero demand and provably non-functional respectively.
+- **Any hardware-acceleration claim.** NNAPI, Hexagon and Vulkan are all ruled out for our stack.
+
+
+## 2026-09-02 — merging calls (2.3.0)
+
+✅ **Folded in.** "What it does" gains a merge bullet, above Transcripts:
+
+> 🔗 **Merge calls that were one conversation** — a call drops and you ring back; join them into one
+> recording, in the order you choose. Lossless, and un-mergeable afterwards.
+
+Three claims in that line, each deliberate and each checked:
+
+- **"Lossless"** is literal, not marketing. The join copies encoded frames without re-encoding, and
+  the round trip was measured — decoded audio matched the original in 0 of 240,640 samples once the
+  encoder priming offset was accounted for. If merging ever grows a re-encode path for mismatched
+  formats, this word has to change.
+- **"in the order you choose"** rather than "in order" — the order is the order you tick, not
+  chronological, and that is a deliberate design decision the README should not paper over.
+- **"un-mergeable afterwards"** is the whole reason merging may delete the originals. It stays true
+  only while `MergeRoundTripTest` passes.
+
+⚠️ **Not claimed, on purpose:** that a merged recording's Drive copy or transcript is preserved. Both
+are, but the bullet is already dense and those are the sort of specifics that age badly.
+
+📷 **Screenshots unaffected** — merging is reached from a row's ⋮ menu, so no pictured screen changed.
+
+## 2026-09-05 — the USB advice was incomplete, and the README was edited directly
+
+**Written into the README already** (not pending), because the existing line was actively harmful to
+one class of user: the Charging-only advice at `README.md:129` now carries a warning that changing the
+Default USB configuration stops Shizuku, and must not be done during a call.
+
+**Why it was not just a wording tidy.** Measured on the OP9 (ColorOS 14) on 2026-09-05: one change to
+the USB configuration restarted `adbd` — new pid — and `shizuku_server` died with it and did not come
+back. A plain detached shell script survived the same event, so this is specific to how Shizuku's
+server is hosted, not a blanket kill. Issue #28's reporter described exactly this and our README, our
+Settings picker and our one-tap fix all recommended it anyway.
+
+⚠️ **Not claimed:** that Samsung/One UI behaves identically. The mechanism is measured on ColorOS and
+reported by a Samsung user; the README words it as what the change does (restarts the debugging
+service), which holds either way.
+
+📷 **Screenshots:** the Settings USB row gained a Shizuku-specific hint and no longer labels "Charging
+only" as recommended in Shizuku mode. If a Settings screenshot is ever added, it must not be taken in
+Shizuku mode.
+
+## Review checklist before publishing
+
+1. Re-read this file top to bottom; fold in every ✅ row.
+2. Check nothing in the 🧪 section has silently been written in anyway.
+3. Confirm the screenshots still match the current UI — the Home status card gained a new failure
+   message in `892509e`.
+4. Confirm the GPLv3 §7 attribution is present: an in-UI "fork of ShizuCallRecorder" notice plus a repo
+   link. That obligation is unchanged and is not optional.
+
+## 2026-09-11 — Shizuku support made visible (maintainer)
+
+The banner pill read **"No Shizuku"** and the GitHub description said **"no root/Shizuku/PC"**, which reads
+as "does not support Shizuku" — the opposite of the truth since Shizuku mode shipped. Changed:
+
+- Banner pill → **"Built-in or Shizuku"** (`docs/screenshots/banner.svg`).
+- GitHub description → "FOSS call recorder for Android, no root or PC — records both sides of a call on
+  its own over built-in ADB, or through Shizuku if you already use it. Fork of ShizuCallRecorder."
+  Topics added: `shizuku`, `call-recorder`, `android`, `adb`.
+- README: a "Works with Shizuku" badge; two side-by-side mode boxes under the tagline (built-in first,
+  marked default); the fork note no longer says "without requiring Shizuku"; "Two ways to run it" now
+  opens with built-in, and its table lists what both modes do before where they differ.
+
+**Still claimed, unchanged:** every ✅/❌ in the comparison table. The only new row — "Nothing to pair, and no
+wireless debugging of CallVault's own" — restates the paragraph that was already there.
+
+## 2026-09-16 — Telegram group link added to the README
+
+- **What changed:** a new "Get in touch" section links the maintainer's Telegram group
+  (https://t.me/+bAnxwAywhdk4MzM8) as the quickest way to ask a question or hear about a build, while
+  pointing anything needing a log at GitHub issues.
+- **Claim status:** no product claim changed; this is a contact route only.
+- **Also worth updating when convenient:** the F-Droid/fastlane description and the GitHub repo
+  description/About links still mention no chat channel.
+
+## 2026-09-16 — CallVault became an audio share target (Phase 6)
+
+- **What changed:** CallVault now appears in Android's share sheet for audio (`ACTION_SEND`,
+  `audio/*` and `application/ogg`) and imports the shared file into the recordings folder, where it
+  can be played and transcribed like anything else. One file at a time; `ACTION_SEND_MULTIPLE` is
+  deliberately not accepted.
+- **Why it matters to the README:** the import story so far has been "pick a file". That is only half
+  true — a WhatsApp or Telegram voice note lives in the sending app's private storage, which no
+  picker can enumerate, so **sharing is the only way to reach the files people most want
+  transcribed.** Anywhere the README describes importing, "share it to CallVault" is now the first
+  answer and the picker the second.
+- **Claim status:** 🧪 the feature is unconfirmed on a phone, and the one case that matters most —
+  a real WhatsApp voice note — has **not** been measured. Verified only against a real share sheet
+  from Files on the emulator. Do not write a README claim about WhatsApp until the maintainer has
+  shared one from the OP12.
+- **Still claimed, unchanged:** no new permission is requested. The share target reads the one URI it
+  is handed and takes no persistable grant, exactly as the SAF picker does — `READ_MEDIA_AUDIO` is
+  still not declared and still must not be.
+
+## 2026-09-16 — Five pieces of maintainer feedback after using the branch
+
+- **What changed:**
+  1. A transcription that finishes — or fails — now says so in the shade, on a channel of its own,
+     and the tap opens that transcript's reading view (or the Transcripts page when it stands for
+     more than one). A "Transcribe only" import's notification also says the audio was deleted.
+  2. The per-recording language question is a dropdown rather than fourteen radio rows.
+  3. A transcript whose audio is gone no longer draws a player, and its lines no longer react to a tap.
+  4. Transcripts and Summaries rows say "Text only" when the recording behind them is gone.
+  5. A note can be written from the reading view, so a transcript with no recording can have one.
+- **Why it matters to the README:** anywhere it describes transcription as something that happens in
+  the background, it can now add that **the phone tells you when it is done**; and the "Transcribe
+  only" import story gains its missing half — the notification is how the words come back, since the
+  file itself does not. Nothing the README already claims becomes false.
+- **Claim status:** 🧪 all five are unconfirmed on a phone. Verified on the emulator only, and the
+  **success** notification was never seen posted there: the emulator's model is a stand-in whisper
+  refuses to load, so only the failure path could be run end to end. Do not write a README line about
+  "CallVault tells you when a transcript is ready" until the maintainer has seen one on the OP12.
+- **Still claimed, unchanged:** no new permission. `POST_NOTIFICATIONS` was already declared and is
+  still checked before every post, and a phone that has refused it simply gets no notice.
+
+## 2026-09-16 — Three more pieces of feedback: the library rows
+
+- **What changed:**
+  1. A transcript whose audio is gone no longer offers "Transcribe again" — there is nothing left to
+     transcribe from, and pressing it would have thrown the stored words away.
+  2. Transcripts and Summaries rows carry an overflow menu: Share, Save as a file, Delete. Share
+     sends the words (or the summary) as text; Save writes the same document the reading view
+     exports, five formats for a transcript and two for a summary. **Delete takes the text on
+     Transcripts and the summary on Summaries — never the recording.**
+  3. Both pages take long-press multi-select, with bulk share and bulk delete, the same grammar the
+     recordings list has always had.
+- **Why it matters to the README:** anywhere it says a transcript can be shared or exported, that is
+  now true **from the list** and not only from inside a transcript; and the Summaries page gains its
+  first actions at all. If the README describes multi-select as a recordings-list feature, it is now
+  a library feature. Nothing it already claims becomes false.
+- **Claim status:** 🧪 all three unconfirmed on a phone. Verified on the emulator: the menus, both
+  deletes with the counts following, a mixed-selection warning, bulk share, and a selection surviving
+  a rotation. **Do not** write a README line about bulk *export*: there deliberately is none, because
+  the export cache holds one file at a time.
+- **Still claimed, unchanged:** no new permission, and no new way for the app to reach audio — every
+  path added here reads and writes text the app already stores.
+
+## 2026-09-18 — What built-in mode does to somebody else's Shizuku (#39)
+
+- **What changed:**
+  1. When CallVault restarts Android's debugging service and that stops a running Shizuku server, it
+     now says so — a notification naming Shizuku and telling the user to start it again. Three
+     operations do this: arming off-Wi-Fi recording, closing that listener again, and changing the
+     Default USB configuration.
+  2. The off-Wi-Fi recording warning dialog gains a second paragraph **only when Shizuku is actually
+     running**, so the cost is stated while the user can still say no.
+  3. CallVault no longer cycles Wireless debugging when `init.svc.adbd` reads stopped but a Shizuku
+     server still answers — the reading is the stale half, and acting on it killed a Shizuku that had
+     just been started.
+- **Why it matters to the README:** line 172 describes the Shizuku/adbd collision **in Shizuku mode**
+  only. It is equally true in built-in mode, and now measurable: routine built-in-mode work (daemon
+  relaunch, Wireless-debugging writes with USB debugging on) leaves a Shizuku server alone, while
+  arming off-Wi-Fi recording certainly kills it. If the README ever gains a "works alongside Shizuku"
+  line, that is the shape of the true claim.
+- **Claim status:** 🧪 measured on the OP9 on 2026-09-18 (adbd pids, Shizuku's pid, the notification in
+  `dumpsys notification`), unconfirmed by the maintainer on the OP12. **Samsung/One UI is untested** and
+  that is where #39 was reported.
+- **Still claimed, unchanged:** no new permission, and nothing here ever cancels a restart — recording
+  still wins over another app's Shizuku.
+
+## 2026-09-18 — CallVault starts Shizuku again after stopping it (#39, follow-up)
+
+- **What changed:** when one of those three operations stops a running Shizuku server, CallVault now
+  **starts it again by itself** and the notification says which happened — started again, or could not
+  be started and needs starting by hand. It only ever restarts a server that was answering immediately
+  before, never one that came back on its own, and never while a recording is live.
+- **Why it matters to the README:** the shape of the true claim about built-in mode and Shizuku moves
+  again. Yesterday it was "arming off-Wi-Fi recording kills a running Shizuku and nothing brings it
+  back"; today the second half is no longer true on a phone where the heal can reach a shell. Any
+  future "works alongside Shizuku" line should say *restarted automatically*, not *survives* — the
+  server does stop, for a couple of seconds.
+- **Claim status:** 🧪 measured on the OP9 and the emulator on 2026-09-18 — arm path end to end on both
+  (Shizuku answering again 0.3–0.6 s after the starter ran, ~2.3–2.7 s of downtime), the leave-it-alone
+  guard and the silent no-Shizuku case on the emulator, and both notification texts read out of
+  `dumpsys notification`. **The close-the-listener path reached the start decision on both devices but
+  its completion was never observed** (see the dev note). Unconfirmed by the maintainer on any phone.
+- **Still claimed, unchanged:** no new permission; nothing cancels a restart; recording still wins.
+
+## 2026-09-19 — the Telegram invite changed
+
+The group link was replaced with `https://t.me/+GmXjAcXxXh42Y2I8` at the maintainer's request. Changed in
+**two** places, because the invite is not only a README claim: `README.md:190` and
+`SystemIntentHelpers.TELEGRAM_GROUP_URL`, which is what the hub's Telegram card and its top-bar shortcut
+open. Pushed to GitHub `main` as `ceaea29e` on 2026-09-19 (README only; the app constant ships with 2.4.0).
+
+## 2026-09-20 — Shizuku recordings now get speaker labels (#38), merged to `main`, unreleased (2.4.1)
+
+✅ VERIFIED 2026-09-20 by the maintainer on the OP9. Ships in 2.4.1; nothing public changes until then.
+
+- **README:** grepped for Shizuku + speaker/label claims — it makes none, so nothing to correct.
+- **🚨 The app itself now says something false.** `mode_switch_ready_shizuku` (shown after switching to
+  Shizuku mode) reads "VoIP calls, resilient recording and **speaker names** are not available in this
+  mode." Speaker names now are. The string exists in **11 locales**, so it was NOT changed in the merge —
+  it needs rewording and re-translating before 2.4.1 ships. VoIP and resilient recording remain true.
+  **Done 2026-09-22** on `fix/wrong-script-retry`: all 11 copies now read "VoIP calls and resilient
+  recording are not available in this mode." — the speaker-names clause dropped, nothing else touched.
+- **Still true, unchanged:** Shizuku mode has no VoIP capture and no resilient recording.
+- Also noticed: `CHANGELOG.md` still heads the shipped release as "[2.4.0] — unreleased" although `v2.4.0`
+  is tagged. **Done 2026-09-22:** now "[2.4.0] — 2026-09-19", the tag's date.
+
+
+## 2026-09-22 — search lines on the three library pages (`feat/search-lines`, unmerged, 2.4.1)
+
+🧪 VERIFYING — installed on the OP9, not yet used by the maintainer.
+
+- ~~**README line 36** "Full-text search across transcripts, summaries and **your own notes**"~~ **Done
+  2026-09-22:** now "Search — a contact on the Recordings page, a word across transcripts or summaries,
+  right on the page." Notes are not searched and the line no longer says they are.
+- ~~**README screenshot `05-transcript-search.png`** shows the old bottom sheet.~~ **Done 2026-09-22:**
+  re-shot on the emulator (dark, demo data re-staged by SQL after the 09-16 import tests had replaced
+  it): the Transcripts page with "Thursday" in the search line and the bold match in two excerpts.
+- Lines 102 and 110 ("search" identical in Shizuku mode) stay true.
+
+## 2026-09-22 — "Start when they answer" for outgoing phone calls (`feat/record-on-answer`, unmerged, 2.4.1)
+
+🧪 VERIFYING — built and unit-tested, not yet on a phone.
+
+- **README:** makes no claim about when an outgoing recording starts, and its feature list does not
+  enumerate the Outgoing-calls settings, so nothing to correct. Screenshot `06-settings.png` (line 59)
+  shows the Settings page; the new toggle sits in a collapsed subsection, so the screenshot stays true.
+- Worth a line under the features list once verified: recording an outgoing call from the pickup is
+  something competitors advertise, and a user asked for it.
+- Lines 102/110 (Shizuku-mode table): the option works in both modes — the host is shell either way —
+  so no ❌ row is needed. 📐 not yet tried in Shizuku mode.
+
+## 2026-09-28 — 2.4.3 (record only selected contacts; vivo app calls; Resilient recording; model downloads)
+
+- **README:** grepped for contact filtering, vivo, Android versions, Resilient recording and model downloads —
+  it makes no claim any of these changes contradicts, and its feature list does not enumerate the
+  per-direction contact choices. Nothing to correct.
+- Worth a line once verified by users: "Record only selected contacts" (a user request), and app calls on
+  vivo/iQOO. Both 🧪 as of release.

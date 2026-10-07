@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  CallVault: FOSS call recording, self-contained over embedded ADB
+  Copyright (C) 2026-present The CallVault Authors
+  Strings added for the Signal redesign of the Home screen. Kept in a separate
+  resources file to avoid conflicts with parallel work on strings.xml.
+-->
+<resources>
+    <!-- Hero status card -->
+    <string name="home_hero_status_label">Status</string>
+    <string name="home_hero_pill_ready">Active</string>
+    <string name="home_hero_pill_not_paired">Action needed</string>
+    <string name="home_hero_pill_no_folder">Action needed</string>
+    <string name="home_hero_pill_dev_options_off">Recording broken</string>
+    <string name="home_hero_pill_update_regrant">Action needed</string>
+    <string name="home_support_pill">Support</string>
+    <string name="home_usb_advisory_title">Recording may stop on screen lock</string>
+    <string name="home_usb_advisory_text">USB is set to a data mode. Tap to set it to Charging only.</string>
+    <string name="home_usb_advisory_fix">Fix</string>
+
+    <!-- Recordings section -->
+    <string name="home_recordings_count">%1$d saved</string>
+    <string name="home_recordings_empty_title">No recordings yet</string>
+    <string name="home_recordings_empty_hint">When Callrex records a call, it shows up here. Make or take a call to get started.</string>
+
+    <!-- Row content descriptions -->
+    <string name="home_play_recording">Play recording</string>
+    <string name="home_update_banner_title">Update available: %1$s</string>
+    <string name="home_update_banner_text">A new version is ready to download from GitHub.</string>
+    <string name="home_update_banner_button">Update</string>
+    <string name="home_update_banner_downloading">Downloading… %1$d%%</string>
+    <string name="home_update_banner_installing">Installing…</string>
+    <string name="home_updated_banner_text">Callrex updated to %1$s</string>
+    <string name="home_whatsnew_title">What\'s new</string>
+    <string name="home_whatsnew_body">• Recording now recovers by itself if it ever gets stuck\n• Home tells you when recording is down, instead of staying quiet\n• A phone call is no longer mistaken for an app call</string>
+    <string name="home_whatsnew_offline_cta">Turn on off-Wi-Fi recording</string>
+    <string name="home_whatsnew_offline_enabled">Offline recording enabled.</string>
+    <string name="offline_failed_needs_wd">Couldn\'t enable — Wireless debugging is off and Callrex couldn\'t switch it on. Turn it on in Developer options, then try again.</string>
+    <string name="offline_failed_no_service">Couldn\'t enable — Callrex couldn\'t reach the phone\'s debugging service. Check you\'re on Wi-Fi with Wireless debugging on, then try again.</string>
+    <string name="offline_failed_port">Couldn\'t enable — the local port didn\'t come back up. Try again in a moment.</string>
+    <string name="home_whatsnew_offline_enabling">Enabling off-Wi-Fi recording…</string>
+    <string name="home_whatsnew_resilient_title">New: Resilient recording</string>
+    <string name="home_whatsnew_resilient_body">Makes call recording more resistant to interruptions.\n\nAndroid can stop Callrex\'s background helper at any time. With this on, a recording already in progress is no longer affected when that happens.\n\nOff by default — you can also turn it on later in Settings ▸ Reliability.</string>
+    <string name="home_whatsnew_resilient_cta">Turn it on</string>
+    <string name="home_whatsnew_resilient_enabled">Resilient recording is on. A recording already in progress is no longer affected if Android stops Callrex\'s background helper.</string>
+
+    <!-- Post-update note: one entry per release, newest first. Keep in sync with CHANGELOG.md. -->
+    <string name="home_whatsnew_settings_cta">Open Settings</string>
+    <string name="whatsnew_153_title">Your setup, checked by your own calls</string>
+    <string name="whatsnew_155_title">Settings in a panel, and calls that record more reliably</string>
+    <string name="whatsnew_155_body">Settings now slides in over the app instead of replacing it, grouped so each screen is a short list rather than everything at once. Recordings show when the call happened and how long it lasted.\n\nUnderneath: several ways a recording could be lost or spoiled have been fixed, including crackly audio with Resilient recording, and one side going missing from VoIP calls on Samsung phones.</string>
+    <string name="whatsnew_154_title">Recording that recovers on its own</string>
+    <string name="whatsnew_154_body">A rare stall in the connection to the recorder could leave recording silently switched off until the app was restarted — with nothing on screen to say so. It now times out and recovers by itself.\n\nYou can also choose when recordings upload to Drive: immediately, daily or weekly. Find it under Settings ▸ Storage, together with Retention, which has moved into the same section.</string>
+    <string name="whatsnew_153_body">The status card now tells you whether recording actually worked, based on your real calls rather than a green light that only means the app started. If a call was not recorded, it says so and why — a folder that was never set, Developer options switched off, a permission lost to an update.\n\nAlso: Callrex now speaks Brazilian Portuguese, and every other language has been brought up to date.</string>
+    <string name="whatsnew_150_title">Switch Wireless debugging off</string>
+    <string name="whatsnew_150_body">Turning on USB debugging lets Callrex switch Wireless debugging off and keep it off. No cable is needed, and unlike Wireless debugging it opens no network port — so it is the safer of the two to leave on. Optional: recording works either way.\n\nAlso fixed: turning USB debugging off could leave Callrex unable to record, without saying so.</string>
+    <string name="whatsnew_150_where">Settings ▸ Experimental ▸ USB debugging</string>
+    <string name="whatsnew_148_title">More reliable start-up</string>
+    <string name="whatsnew_148_body">On some phones Callrex could keep switching Wireless debugging on and off without ever becoming ready to record. That is fixed. Where Wireless debugging is the only way in, Callrex now leaves it on and tells you which setting would let it be switched off again.\n\nAlso fixed: an app call could report a failure even though it recorded fine, and could be labelled with the wrong app.</string>
+    <string name="whatsnew_147_title">Record app calls (VoIP)</string>
+    <string name="whatsnew_147_body">Callrex can now record calls made inside apps like WhatsApp, Signal and Telegram — both sides of the conversation, not just your own voice. Recordings show which app the call was made in, and the contact\'s name when the app provides it.\n\nExperimental: it works with some apps and not others, and an app can block recording at any time in an update.</string>
+    <string name="whatsnew_147_where">Settings ▸ Experimental ▸ VoIP calls</string>
+    <string name="whatsnew_146_title">Resilient recording</string>
+    <string name="whatsnew_146_body">Android can stop Callrex\'s background helper at any time, which used to cut a recording short and leave you with half a call. With this on, a recording already under way carries on to the end regardless.</string>
+    <string name="whatsnew_146_where">Settings ▸ Experimental ▸ Resilience</string>
+    <string name="whatsnew_145_title">Keep recording when the screen locks</string>
+    <string name="whatsnew_145_body">On many phones, locking the screen during a call was stopping the recorder mid-call. That is fixed, and Callrex now warns you if your phone\'s USB setting is the one causing it.</string>
+    <string name="offline_recording_on">Off-Wi-Fi recording is on.</string>
+    <string name="offline_recording_disabling">Turning off off-Wi-Fi recording…</string>
+
+    <!-- Setup health: what real calls proved, shown as the status card's second line when ready -->
+    <string name="home_health_verified">Last verified %1$s.</string>
+    <string name="home_health_verified_just_now">Last verified just now.</string>
+    <string name="home_health_unverified">Your next call will confirm recording works.</string>
+    <string name="home_health_setup_changed">Setup changed since your last call — your next call will confirm it still works.</string>
+    <string name="home_health_call_not_recorded">A call was not recorded — %1$s, %2$s.</string>
+    <string name="home_health_call_not_recorded_unnamed">A call was not recorded — %1$s.</string>
+    <!-- A call missed while a specific, user-owned prerequisite was missing — named precisely rather
+         than reading as the unexplained daemon-died case above. One pair (labelled/unnamed) per
+         Prerequisite, mirroring home_health_call_not_recorded / _unnamed. -->
+    <string name="home_health_missed_recording_folder">A call was not recorded — no recording folder was set at the time, %1$s.</string>
+    <string name="home_health_missed_recording_folder_unnamed">A call was not recorded — no recording folder was set at the time.</string>
+    <string name="home_health_missed_adb_pairing">A call was not recorded — setup was not finished at the time, %1$s.</string>
+    <string name="home_health_missed_adb_pairing_unnamed">A call was not recorded — setup was not finished at the time.</string>
+    <string name="home_health_missed_developer_options">A call was not recorded — Developer options were off at the time, %1$s.</string>
+    <string name="home_health_missed_developer_options_unnamed">A call was not recorded — Developer options were off at the time.</string>
+    <string name="home_health_missed_secure_settings">A call was not recorded — Callrex had lost permission to start the recorder, %1$s.</string>
+    <string name="home_health_missed_secure_settings_unnamed">A call was not recorded — Callrex had lost permission to start the recorder.</string>
+    <string name="home_health_failed_empty">Your last call produced an empty recording (0 bytes).</string>
+    <string name="home_health_failed_no_audio">Your last call was saved but contains no audio.</string>
+    <string name="home_health_failed_daemon">The recorder stopped during your last call.</string>
+    <string name="home_health_failed_one_sided">Only your side was recorded on your last app call.</string>
+    <string name="home_health_failed_one_sided_vivo">Only your side was recorded on your last app call. On vivo: open the Recorder app → In-app call recording and turn it on (with Auto-start recording).</string>
+    <string name="home_date_today">Today</string>
+    <string name="home_date_yesterday">Yesterday</string>
+    <string name="whatsnew_221_title">Faster to open, and quieter about problems that are not there</string>
+    <string name="whatsnew_221_body">Opening Callrex is quick again, and stays quick however many calls you keep. 2.2.0 re-read the length of every recording each time the list was drawn, so once you had a few dozen calls the list was slow enough that a call recorded minutes earlier could look as though it had never been recorded at all.\n\nThe warning that recordings had stopped reaching Google Drive no longer appears when they have not stopped. Two people were told their backup had failed while every recording was arriving perfectly well.\n\nThe headings inside an exported transcript, the number of selected apps and the back button now follow the language you have chosen instead of staying in English. The debug report can also say which app is holding the microphone, for a problem that is proving hard to catch.</string>
+    <string name="whatsnew_220_title">Find a call again, and steer one while it happens</string>
+    <string name="whatsnew_220_body">Mark a moment while you are still talking. A button on the call notification drops a bookmark where you press it, and the recording shows them as chips that play from there — on phone calls and app calls alike. App calls have controls at all now: pause, resume, stop and mark, where before one could only be started and finished.\n\nFinding a call again is easier: star the ones worth keeping, label them with your own words, and search across summaries and your own notes rather than only the spoken words. Transcripts export as text, Markdown, SRT, VTT or JSON.\n\nCallrex also speaks up when it has quietly stopped working — if recording cannot start after a reboot, or recordings stop reaching Drive. Both used to be silent. New housekeeping can cap how much space recordings take or drop very short ones. It is all off by default, and a starred recording is never deleted automatically.</string>
+    <string name="whatsnew_220_where">Settings ▸ Storage ▸ Retention for the housekeeping options</string>
+    <string name="whatsnew_211_title">Better transcripts, better summaries</string>
+    <string name="whatsnew_211_body">Transcription now skips silence before the model reads a call, and weighs several possible transcriptions rather than taking the first word that comes to mind. It came out slightly faster than before despite doing more, and on a test call it recovered a whole sentence the previous version had dropped.\n\nSummaries no longer repeat themselves, which happened because the list of points had no real limit. They can also say more: items were capped at five and each one asked to be a single short line, and both of those were being followed at the expense of the content. A long summary in a language that needs more words is no longer thrown away for running out of room.\n\nRecordings were also being quietly degraded on the way in — reducing them to the rate the model expects was adding noise to the speech instead of filtering it out. Outgoing calls were worst affected, because they carry the most of your own voice.</string>
+    <string name="whatsnew_210_title">Transcripts show who was speaking</string>
+    <string name="whatsnew_210_body">Calls recorded from now on are transcribed with the speaker beside each line.\n\nIt is read from the call while it is being recorded — your phone keeps the two sides apart before mixing them together — so it costs no extra time, no extra download and no guesswork. It cannot be done for calls already on the phone, because that information only exists while a call is being recorded.\n\nThe two sides start out as Speaker A and Speaker B. Once two outgoing calls agree on which side is which, they become you and the person you were talking to — in the transcript, in what you copy or share, and in the summary.</string>
+    <string name="whatsnew_210_where">Any call recorded from now on, in its transcript</string>
+    <string name="whatsnew_200_title">Your calls, written out — and summarised</string>
+    <string name="whatsnew_200_body">Two big additions, both running entirely on your phone. Nothing is uploaded and both work with no network at all.\n\nTranscription turns a recording into text you can read and search, in fourteen languages. Tap a line to jump to that moment in the call.\n\nSummaries go a step further: what the call was about, what was decided, and what anyone said they would do — with times beside the points that have one, so tapping jumps you straight there.\n\nEach needs a model downloaded over Wi-Fi first; the app tells you what each costs before you start.</string>
+    <string name="whatsnew_200_where">Settings ▸ Transcription and Settings ▸ Call summaries</string>
+    <string name="whatsnew_157_title">Auto-delete now removes everything it should</string>
+    <string name="whatsnew_157_body">If you set recordings to auto-delete, some were quietly kept for ever — the check only looked at recordings Callrex still had a record of, and any it had lost track of were never removed however old they got. On one phone set to keep a week, 131 files had outlived that.\n\nThe daily check now reads your recording folders as well, so age alone decides. Only files Callrex named are ever touched, and anything it cannot date is left alone.\n\nChanging the time the check runs also takes effect straight away instead of waiting a day.</string>
+    <string name="whatsnew_157_where">Settings ▸ Storage ▸ Retention</string>
+    <string name="whatsnew_156_title">Decide what gets recorded, and tidy up recordings</string>
+    <string name="whatsnew_156_body">Phone calls and app calls can each record automatically, ask first, or be ignored completely — so \"app calls only\" is now a real setting rather than a combination you had to work out.\n\nRecordings can be shared, and held down to select several at once for sharing or deleting. Deleting a recording kept both on the device and in Drive now asks which copies to remove.</string>
+    <string name="whatsnew_156_where">Settings ▸ Recording ▸ Phone calls</string>
+    <string name="merge_confirm">Merge</string>
+    <string name="merge_menu_action">Merge with another call</string>
+    <string name="merge_menu_take_apart">Un-merge</string>
+    <string name="merge_no_candidates">There are no other calls with this number on the phone.</string>
+    <string name="merge_only_in_drive">Only in Drive</string>
+    <string name="merge_pick_hint">Tick what continues it. Numbers follow the order you tick.</string>
+    <string name="merge_primary_hint">Starts the merged call</string>
+    <string name="merge_title">Merge calls with %1$s</string>
+    <string name="settings_merge_keep_originals_description">After merging, leave the calls it was made from on the phone as well. Off by default, so a merge leaves one recording. Taking a merged call apart works either way.</string>
+    <string name="settings_merge_keep_originals_title">Keep the original calls</string>
+    <string name="unmerge_confirm">Un-merge</string>
+    <string name="unmerge_message">It becomes these calls again, each with the transcript and marks it had:</string>
+    <string name="unmerge_title">Un-merge this call?</string>
+    <plurals name="merge_row_badge">
+        <item quantity="one">%1$d call</item>
+        <item quantity="other">%1$d calls</item>
+    </plurals>
+    <plurals name="merge_summary">
+        <item quantity="one">%1$d call · %2$s</item>
+        <item quantity="other">%1$d calls · %2$s</item>
+    </plurals>
+    <string name="merge_note_will_delete">The other calls are removed. Un-merging later brings them back.</string>
+    <string name="merge_note_will_keep">The other calls are kept on the phone as well.</string>
+    <string name="home_scroll_to_top">Top</string>
+    <string name="home_whatsnew_full_notes">Full release notes</string>
+    <string name="whatsnew_245_title">New languages, backups and more</string>
+    <string-array name="whatsnew_245_items">
+        <item>Persian &amp; Arabic — two new app languages, right-to-left</item>
+        <item>vivo app calls — to record the other side, turn on vivo\'s Recorder → In-app call recording</item>
+        <item>Transcript backups — save transcripts &amp; notes as text beside each recording</item>
+        <item>Filename templates — new contact- and number-first orders</item>
+        <item>Export &amp; import — back up your settings to a file</item>
+        <item>Fixed — no more false ‘call was cut off’</item>
+    </string-array>
+    <string name="whatsnew_244_title">More reliable recording, easy re-pairing, and update alerts</string>
+    <string name="whatsnew_244_where">Settings ▸ Reliability ▸ Pair again</string>
+    <string-array name="whatsnew_244_items">
+        <item>New — If your phone closes Callrex mid-call, the part recorded before that is saved, and you\'re told</item>
+        <item>New — Pair again from Settings if the recorder connection is lost, with no reinstall</item>
+        <item>New — A popup and faster checks tell you as soon as a new version is available</item>
+        <item>Changed — Settings your Android version can\'t use are greyed out, with the reason</item>
+    </string-array>
+    <string name="whatsnew_243_title">App calls stay in sync, notes save as you type, and record only who you choose</string>
+    <string name="whatsnew_243_where">Settings ▸ Recording ▸ Incoming calls ▸ Record only selected contacts</string>
+    <string-array name="whatsnew_243_items">
+        <item>New — Record only the contacts you choose, for incoming or outgoing calls</item>
+        <item>Fixed — In app calls, the other person no longer drifts out of step with you</item>
+        <item>Fixed — Typing a note keeps every letter, and says Saved</item>
+        <item>Fixed — No call notification is left behind after a call</item>
+        <item>Fixed — If you installed a test build, you are offered the final update</item>
+        <item>Fixed — A model download that went wrong is cleaned up and downloaded again, instead of failing as damaged</item>
+        <item>Fixed — With Resilient recording on, some phones lost every second call</item>
+        <item>Fixed — App calls record on vivo and iQOO phones</item>
+    </string-array>
+    <string name="whatsnew_241_title">Search on every page, and start recording when they answer</string>
+    <string-array name="whatsnew_241_items">
+        <item>New — A search line on Recordings, Transcripts and Summaries: a contact, or a word that was said</item>
+        <item>New — Start recording an outgoing call only when the other person answers (off by default)</item>
+        <item>New — Shizuku recordings get speaker labels</item>
+        <item>Fixed — App calls on Android 14 and earlier carry the contact\'s name</item>
+        <item>Fixed — An update in Shizuku mode no longer costs the next call</item>
+        <item>Fixed — A line shared by both speakers is split where the speaker changes</item>
+        <item>Fixed — A transcript in the wrong alphabet is decoded again</item>
+        <item>Fixed — A line where only one person spoke is no longer left unnamed</item>
+    </string-array>
+    <string name="whatsnew_241_where">Settings ▸ Recording ▸ Outgoing calls ▸ Start when they answer</string>
+    <string name="whatsnew_240_title">Recordings, transcripts and summaries each have a home</string>
+    <string-array name="whatsnew_240_items">
+        <item>New — A home screen with Recordings, Transcripts and Summaries, opening where you left off</item>
+        <item>New — Import an audio file, or share one to Callrex from another app</item>
+        <item>New — Import just for the words: the audio is deleted once the transcript is ready</item>
+        <item>New — Read a transcript on a page of its own, and add a note to it</item>
+        <item>New — Pick several transcripts or summaries at once to delete, share or save</item>
+        <item>New — A notification when a transcription finishes</item>
+        <item>Fixed — Restarting the phone no longer leaves it not recording</item>
+        <item>Fixed — Shizuku is started again when Callrex has to stop it</item>
+        <item>Fixed — Setup works on Android 17</item>
+    </string-array>
+    <string name="whatsnew_240_where">Home ▸ Transcripts ▸ Import audio</string>
+    <string name="whatsnew_230_title">Calls that were one conversation can be one recording</string>
+    <string-array name="whatsnew_230_items">
+        <item>New — Merge calls that were one conversation into one recording</item>
+        <item>New — Save the bug report to a folder you choose</item>
+        <item>Fixed — Rotating the phone keeps your place</item>
+        <item>Fixed — No more crackle in recordings</item>
+        <item>Fixed — A recording that fails to start now says so</item>
+        <item>Fixed — Switching to AAC keeps the next call</item>
+        <item>Fixed — Voicemail is no longer logged as a failed call</item>
+        <item>Fixed — Transcript timestamps after a long pause are right</item>
+        <item>Fixed — Updating keeps the next call recording</item>
+        <item>Fixed — Shizuku hide mode supported</item>
+        <item>Fixed — Wireless debugging you switched on stays on</item>
+        <item>Fixed — Off-Wi-Fi recording says what actually failed</item>
+        <item>Fixed — The microphone dot no longer stays on after a call</item>
+        <item>Fixed — Transcription progress no longer restarts when you rotate</item>
+        <item>Fixed — Deleting a call stops its transcription</item>
+        <item>Fixed — No warm-phone notification for a transcription you started</item>
+        <item>Fixed — Automatically recorded calls no longer flash a Record button</item>
+        <item>Fixed — Transcription progress no longer stalls at three quarters</item>
+        <item>Fixed — A recorded call shows one notification, not two</item>
+        <item>Fixed — The log viewer fills the screen and wraps long lines</item>
+    </string-array>
+    <string name="whatsnew_230_where">The ⋮ menu on any recording ▸ Merge with another call</string>
+    <string name="merge_progress_title">Merging</string>
+    <string name="unmerge_progress_title">Un-merging</string>
+    <string name="merge_progress_step">Call %1$d of %2$d</string>
+    <string name="merge_progress_done">Merged successfully</string>
+    <string name="unmerge_progress_done">Un-merged successfully</string>
+    <string name="progress_closing_in">Closing in %1$ds</string>
+    <string name="merge_progress_working">Joining the calls</string>
+    <string name="unmerge_progress_working">Separating the calls</string>
+    <string name="offline_failed_no_wifi">Couldn\'t enable — you\'re not on Wi-Fi. Connect to any Wi-Fi network once, then try again.</string>
+    <string name="offline_failed_wd_refused">Couldn\'t enable — Android didn\'t allow Wireless debugging on this network. Turn it on once in Developer options, accept the prompt, then try again.</string>
+    <string name="offline_failed_needs_usb">Turn on USB debugging first — off-Wi-Fi recording can\'t work without it. Settings ▸ Experimental ▸ USB debugging.</string>
+
+    <!-- Home: the hub of cards, and the two sections its cards open -->
+    <string name="home_hub_library_title">Library</string>
+    <string name="home_hub_recordings_body">Every call Callrex has recorded.</string>
+    <string name="home_hub_transcripts_body">Your calls as words — and any audio you bring.</string>
+    <string name="home_hub_summaries_body">AI summaries, written on your phone.</string>
+    <string name="home_transcripts_title">Transcripts</string>
+    <string name="home_summaries_title">Summaries</string>
+    <string name="home_transcripts_count">%1$d transcribed</string>
+    <string name="home_summaries_count">%1$d summarised</string>
+    <string name="home_transcripts_empty_title">Nothing transcribed yet</string>
+    <string name="home_transcripts_empty_hint">Ask for a transcript from a recording\'s menu, or import an audio file above. Either one appears here once it is written.</string>
+    <string name="home_summaries_empty_title">Nothing summarised yet</string>
+    <string name="home_summaries_empty_hint">Open a call that has a transcript and ask for a summary; it appears here once it is written.</string>
+
+    <!-- Transcripts: the two headings above the finished transcripts -->
+    <string name="transcripts_working_header">Being transcribed</string>
+    <string name="transcripts_failed_header">Didn\'t finish</string>
+    <string name="transcripts_failed_hint">Tap one to try it again.</string>
+    <string name="transcripts_waiting_header">Waiting to be transcribed</string>
+    <string name="transcripts_waiting_hint">You shared these to be read, not to keep. Tap one to start, or open it to listen to it or delete it.</string>
+    <!-- Summaries: the two headings above the finished summaries -->
+    <string name="summaries_working_header">Being summarised</string>
+    <string name="summaries_failed_header">Didn\'t finish</string>
+    <string name="summaries_failed_hint">Open one to ask for it again.</string>
+    <!-- Transcripts: bringing in audio Callrex did not record -->
+    <string name="transcripts_import_title">Import audio</string>
+    <string name="transcripts_import_working">Importing…</string>
+    <string name="transcripts_import_body">Transcribe a voice note or any other audio file already on your phone.</string>
+    <string name="import_failed_title">Couldn\'t import that file</string>
+    <string name="import_failed_not_audio">Callrex can\'t read that kind of file. Try an .opus, .ogg, .m4a, .mp3 or .wav recording.</string>
+    <string name="import_failed_empty">That file is empty, so there would be nothing to transcribe.</string>
+    <string name="import_failed_no_folder">There\'s no recordings folder to keep it in. Choose one in Settings, then try again.</string>
+    <string name="import_failed_copy">The file couldn\'t be written into your recordings folder. Check the phone has space and that the folder is still available.</string>
+    <string name="import_failed_undecodable">This phone can\'t read the audio inside that file, so it could never be transcribed. It may be damaged, or in a format Android doesn\'t decode.</string>
+    <string name="home_row_imported">Imported</string>
+    <string name="home_row_text_only">Text only</string>
+    <!-- Share sheet: audio sent to Callrex from another app -->
+    <string name="share_import_label">Import audio</string>
+    <string name="share_import_working_body">Copying it in and checking this phone can read it.</string>
+    <string name="share_import_done_title">Added to your recordings</string>
+    <string name="share_import_done_body">It\'s in Callrex now. Open it to listen, or to ask for a transcript.</string>
+    <string name="share_import_open">Open</string>
+    <string name="share_import_open_app">Open Callrex</string>
+    <string name="share_import_close">Close</string>
+    <string name="share_import_nothing">Nothing came through with that share. Try sharing the audio file itself rather than the message around it.</string>
+    <string name="share_import_not_set_up_title">Finish setting Callrex up first</string>
+    <string name="share_import_not_set_up_body">Callrex hasn\'t finished its one-time setup, so there\'s nowhere to keep this file yet. Open it, finish setting up, then share this again.</string>
+    <string name="share_import_choice_title">What should Callrex do with this?</string>
+    <string name="share_import_choice_unnamed">The shared audio</string>
+    <string name="import_choice_keep">Import &amp; transcribe</string>
+    <string name="import_choice_keep_hint">Keeps the audio in your recordings and transcribes it.</string>
+    <string name="import_choice_transcribe_only">Transcribe only</string>
+    <string name="import_choice_transcribe_only_hint">Transcribes it, then deletes the audio. It never appears in your recordings — only the words, under Transcripts.</string>
+    <string name="share_import_queued_keep_title">Added, and queued</string>
+    <string name="share_import_queued_keep_body">It\'s in your recordings. The transcript appears under Transcripts when it\'s done.</string>
+    <string name="share_import_queued_only_title">Queued for transcription</string>
+    <string name="share_import_queued_only_body">You\'ll find the words under Transcripts. The audio is deleted as soon as the transcript is stored.</string>
+    <string name="share_import_kept_title">Saved, but not transcribed</string>
+    <string name="share_import_kept_body">It\'s in your recordings. You can start the transcript from there whenever you like.</string>
+    <string name="share_import_kept_only_body">It\'s waiting under Transcripts. Start it there whenever you like, or delete it from the same place.</string>
+    <string name="share_import_too_long">That audio is %1$d minutes long, and Callrex can only transcribe up to %2$d minutes at once. The file was saved, so you can still listen to it.</string>
+    <string name="share_import_no_model">There\'s no transcription model installed yet, so Callrex can\'t read this. The audio was saved — install a model in Settings, then start it from Transcripts.</string>
+</resources>

@@ -1,0 +1,130 @@
+/*
+ * CallVault: FOSS call recording, self-contained over embedded ADB
+ *  Copyright (C) 2026-present The CallVault Authors
+ *  This software is licensed under the GNU General Public License v3 or later, with additional terms as permitted under Section 7.
+ *  The full license text is available in the LICENSE file at the root of this project.
+ *  This software is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+package com.baba.callvault.ui.common
+
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.tooling.preview.Preview
+import com.baba.callvault.ui.theme.CallVaultTheme
+
+/**
+ * A key/label/description/etc... data class used to populate dropdown menus.
+ *
+ * @property key         Machine-readable identifier, identifies the selection in the data layer persisted.
+ * @property label       Human-readable text shown inside the dropdown field.
+ * @property description Optional one-line description shown below the dropdown for the selected item.
+ * @property enabled     Whether this item can be selected; `false` grays it out and disables clicks.
+ */
+data class OptionItem(
+    val key: String,
+    val label: String,
+    val description: String? = null,
+    val enabled: Boolean = true
+)
+
+/**
+ * A Material 3 [ExposedDropdownMenuBox]-based dropdown field.
+ *
+ * @param label            Text label shown above the field.
+ * @param selected         The currently selected [OptionItem].
+ * @param options          All available options shown in the dropdown menu.
+ * @param onOptionSelected Called with the chosen [OptionItem] when the user picks a new option.
+ * @param modifier         Optional layout modifier forwarded to the root [ExposedDropdownMenuBox].
+ * @param enabled          When `false`, the field is greyed out and can't be opened (e.g. while a
+ *                         selection is being applied). Defaults to `true`.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun M3DropdownField(
+    label: String,
+    selected: OptionItem,
+    options: List<OptionItem>,
+    onOptionSelected: (OptionItem) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    // Never leave the menu open once the field is disabled mid-interaction.
+    if (!enabled && expanded) expanded = false
+
+    ExposedDropdownMenuBox(
+        expanded         = expanded,
+        onExpandedChange = { if (enabled) expanded = !expanded },
+        modifier         = modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        OutlinedTextField(
+            value         = selected.label,
+            onValueChange = {},
+            readOnly      = true,
+            enabled       = enabled,
+            singleLine    = true,
+            maxLines      = 1,
+            label         = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            trailingIcon  = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors        = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+            modifier      = Modifier.menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = enabled).fillMaxWidth()
+        )
+        ExposedDropdownMenu(
+            expanded         = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text    = {
+                        Column {
+                            Text(option.label)
+                            // Optional secondary preview line (e.g. a resolved file-name example)
+                            // shown beneath the primary label when a description is provided.
+                            option.description?.let { desc ->
+                                Text(
+                                    text  = desc,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    },
+                    onClick = {
+                        if (option.enabled) {
+                            onOptionSelected(option)
+                            expanded = false
+                        }
+                    },
+                    enabled        = option.enabled,
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewM3DropdownField() {
+    val options = listOf(
+        OptionItem("opt1", "Standard Option", "Description for option 1"),
+        OptionItem("opt2", "Another Option", "Description for option 2"),
+        OptionItem("opt3", "Disabled Option", "This cannot be selected", enabled = false)
+    )
+    CallVaultTheme(darkTheme = false) {
+        Surface {
+            M3DropdownField(
+                label = "Select an option",
+                selected = options[0],
+                options = options,
+                onOptionSelected = {},
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}

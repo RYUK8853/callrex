@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-completed translations. Do not hand-edit placeholders (%1$s etc.). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="home_date_today">今天</string>
+    <string name="home_date_yesterday">昨天</string>
+    <string name="home_health_call_not_recorded">有一通通话未被录音 — %1$s，%2$s。</string>
+    <string name="home_health_call_not_recorded_unnamed">有一通通话未被录音 — %1$s。</string>
+    <string name="home_health_failed_daemon">上一通通话期间录音已停止。</string>
+    <string name="home_health_failed_empty">你上一通通话生成了空录音（0 字节）。</string>
+    <string name="home_health_failed_no_audio">上次通话已保存，但不含音频。</string>
+    <string name="home_health_failed_one_sided">上一通应用内通话只录到了你这一方。</string>
+    <string name="home_health_failed_one_sided_vivo">上次应用通话仅录下了你这一方。在 vivo 手机上：打开“录音机”应用 → 应用内通话录音并开启（同时开启自动开始录音）。</string>
+    <string name="home_health_missed_adb_pairing">有一通通话未被录音 — 当时设置尚未完成，%1$s。</string>
+    <string name="home_health_missed_adb_pairing_unnamed">有一通通话未被录音 — 当时设置尚未完成。</string>
+    <string name="home_health_missed_developer_options">有一通通话未被录音 — 当时开发者选项处于关闭状态，%1$s。</string>
+    <string name="home_health_missed_developer_options_unnamed">有一通通话未被录音 — 当时开发者选项处于关闭状态。</string>
+    <string name="home_health_missed_recording_folder">有一通通话未被录音 — 当时未设置录音文件夹，%1$s。</string>
+    <string name="home_health_missed_recording_folder_unnamed">有一通通话未被录音 — 当时未设置录音文件夹。</string>
+    <string name="home_health_missed_secure_settings">有一通通话未被录音 — Callrex 已失去启动录音的权限，%1$s。</string>
+    <string name="home_health_missed_secure_settings_unnamed">有一通通话未被录音 — Callrex 已失去启动录音的权限。</string>
+    <string name="home_health_setup_changed">自上一通通话以来设置已更改 — 下一通通话将确认它是否仍然有效。</string>
+    <string name="home_health_unverified">你的下一通通话将确认录音功能正常。</string>
+    <string name="home_health_verified">上次验证于 %1$s。</string>
+    <string name="home_health_verified_just_now">刚刚验证过。</string>
+    <string name="home_hero_pill_dev_options_off">无法录音</string>
+    <string name="home_hero_pill_no_folder">需要操作</string>
+    <string name="home_hero_pill_not_paired">需要操作</string>
+    <string name="home_hero_pill_ready">运行中</string>
+    <string name="home_hero_pill_update_regrant">需要操作</string>
+    <string name="home_hero_status_label">状态</string>
+    <string name="home_play_recording">播放录音</string>
+    <string name="home_recordings_count">已保存 %1$d 个</string>
+    <string name="home_recordings_empty_hint">当 Callrex 录制通话后，会显示在这里。拨打或接听一通电话即可开始。</string>
+    <string name="home_recordings_empty_title">暂无录音</string>
+    <string name="home_support_pill">支持</string>
+    <string name="home_update_banner_button">更新</string>
+    <string name="home_update_banner_downloading">正在下载… %1$d%%</string>
+    <string name="home_update_banner_installing">正在安装…</string>
+    <string name="home_update_banner_text">新版本已可从 GitHub 下载。</string>
+    <string name="home_update_banner_title">有可用更新：%1$s</string>
+    <string name="home_updated_banner_text">Callrex 已更新到 %1$s</string>
+    <string name="home_usb_advisory_fix">修复</string>
+    <string name="home_usb_advisory_text">USB 处于数据模式。点按设为仅充电。</string>
+    <string name="home_usb_advisory_title">锁屏时录音可能中断</string>
+    <string name="home_whatsnew_body">• 录音卡住时现在会自行恢复\n• 未在录音时首页会告知，而不是保持沉默\n• 通话不再被误认为应用内通话</string>
+    <string name="home_whatsnew_offline_cta">开启无 Wi-Fi 录音</string>
+    <string name="home_whatsnew_offline_enabled">已启用离线录音。</string>
+    <string name="home_whatsnew_offline_enabling">正在启用无 Wi-Fi 录音…</string>
+    <string name="offline_failed_needs_wd">无法开启 — 无线调试已关闭，Callrex 无法将其开启。请在开发者选项中开启后重试。</string>
+    <string name="offline_failed_no_service">无法开启 — Callrex 无法连接手机的调试服务。请确认已连接 Wi-Fi 且无线调试已开启，然后重试。</string>
+    <string name="offline_failed_port">无法开启 — 本地端口没有恢复。请稍后重试。</string>
+    <string name="home_whatsnew_resilient_body">让通话录音更能抵御中断。\n\nAndroid 可能随时停止 Callrex 的后台进程。开启后，已在进行中的录音不再受此影响。\n\n默认关闭——你也可以稍后在“设置 ▸ 可靠性”中开启。</string>
+    <string name="home_whatsnew_resilient_cta">开启</string>
+    <string name="home_whatsnew_resilient_enabled">弹性录音已开启。若 Android 停止 Callrex 的后台进程，已在进行中的录音不再受影响。</string>
+    <string name="home_whatsnew_resilient_title">新功能：弹性录音</string>
+    <string name="home_whatsnew_settings_cta">打开设置</string>
+    <string name="home_whatsnew_title">新功能</string>
+    <string name="offline_recording_disabling">正在关闭无 Wi-Fi 录音…</string>
+    <string name="offline_recording_on">无 Wi-Fi 录音已开启。</string>
+    <string name="whatsnew_145_body">在许多手机上，通话中锁屏会导致录音中途停止。此问题已修复，并且当你手机的 USB 设置是原因时，Callrex 现在会提醒你。</string>
+    <string name="whatsnew_145_title">锁屏时继续录音</string>
+    <string name="whatsnew_146_body">Android 可能随时终止 Callrex 的后台辅助进程，以前这会截断录音，只留下半通电话。开启此项后，已经在进行的录音仍会完整录到结束。</string>
+    <string name="whatsnew_146_title">弹性录音</string>
+    <string name="whatsnew_146_where">设置 ▸ 实验性功能 ▸ 弹性</string>
+    <string name="whatsnew_147_body">Callrex 现在可以录制在 WhatsApp、Signal、Telegram 等应用中进行的通话 — 对话的双方，而不只是你自己的声音。录音会显示通话是在哪个应用中进行的，以及应用提供的联系人姓名。\n\n实验性功能：对某些应用有效，对另一些无效，而且应用可以在任何一次更新中阻止录音。</string>
+    <string name="whatsnew_147_title">录制应用内通话（VoIP）</string>
+    <string name="whatsnew_147_where">设置 ▸ 实验性功能 ▸ VoIP 通话</string>
+    <string name="whatsnew_148_body">在某些手机上，Callrex 会反复开启和关闭无线调试，却始终无法进入可录音状态。此问题已修复。在无线调试是唯一接入方式的情况下，Callrex 现在会让它保持开启，并告诉你哪项设置可以让它重新被关闭。\n\n同时修复：应用内通话可能在录音正常的情况下报告失败，也可能被标记为错误的应用。</string>
+    <string name="whatsnew_148_title">更可靠的启动</string>
+    <string name="whatsnew_150_body">开启 USB 调试后，Callrex 就能关闭无线调试并让它保持关闭。无需数据线，而且与无线调试不同，它不会打开网络端口 — 因此在两者之中，它是更适合保持开启的那个。可选：无论哪种方式，录音都能正常工作。\n\n同时修复：关闭 USB 调试可能导致 Callrex 无法录音，却不作任何提示。</string>
+    <string name="whatsnew_150_title">关闭无线调试</string>
+    <string name="whatsnew_150_where">设置 ▸ 实验性功能 ▸ USB 调试</string>
+    <string name="whatsnew_153_body">状态卡片现在会告诉你录音是否真的成功了 — 依据是你的真实通话，而不是一个只表示应用已启动的绿灯。如果某通通话没有被录音，它会说明这一点并给出原因：从未设置文件夹、开发者选项被关闭、更新导致权限丢失。\n\n此外：Callrex 现在支持巴西葡萄牙语，其他所有语言也都已更新。</string>
+    <string name="whatsnew_153_title">你的设置，由你自己的通话来验证</string>
+    <string name="whatsnew_154_body">与录音器的连接偶尔会出现罕见的卡顿，可能在无任何提示的情况下悄悄停止录音，直到重启应用。现在它会超时并自行恢复。\n\n你还可以选择录音上传到云端硬盘的时间：立即、每天或每周。请前往「设置 ▸ 存储」，「保留时长」也已移至同一板块。</string>
+    <string name="whatsnew_154_title">能自行恢复的录音</string>
+    <string name="whatsnew_155_body">设置现在会滑出覆盖在应用之上，而不是整屏替换，并已重新分组，让每屏只是一份简短列表。录音会显示通话时间和时长。\n\n底层方面：修复了多种可能导致录音丢失或受损的情况，包括开启稳健录音时的爆音，以及三星手机上 VoIP 通话缺失一方声音的问题。</string>
+    <string name="whatsnew_155_title">设置改为侧边面板，录音更可靠</string>
+    <string name="whatsnew_156_body">电话通话和应用内通话现在可以分别设置为自动录制、先询问，或完全忽略——“仅录制应用内通话”成了一项真正的设置，而不再是需要自己摸索的组合。\n\n录音可以分享，长按还能一次选中多条来分享或删除。删除同时保存在本机和云端硬盘中的录音时，会先询问要删除哪些副本。</string>
+    <string name="whatsnew_156_title">决定录制什么，并整理录音</string>
+    <string name="whatsnew_156_where">设置 ▸ 录制 ▸ 电话通话</string>
+    <string name="whatsnew_157_body">如果您设置了自动删除，有些录音会被悄悄永久保留——检查只看得到 Callrex 仍有记录的录音，其余的无论多旧都不会被删除。在一台设置为保留一周的手机上，有 131 个文件早已超期。\n\n每日检查现在也会读取您的录音文件夹，因此只由文件的时间决定去留。只有 Callrex 自己命名的文件才会被处理，无法确定日期的文件一律保留。\n\n修改检查时间也会立即生效，不再需要等到第二天。</string>
+    <string name="whatsnew_157_title">自动删除现在会清理掉所有该清理的录音</string>
+    <string name="whatsnew_157_where">设置 ▸ 存储 ▸ 保留</string>
+    <string name="whatsnew_200_body">两项重要新功能，都完全在你的手机上运行。不会上传任何内容，两者在完全离线时也能用。\n\n转写把录音变成可读、可搜索的文字，支持十四种语言。点一下某一行就能跳到通话中的那个时刻。\n\n摘要更进一步：这通电话聊了什么、做了什么决定、谁答应做什么——能确定时刻的条目旁边会标出时间，点一下就直接跳过去。\n\n两者都需要先通过 Wi-Fi 下载模型；开始之前应用会告诉你各自的代价。</string>
+    <string name="whatsnew_200_title">你的通话，转成文字，也生成摘要</string>
+    <string name="whatsnew_200_where">设置 ▸ 转写 和 设置 ▸ 通话摘要</string>
+    <string name="whatsnew_210_body">从现在起录下的通话，转写时每一行旁边都会标出说话人。\n\n这是录音过程中从通话本身读取的——手机在把两边混合之前会分开保存——因此不额外花时间、不需下载、也不靠猜测。已经存在手机里的通话无法这样处理，因为这项信息只在录音时存在。\n\n两边一开始显示为说话人 A 和说话人 B。等两通拨出的电话对哪边是哪边达成一致，它们就会变成你和通话的对方——出现在转写、你复制或分享的内容以及摘要里。</string>
+    <string name="whatsnew_210_title">转写会标出是谁在说话</string>
+    <string name="whatsnew_210_where">从现在起录下的任何通话，在它的转写里</string>
+    <string name="whatsnew_211_body">转写现在会在模型读取通话之前跳过静音，并且会权衡多种可能的转写结果，而不是采用最先想到的那个词。虽然做的事更多，速度反而比以前略快；在一次测试通话中，它找回了上一个版本漏掉的一整句话。\n\n摘要不再重复自己——这是因为要点列表原本没有真正的上限。它们也可以说得更多：要点最多只有五条，且每条被要求写成一行短句，而模型是以牺牲内容为代价照做的。用需要更多篇幅的语言写的长摘要——英语以外的语言大多如此——不会再因为写不下而被丢弃。\n\n此外，录音在送进模型的路上一直被悄悄削弱：把它们降到模型所需的采样率时，是在往语音里添加噪声，而不是把噪声滤掉。受影响最大的是拨出的通话，因为其中你自己的声音最多。</string>
+    <string name="whatsnew_211_title">转写更准，摘要更全</string>
+    <plurals name="merge_row_badge">
+        <item quantity="one">%1$d 通电话</item>
+        <item quantity="other">%1$d 通电话</item>
+    </plurals>
+    <plurals name="merge_summary">
+        <item quantity="one">%1$d 通电话 · %2$s</item>
+        <item quantity="other">%1$d 通电话 · %2$s</item>
+    </plurals>
+    <string name="merge_confirm">合并</string>
+    <string name="merge_menu_action">与另一通电话合并</string>
+    <string name="merge_menu_take_apart">拆开</string>
+    <string name="merge_no_candidates">手机上没有与该号码的其他通话。</string>
+    <string name="merge_only_in_drive">仅在云端硬盘中</string>
+    <string name="merge_pick_hint">勾选接续的通话。编号按你勾选的顺序排列。</string>
+    <string name="merge_primary_hint">作为合并后通话的开头</string>
+    <string name="merge_title">合并与 %1$s 的通话</string>
+    <string name="settings_merge_keep_originals_description">合并之后，把构成它的那些通话也留在手机上。默认关闭，因此一次合并只留下一条录音。无论开启与否，都可以把合并后的通话拆开。</string>
+    <string name="settings_merge_keep_originals_title">保留原始通话</string>
+    <string name="unmerge_confirm">拆开</string>
+    <string name="unmerge_message">它会重新变回下面这些通话，各自带着原有的转写稿和标记：</string>
+    <string name="unmerge_title">拆开这通电话？</string>
+    <string name="merge_note_will_delete">其余通话会被移除。之后拆开就能把它们找回来。</string>
+    <string name="merge_note_will_keep">其余通话也会保留在手机上。</string>
+    <string name="home_scroll_to_top">回到顶部</string>
+    <string name="home_whatsnew_full_notes">完整发行说明</string>
+    <string name="whatsnew_245_title">新增语言、备份以及更多</string>
+    <string-array name="whatsnew_245_items">
+        <item>波斯语和阿拉伯语 — 两种新的应用语言，从右到左</item>
+        <item>vivo 应用通话 — 要录下对方，请在 vivo 上开启“录音机” → 应用内通话录音</item>
+        <item>转写备份 — 将转写和备注以文本形式保存在每条录音旁</item>
+        <item>文件名模板 — 新增以联系人或号码开头的排列</item>
+        <item>导出与导入 — 将你的设置备份到文件</item>
+        <item>修复 — 不再误报“一次通话被中断”</item>
+    </string-array>
+    <string name="whatsnew_244_title">录音更可靠、轻松重新配对，以及更新提醒</string>
+    <string name="whatsnew_244_where">设置 ▸ 可靠性 ▸ 重新配对</string>
+    <string-array name="whatsnew_244_items">
+        <item>新增 — 如果手机在通话中关闭 Callrex，此前录下的部分会被保存并通知你</item>
+        <item>新增 — 若与录音器的连接断开，可在设置中重新配对，无需重装</item>
+        <item>新增 — 弹窗和更频繁的检查会在有新版本时立即提醒你</item>
+        <item>变更 — 手机 Android 版本不支持的设置会变灰并说明原因</item>
+    </string-array>
+    <string name="whatsnew_243_title">应用通话保持同步，笔记边输入边保存，仅录制您选择的人</string>
+    <string name="whatsnew_243_where">设置 ▸ 录音 ▸ 来电 ▸ 仅录制选定的联系人</string>
+    <string-array name="whatsnew_243_items">
+        <item>新增 — 仅录制您选定的联系人，适用于来电或去电</item>
+        <item>修复 — 应用通话中，对方的声音不再与您逐渐错位</item>
+        <item>修复 — 输入笔记不再丢字，并显示“已保存”</item>
+        <item>修复 — 通话结束后不再残留通话通知</item>
+        <item>修复 — 若安装过测试版，现在会收到正式版更新</item>
+        <item>修复 — 下载失败的模型会被清理并重新下载，而不再报告已损坏</item>
+        <item>修复 — 开启弹性录音后，部分手机每隔一通电话就会丢失录音</item>
+        <item>修复 — vivo 和 iQOO 手机可以录制应用通话</item>
+    </string-array>
+    <string name="whatsnew_241_title">每个页面都能搜索，并可在对方接听后再录音</string>
+    <string-array name="whatsnew_241_items">
+        <item>新增 — 录音、转写和摘要页面各有搜索栏：按联系人或说过的词查找</item>
+        <item>新增 — 去电可设为对方接听后才开始录音（默认关闭）</item>
+        <item>新增 — Shizuku 录音也有说话人标签</item>
+        <item>修复 — Android 14 及更早版本上的应用通话带有联系人姓名</item>
+        <item>修复 — Shizuku 模式下更新不再丢失下一通电话</item>
+        <item>修复 — 两人共用的一行会在说话人切换处拆开</item>
+        <item>修复 — 转写成错误字母表的文本会重新解码</item>
+        <item>修复 — 只有一人说话的行不再缺少名字</item>
+    </string-array>
+    <string name="whatsnew_241_where">设置 ▸ 录音 ▸ 去电 ▸ 对方接听后再开始</string>
+    <string name="whatsnew_240_title">录音、转写和摘要各有自己的位置</string>
+    <string-array name="whatsnew_240_items">
+        <item>新增 — 主屏幕分为录音、转写和摘要，并从你上次离开的地方打开</item>
+        <item>新增 — 导入音频文件，或从其他应用分享给 Callrex</item>
+        <item>新增 — 只为文字导入：转写完成后音频会被删除</item>
+        <item>新增 — 在独立页面上阅读转写，并为它添加备注</item>
+        <item>新增 — 一次选中多条转写或摘要，进行删除、分享或保存</item>
+        <item>新增 — 转写完成时通知你</item>
+        <item>已修复 — 重启手机后不再停止录音</item>
+        <item>已修复 — Callrex 必须停止 Shizuku 时会重新启动它</item>
+        <item>已修复 — 在 Android 17 上可以完成设置</item>
+    </string-array>
+    <string name="whatsnew_240_where">主页 ▸ 转写 ▸ 导入音频</string>
+    <string name="whatsnew_230_title">本就是一次对话的通话，可以合成一条录音</string>
+    <string-array name="whatsnew_230_items">
+        <item>新增 — 将同一次谈话的多通来电合并为一条录音</item>
+        <item>新增 — 将错误报告保存到你选择的文件夹</item>
+        <item>修复 — 旋转手机不再丢失当前位置</item>
+        <item>修复 — 录音不再有杂音</item>
+        <item>修复 — 录音未真正开始时会明确提示</item>
+        <item>修复 — 切换到 AAC 不再影响下一通来电</item>
+        <item>修复 — 语音信箱不再被记为录音失败的来电</item>
+        <item>修复 — 长时间停顿后转写时间戳正确</item>
+        <item>修复 — 更新后仍能录下一通来电</item>
+        <item>修复 — 支持 Shizuku 隐藏模式</item>
+        <item>修复 — 你自己开启的无线调试会保持开启</item>
+        <item>修复 — 无 Wi-Fi 录音会说明真正的失败原因</item>
+        <item>修复 — 通话结束后麦克风指示点不再常亮</item>
+        <item>修复 — 旋转手机时转写进度不再从头开始</item>
+        <item>修复 — 删除通话会停止它的转写</item>
+        <item>修复 — 你手动开始的转写不再显示手机发热通知</item>
+        <item>修复 — 自动录音的通话不再闪现录音按钮</item>
+        <item>修复 — 转写进度不再卡在四分之三</item>
+        <item>修复 — 录音通话只显示一条通知，而不是两条</item>
+        <item>修复 — 日志查看器占满屏幕，长行自动换行</item>
+    </string-array>
+    <string name="whatsnew_230_where">任意录音的 ⋮ 菜单 ▸ 与另一通电话合并</string>
+    <string name="merge_progress_title">正在合并</string>
+    <string name="unmerge_progress_title">正在拆开</string>
+    <string name="merge_progress_step">第 %1$d 通，共 %2$d 通</string>
+    <string name="merge_progress_done">合并成功</string>
+    <string name="unmerge_progress_done">拆开成功</string>
+    <string name="progress_closing_in">%1$d 秒后关闭</string>
+    <string name="merge_progress_working">正在接合通话</string>
+    <string name="unmerge_progress_working">正在分离通话</string>
+    <string name="whatsnew_220_body">边说边标记。通话通知上的按钮会在你按下的位置留下书签，录音页面会把它们显示为可以从那里播放的标签 — 电话通话和应用通话都适用。应用通话现在终于有了控制：暂停、继续、停止和标记，而以前只能开始和结束。\n\n重新找到一通通话更容易了：给值得保留的通话标星，用你自己的词语添加标签，并且不只搜索说过的话，还能搜索摘要和你自己的笔记。转写可导出为文本、Markdown、SRT、VTT 或 JSON。\n\nCallrex 还会在自己悄无声息地停止工作时告诉你 — 比如重启后录音无法启动，或录音不再上传到 Drive。这两种情况以前都是静默的。新的清理选项可以限制录音占用的空间，或丢弃非常短的录音。这些默认全部关闭，而且标星的录音永远不会被自动删除。</string>
+    <string name="whatsnew_220_title">重新找到一通通话，并在通话中掌控它</string>
+    <string name="whatsnew_220_where">设置 ▸ 存储 ▸ 保留，即可找到清理选项</string>
+    <string name="whatsnew_221_body">Callrex 重新变得打开迅速，并且无论保存多少通话都保持迅速。2.2.0 每次绘制列表时都会重新读取每条录音的时长，因此当通话积累到几十条时，列表会慢到让几分钟前录下的通话看起来像是根本没有被录下。\n\n关于录音不再传到 Google 云端硬盘的警告，不会再在事实并非如此时出现。曾有两位用户被告知备份失败，而他们的每一条录音其实都完好送达。\n\n导出的转写稿内的标题、已选应用的数量以及返回按钮，现在都会跟随你所选择的语言，而不再停留在英文。调试报告还能指出是哪个应用正占用着麦克风——用于一个目前很难当场抓到的问题。</string>
+    <string name="whatsnew_221_title">打开更快，也不再为并不存在的问题报警</string>
+    <string name="offline_failed_no_wifi">无法开启——未连接 Wi-Fi。请先连接任意 Wi-Fi 网络一次，然后重试。</string>
+    <string name="offline_failed_wd_refused">无法开启——Android 不允许在此网络上使用无线调试。请在开发者选项中手动开启一次并接受提示，然后重试。</string>
+    <string name="offline_failed_needs_usb">请先开启 USB 调试——没有它，无 Wi-Fi 录音无法工作。设置 ▸ 实验性功能 ▸ USB 调试。</string>
+
+    <!-- Home: the hub of cards, and the two sections its cards open -->
+    <string name="home_hub_library_title">资料库</string>
+    <string name="home_hub_recordings_body">Callrex 录下的每一通通话。</string>
+    <string name="home_hub_transcripts_body">把通话变成文字，也包括你带来的任何音频。</string>
+    <string name="home_hub_summaries_body">由手机本地 AI 生成的摘要。</string>
+    <string name="home_transcripts_title">转写</string>
+    <string name="home_summaries_title">摘要</string>
+    <string name="home_transcripts_count">已转写 %1$d 个</string>
+    <string name="home_summaries_count">已摘要 %1$d 个</string>
+    <string name="home_transcripts_empty_title">还没有转写</string>
+    <string name="home_transcripts_empty_hint">在某个录音的菜单中请求转写，或在上方导入一个音频文件——两者写好后都会出现在这里。</string>
+    <string name="home_summaries_empty_title">还没有摘要</string>
+    <string name="home_summaries_empty_hint">打开一通已有转写的通话并请求摘要，写好后就会出现在这里。</string>
+
+    <!-- Transcripts: the two headings above the finished transcripts -->
+    <string name="transcripts_working_header">正在转写</string>
+    <string name="transcripts_failed_header">未能完成</string>
+    <string name="transcripts_failed_hint">点按其中一项即可重试。</string>
+    <string name="transcripts_waiting_header">等待转写</string>
+    <string name="transcripts_waiting_hint">这些音频是你分享来阅读的，不是用来保存的。点按开始转写，或打开它试听或删除。</string>
+    <string name="summaries_working_header">正在生成摘要</string>
+    <string name="summaries_failed_header">未能完成</string>
+    <string name="summaries_failed_hint">打开其中一项即可重新请求。</string>
+    <!-- Transcripts: bringing in audio Callrex did not record -->
+    <string name="transcripts_import_title">导入音频</string>
+    <string name="transcripts_import_working">正在导入…</string>
+    <string name="transcripts_import_body">转写一条语音留言，或手机上任何其他音频文件。</string>
+    <string name="import_failed_title">无法导入该文件</string>
+    <string name="import_failed_not_audio">Callrex 读不了这种文件。请试试 .opus、.ogg、.m4a、.mp3 或 .wav 录音。</string>
+    <string name="import_failed_empty">该文件是空的，没有内容可转写。</string>
+    <string name="import_failed_no_folder">还没有存放录音的文件夹。请先在设置中选一个，然后重试。</string>
+    <string name="import_failed_copy">无法把文件写入你的录音文件夹。请检查手机是否还有空间，以及该文件夹是否仍然可用。</string>
+    <string name="import_failed_undecodable">这部手机读不出该文件里的音频，因此永远无法转写。文件可能已损坏，或采用了 Android 不解码的格式。</string>
+    <string name="home_row_imported">已导入</string>
+    <string name="home_row_text_only">仅文字</string>
+    <!-- 分享菜单：从其他应用发送给 Callrex 的音频 -->
+    <string name="share_import_label">导入音频</string>
+    <string name="share_import_working_body">正在复制文件，并检查这部手机能否读取它。</string>
+    <string name="share_import_done_title">已加入你的录音</string>
+    <string name="share_import_done_body">文件已在 Callrex 中。打开即可收听，或请求转写。</string>
+    <string name="share_import_open">打开</string>
+    <string name="share_import_open_app">打开 Callrex</string>
+    <string name="share_import_close">关闭</string>
+    <string name="share_import_nothing">这次分享没有带来任何文件。请尝试直接分享音频文件本身，而不是包含它的消息。</string>
+    <string name="share_import_not_set_up_title">请先完成 Callrex 的设置</string>
+    <string name="share_import_not_set_up_body">Callrex 尚未完成一次性设置，因此暂时没有地方存放这个文件。请打开应用完成设置，然后再分享一次。</string>
+    <string name="share_import_choice_title">Callrex 该怎么处理它？</string>
+    <string name="share_import_choice_unnamed">分享过来的音频</string>
+    <string name="import_choice_keep">导入并转写</string>
+    <string name="import_choice_keep_hint">把音频保留在你的录音里，并进行转写。</string>
+    <string name="import_choice_transcribe_only">仅转写</string>
+    <string name="import_choice_transcribe_only_hint">转写完成后删除音频。它不会出现在你的录音里，只在“转写”中留下文字。</string>
+    <string name="share_import_queued_keep_title">已添加并排入队列</string>
+    <string name="share_import_queued_keep_body">它已在你的录音里。转写完成后会出现在“转写”中。</string>
+    <string name="share_import_queued_only_title">已排入转写队列</string>
+    <string name="share_import_queued_only_body">文字会出现在“转写”中。转写一存好，音频就会被删除。</string>
+    <string name="share_import_kept_title">已保存，但未转写</string>
+    <string name="share_import_kept_body">它已在你的录音里。你随时可以从那里开始转写。</string>
+    <string name="share_import_kept_only_body">它正在“转写”中等待。你可以随时从那里开始转写，也可以在同一处删除它。</string>
+    <string name="share_import_too_long">这段音频有 %1$d 分钟，而 Callrex 一次最多只能转写 %2$d 分钟。文件已保存，你仍然可以收听。</string>
+    <string name="share_import_no_model">还没有安装转写模型，Callrex 读不了这个文件。音频已保存——请先在设置中安装模型，再从“转写”中开始。</string>
+</resources>

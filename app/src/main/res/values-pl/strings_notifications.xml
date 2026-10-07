@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-completed notification translations. -->
+<resources>
+    <string name="notif_call_monitor_channel">Monitorowanie połączeń</string>
+    <string name="notif_pairing_action_enter_code">Wprowadź kod parowania</string>
+    <string name="notif_pairing_action_stop">Zatrzymaj</string>
+    <string name="notif_pairing_channel">Parowanie ADB</string>
+    <string name="notif_pairing_failed_title">Parowanie nie powiodło się</string>
+    <string name="notif_pairing_found_text">Wprowadź 6-cyfrowy kod parowania.</string>
+    <string name="notif_pairing_found_title">Znaleziono usługę parowania</string>
+    <string name="notif_pairing_remote_input_label">Kod parowania</string>
+    <string name="notif_pairing_searching_text">Otwórz na telefonie okno „Sparuj urządzenie za pomocą kodu parowania”.</string>
+    <string name="notif_pairing_searching_title">Wyszukiwanie usługi parowania…</string>
+    <string name="notif_pairing_success_text">Debugowanie bezprzewodowe sparowane. Dotknij, aby dokończyć konfigurację Callrex.</string>
+    <string name="notif_pairing_success_title">Sparowano ✓</string>
+    <string name="notif_pairing_waiting_wd_text">Włącz Debugowanie bezprzewodowe, aby rozpocząć parowanie.</string>
+    <string name="notif_pairing_waiting_wd_title">Oczekiwanie na Debugowanie bezprzewodowe…</string>
+    <string name="notif_pairing_working_text">Konfigurowanie Callrex. Potrwa to kilka sekund.</string>
+    <string name="notif_pairing_working_title">Parowanie…</string>
+    <string name="notif_readiness_channel">Gotowość rejestratora połączeń</string>
+    <string name="notif_readiness_ready_text">Rejestrator jest połączony.</string>
+    <string name="notif_readiness_ready_title">Gotowy do nagrywania połączeń</string>
+    <string name="notif_readiness_reboot_ready_text">Nasłuchiwanie połączeń po ponownym uruchomieniu.</string>
+    <string name="notif_readiness_starting_text">Łączenie rejestratora — połączenia nie będą nagrywane, dopóki proces się nie zakończy.</string>
+    <string name="notif_readiness_starting_title">Uruchamianie rejestratora połączeń…</string>
+    <string name="notif_startup_channel">Uruchamianie</string>
+    <string name="notif_startup_preparing">Przygotowywanie rejestratora połączeń…</string>
+    <string name="notif_usb_check_unavailable">Jeśli to się nie zakończy, ustaw „USB po odblokowaniu” na Tylko ładowanie w Ustawieniach ▸ Eksperymentalne — na niektórych telefonach tryb danych USB uniemożliwia połączenie rejestratora.</string>
+    <string name="notif_usb_lock_warning">Zablokowanie ekranu podczas połączenia może przerwać nagrywanie. W Ustawieniach ▸ Eksperymentalne ustaw „USB po odblokowaniu” na Tylko ładowanie.</string>
+    <string name="update_notif_available_text">Otwórz aplikację i dotknij Aktualizuj, aby ją zainstalować.</string>
+    <string name="update_notif_available_title">Dostępny jest Callrex %1$s</string>
+    <string name="update_notif_channel">Aktualizacje aplikacji</string>
+    <string name="update_notif_downloading_title">Pobieranie aktualizacji…</string>
+    <string name="update_notif_failure_download_text">Nie udało się pobrać aktualizacji. Dotknij, aby pobrać ją z GitHuba.</string>
+    <string name="update_notif_failure_install_text">Nie udało się zainstalować aktualizacji. Dotknij, aby pobrać ją z GitHuba.</string>
+    <string name="update_notif_failure_title">Aktualizacja nie powiodła się</string>
+    <string name="update_notif_failure_verify_text">Pobrana aktualizacja nie przeszła kontroli bezpieczeństwa i została odrzucona. Dotknij, aby pobrać ją z GitHuba.</string>
+    <string name="update_notif_installing_title">Instalowanie aktualizacji…</string>
+    <string name="update_notif_success_text">Callrex ma teraz wersję %1$s.</string>
+    <string name="update_notif_success_title">Aktualizacja zainstalowana</string>
+    <string name="notif_readiness_down_title">Połączenia nie są nagrywane</string>
+    <string name="notif_readiness_no_debugging_text">Debugowanie USB i debugowanie bezprzewodowe są wyłączone. Włącz jedno z nich w Opcjach programisty.</string>
+    <string name="notif_readiness_needs_wifi_text">Debugowanie USB jest wyłączone i nie ma Wi-Fi. Połącz się z Wi-Fi lub włącz debugowanie USB.</string>
+    <string name="notif_readiness_stuck_text">Rejestrator nie może się uruchomić. Otwórz Callrex, aby zobaczyć przyczynę.</string>
+    <string name="notif_readiness_needs_wifi_restart_text">Rejestrator zatrzymał się i potrzebuje Wi-Fi, aby uruchomić się ponownie. Włącz nagrywanie offline, gdy jesteś w sieci Wi-Fi, aby tego uniknąć.</string>
+    <string name="notif_readiness_wd_off_by_user_text">Wyłączyłeś debugowanie bezprzewodowe, a Callrex nie ma innego sposobu na ponowne uruchomienie rejestratora. Włącz je z powrotem albo włącz debugowanie USB.</string>
+    <string name="notif_readiness_offline_paused_text">Nagrywanie bez Wi-Fi jest wstrzymane: wymaga debugowania USB. Połączenia przez Wi-Fi są nadal nagrywane.</string>
+    <string name="notif_action_turn_wd_on">Włącz debugowanie bezprzewodowe</string>
+
+    <!-- Transcription finished / didn't finish -->
+    <string name="transcript_notice_channel">Transkrypcje</string>
+    <string name="transcript_notice_ready_title">Transkrypcja gotowa</string>
+    <string name="transcript_notice_ready_deleted_text">%1$s — nagranie zostało usunięte, zgodnie z Twoim wyborem.</string>
+    <string name="transcript_notice_ready_many_title">Gotowe transkrypcje: %1$d</string>
+    <string name="transcript_notice_ready_many_text">Dotknij, aby je przeczytać.</string>
+    <string name="transcript_notice_failed_title">Transkrypcja nie została ukończona</string>
+    <string name="transcript_notice_failed_text">%1$s. Dotknij, aby spróbować ponownie.</string>
+    <string name="transcript_notice_failed_many_title">Nieukończone transkrypcje: %1$d</string>
+    <string name="transcript_notice_failed_many_text">Dotknij, aby je zobaczyć.</string>
+</resources>

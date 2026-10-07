@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-completed notification translations. -->
+<resources>
+    <string name="notif_call_monitor_channel">Monitoraggio chiamate</string>
+    <string name="notif_pairing_action_enter_code">Inserisci codice di associazione</string>
+    <string name="notif_pairing_action_stop">Interrompi</string>
+    <string name="notif_pairing_channel">Associazione ADB</string>
+    <string name="notif_pairing_failed_title">Associazione non riuscita</string>
+    <string name="notif_pairing_found_text">Inserisca il codice di associazione a 6 cifre.</string>
+    <string name="notif_pairing_found_title">Servizio di associazione trovato</string>
+    <string name="notif_pairing_remote_input_label">Codice di associazione</string>
+    <string name="notif_pairing_searching_text">Apra la finestra \"Associa dispositivo tramite codice di associazione\" del telefono.</string>
+    <string name="notif_pairing_searching_title">Ricerca del servizio di associazione…</string>
+    <string name="notif_pairing_success_text">Debug wireless associato. Tocchi per completare la configurazione di Callrex.</string>
+    <string name="notif_pairing_success_title">Associato ✓</string>
+    <string name="notif_pairing_waiting_wd_text">Attivi il Debug wireless per avviare l\'associazione.</string>
+    <string name="notif_pairing_waiting_wd_title">In attesa del Debug wireless…</string>
+    <string name="notif_pairing_working_text">Configurazione di Callrex in corso. Richiede qualche secondo.</string>
+    <string name="notif_pairing_working_title">Associazione in corso…</string>
+    <string name="notif_readiness_channel">Stato del registratore di chiamate</string>
+    <string name="notif_readiness_ready_text">Il registratore è connesso.</string>
+    <string name="notif_readiness_ready_title">Pronto a registrare le chiamate</string>
+    <string name="notif_readiness_reboot_ready_text">In ascolto delle chiamate dopo il riavvio.</string>
+    <string name="notif_readiness_starting_text">Connessione del registratore in corso: le chiamate non verranno registrate finché non termina.</string>
+    <string name="notif_readiness_starting_title">Avvio del registratore di chiamate…</string>
+    <string name="notif_startup_channel">Avvio</string>
+    <string name="notif_startup_preparing">Preparazione del registratore di chiamate…</string>
+    <string name="notif_usb_check_unavailable">Se non termina, imposta «USB allo sblocco» su Solo ricarica in Impostazioni ▸ Sperimentale: su alcuni telefoni una modalità USB dati impedisce al registratore di connettersi.</string>
+    <string name="notif_usb_lock_warning">Bloccare lo schermo durante una chiamata può interrompere la registrazione. In Impostazioni ▸ Sperimentale, imposta «USB allo sblocco» su Solo ricarica.</string>
+    <string name="update_notif_available_text">Apri l\'app e tocca Aggiorna per installarlo.</string>
+    <string name="update_notif_available_title">Callrex %1$s è disponibile</string>
+    <string name="update_notif_channel">Aggiornamenti dell\'app</string>
+    <string name="update_notif_downloading_title">Download dell\'aggiornamento…</string>
+    <string name="update_notif_failure_download_text">Impossibile scaricare l\'aggiornamento. Tocca per scaricarlo da GitHub.</string>
+    <string name="update_notif_failure_install_text">Impossibile installare l\'aggiornamento. Tocca per scaricarlo da GitHub.</string>
+    <string name="update_notif_failure_title">Aggiornamento non riuscito</string>
+    <string name="update_notif_failure_verify_text">L\'aggiornamento scaricato non ha superato il controllo di sicurezza ed è stato eliminato. Tocca per scaricarlo da GitHub.</string>
+    <string name="update_notif_installing_title">Installazione dell\'aggiornamento…</string>
+    <string name="update_notif_success_text">Callrex è ora alla versione %1$s.</string>
+    <string name="update_notif_success_title">Aggiornamento installato</string>
+    <string name="notif_readiness_down_title">Le chiamate non vengono registrate</string>
+    <string name="notif_readiness_no_debugging_text">Il debug USB e il debug wireless sono entrambi disattivati. Riattivane uno nelle Opzioni sviluppatore.</string>
+    <string name="notif_readiness_needs_wifi_text">Il debug USB è disattivato e non c\'è Wi-Fi. Connettiti a una rete Wi-Fi o attiva il debug USB.</string>
+    <string name="notif_readiness_stuck_text">Il registratore non riesce ad avviarsi. Apri Callrex per vedere il motivo.</string>
+    <string name="notif_readiness_needs_wifi_restart_text">Il registratore si è fermato e ha bisogno del Wi-Fi per ripartire. Attiva la registrazione offline mentre sei in Wi-Fi per evitarlo.</string>
+    <string name="notif_readiness_wd_off_by_user_text">Hai disattivato il debug wireless e Callrex non ha altri modi per riavviare il registratore. Riattivalo, oppure attiva il debug USB.</string>
+    <string name="notif_readiness_offline_paused_text">La registrazione senza Wi-Fi è in pausa: richiede il debug USB. Le chiamate in Wi-Fi vengono ancora registrate.</string>
+    <string name="notif_action_turn_wd_on">Attiva il debug wireless</string>
+
+    <!-- Transcription finished / didn't finish -->
+    <string name="transcript_notice_channel">Trascrizioni</string>
+    <string name="transcript_notice_ready_title">Trascrizione pronta</string>
+    <string name="transcript_notice_ready_deleted_text">%1$s — l\'audio è stato eliminato, come richiesto.</string>
+    <string name="transcript_notice_ready_many_title">Trascrizioni pronte: %1$d</string>
+    <string name="transcript_notice_ready_many_text">Tocca per leggerle.</string>
+    <string name="transcript_notice_failed_title">La trascrizione non è stata completata</string>
+    <string name="transcript_notice_failed_text">%1$s. Tocca per riprovare.</string>
+    <string name="transcript_notice_failed_many_title">Trascrizioni non completate: %1$d</string>
+    <string name="transcript_notice_failed_many_text">Tocca per vederle.</string>
+</resources>

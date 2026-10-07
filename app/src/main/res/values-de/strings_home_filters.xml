@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-completed translations. Do not hand-edit placeholders (%1$s etc.). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="home_copy_device">Gerät</string>
+    <string name="home_copy_drive">Drive</string>
+    <string name="home_delete_confirm_device_message">Die Gerätekopie von %1$s löschen? Die Drive-Kopie bleibt erhalten.</string>
+    <string name="home_delete_confirm_drive_message">Die Drive-Kopie von %1$s löschen? Die Gerätekopie bleibt erhalten.</string>
+    <string name="home_delete_copy_device_content_desc">Gerätekopie löschen</string>
+    <string name="home_delete_copy_drive_content_desc">Drive-Kopie löschen</string>
+    <string name="home_filter_date_all">Alle Daten</string>
+    <string name="home_filter_date_all_short">Alle</string>
+    <string name="home_filter_date_chip">Datum: %1$s</string>
+    <string name="home_filter_date_label">Datum</string>
+    <string name="home_filter_direction_all">Alle</string>
+    <string name="home_filter_direction_chip">Richtung: %1$s</string>
+    <string name="home_filter_direction_incoming">Eingehend</string>
+    <string name="home_filter_direction_label">Richtung</string>
+    <string name="home_filter_direction_outgoing">Ausgehend</string>
+    <string name="home_filter_source_all">Alle</string>
+    <string name="home_filter_source_chip">Quelle: %1$s</string>
+    <string name="home_filter_source_drive">Nur Drive</string>
+    <string name="home_filter_source_label">Quelle</string>
+    <string name="home_filter_source_local">Nur lokal</string>
+    <string name="home_source_badge_both">Gerät + Drive</string>
+    <string name="home_source_badge_drive">Drive</string>
+    <string name="home_source_badge_local">Gerät</string>
+
+    <!-- Tag facet (chip label + "all" option). %1$s = current value shown on the chip. -->
+    <string name="home_filter_tag_label">Tag</string>
+    <string name="home_filter_tag_chip">Tag: %1$s</string>
+    <string name="home_filter_tag_all">Alle Tags</string>
+    <string name="home_filter_tag_all_short">Alle</string>
+
+</resources>

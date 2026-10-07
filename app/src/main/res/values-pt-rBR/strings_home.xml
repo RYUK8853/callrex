@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brazilian Portuguese. Do not hand-edit placeholders (%1$s etc.). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="home_date_today">Hoje</string>
+    <string name="home_date_yesterday">Ontem</string>
+    <string name="home_health_call_not_recorded">Uma chamada não foi gravada — %1$s, %2$s.</string>
+    <string name="home_health_call_not_recorded_unnamed">Uma chamada não foi gravada — %1$s.</string>
+    <string name="home_health_failed_daemon">O gravador parou durante a sua última chamada.</string>
+    <string name="home_health_failed_empty">Sua última chamada gerou uma gravação vazia (0 bytes).</string>
+    <string name="home_health_failed_no_audio">Sua última chamada foi salva, mas não contém áudio.</string>
+    <string name="home_health_failed_one_sided">Só o seu lado foi gravado na sua última chamada de app.</string>
+    <string name="home_health_failed_one_sided_vivo">Na sua última chamada por app, somente o seu lado foi gravado. No vivo: abra o app Gravador → Gravação de chamadas em apps e ative-a (com Início automático).</string>
+    <string name="home_health_missed_adb_pairing">Uma chamada não foi gravada — a configuração não estava concluída no momento, %1$s.</string>
+    <string name="home_health_missed_adb_pairing_unnamed">Uma chamada não foi gravada — a configuração não estava concluída no momento.</string>
+    <string name="home_health_missed_developer_options">Uma chamada não foi gravada — as Opções do desenvolvedor estavam desativadas no momento, %1$s.</string>
+    <string name="home_health_missed_developer_options_unnamed">Uma chamada não foi gravada — as Opções do desenvolvedor estavam desativadas no momento.</string>
+    <string name="home_health_missed_recording_folder">Uma chamada não foi gravada — nenhuma pasta de gravação estava definida no momento, %1$s.</string>
+    <string name="home_health_missed_recording_folder_unnamed">Uma chamada não foi gravada — nenhuma pasta de gravação estava definida no momento.</string>
+    <string name="home_health_missed_secure_settings">Uma chamada não foi gravada — o Callrex havia perdido a permissão para iniciar o gravador, %1$s.</string>
+    <string name="home_health_missed_secure_settings_unnamed">Uma chamada não foi gravada — o Callrex havia perdido a permissão para iniciar o gravador.</string>
+    <string name="home_health_setup_changed">A configuração mudou desde a sua última chamada — a próxima vai confirmar se ainda funciona.</string>
+    <string name="home_health_unverified">Sua próxima chamada vai confirmar que a gravação funciona.</string>
+    <string name="home_health_verified">Verificado pela última vez %1$s.</string>
+    <string name="home_health_verified_just_now">Verificado agora mesmo.</string>
+    <string name="home_hero_pill_dev_options_off">Gravação com problema</string>
+    <string name="home_hero_pill_no_folder">Ação necessária</string>
+    <string name="home_hero_pill_not_paired">Ação necessária</string>
+    <string name="home_hero_pill_ready">Ativo</string>
+    <string name="home_hero_pill_update_regrant">Ação necessária</string>
+    <string name="home_hero_status_label">Status</string>
+    <string name="home_play_recording">Reproduzir gravação</string>
+    <string name="home_recordings_count">%1$d salvas</string>
+    <string name="home_recordings_empty_hint">Quando o Callrex gravar uma chamada, ela aparece aqui. Faça ou receba uma chamada para começar.</string>
+    <string name="home_recordings_empty_title">Nenhuma gravação ainda</string>
+    <string name="home_support_pill">Apoiar</string>
+    <string name="home_update_banner_button">Atualizar</string>
+    <string name="home_update_banner_downloading">Baixando… %1$d%%</string>
+    <string name="home_update_banner_installing">Instalando…</string>
+    <string name="home_update_banner_text">Uma nova versão está pronta para baixar no GitHub.</string>
+    <string name="home_update_banner_title">Atualização disponível: %1$s</string>
+    <string name="home_updated_banner_text">Callrex atualizado para %1$s</string>
+    <string name="home_usb_advisory_fix">Corrigir</string>
+    <string name="home_usb_advisory_text">O USB está em um modo de transferência de dados. Toque para definir como Somente carregar.</string>
+    <string name="home_usb_advisory_title">A gravação pode parar ao bloquear a tela</string>
+    <string name="home_whatsnew_body">• A gravação agora se recupera sozinha caso trave\n• A tela inicial avisa quando não está gravando, em vez de ficar calada\n• Uma chamada telefônica não é mais confundida com uma chamada de app</string>
+    <string name="home_whatsnew_offline_cta">Ativar a gravação sem Wi-Fi</string>
+    <string name="home_whatsnew_offline_enabled">Gravação offline ativada.</string>
+    <string name="home_whatsnew_offline_enabling">Ativando a gravação sem Wi-Fi…</string>
+    <string name="offline_failed_needs_wd">Não foi possível ativar — a depuração sem fio está desligada e o Callrex não conseguiu ligá-la. Ligue-a nas opções do desenvolvedor e tente de novo.</string>
+    <string name="offline_failed_no_service">Não foi possível ativar — o Callrex não conseguiu alcançar o serviço de depuração do telefone. Verifique o Wi-Fi e a depuração sem fio e tente de novo.</string>
+    <string name="offline_failed_port">Não foi possível ativar — a porta local não voltou. Tente novamente em instantes.</string>
+    <string name="home_whatsnew_resilient_body">Deixa a gravação de chamadas mais resistente a interrupções.\n\nO Android pode encerrar o serviço auxiliar do Callrex a qualquer momento. Com isto ativado, uma gravação já em andamento deixa de ser afetada quando isso acontece.\n\nDesativado por padrão — você também pode ativar depois em Configurações ▸ Confiabilidade.</string>
+    <string name="home_whatsnew_resilient_cta">Ativar</string>
+    <string name="home_whatsnew_resilient_enabled">A gravação resiliente está ativada. Uma gravação já em andamento deixa de ser afetada se o Android encerrar o serviço auxiliar do Callrex.</string>
+    <string name="home_whatsnew_resilient_title">Novo: gravação resiliente</string>
+    <string name="home_whatsnew_settings_cta">Abrir as Configurações</string>
+    <string name="home_whatsnew_title">Novidades</string>
+    <string name="offline_recording_disabling">Desativando a gravação sem Wi-Fi…</string>
+    <string name="offline_recording_on">A gravação sem Wi-Fi está ativada.</string>
+    <string name="whatsnew_145_body">Em muitos celulares, bloquear a tela durante uma chamada interrompia o gravador no meio da chamada. Isso foi corrigido, e o Callrex agora avisa quando a configuração de USB do seu celular é a causa.</string>
+    <string name="whatsnew_145_title">Continue gravando quando a tela bloquear</string>
+    <string name="whatsnew_146_body">O Android pode encerrar o serviço auxiliar do Callrex a qualquer momento, o que antes cortava a gravação e deixava você com metade da chamada. Com isto ativado, uma gravação já em andamento segue até o fim mesmo assim.</string>
+    <string name="whatsnew_146_title">Gravação resiliente</string>
+    <string name="whatsnew_146_where">Configurações ▸ Experimental ▸ Resiliência</string>
+    <string name="whatsnew_147_body">O Callrex agora pode gravar chamadas feitas dentro de apps como WhatsApp, Signal e Telegram — os dois lados da conversa, não apenas a sua voz. As gravações mostram em qual app a chamada foi feita e o nome do contato, quando o app o fornece.\n\nExperimental: funciona com alguns apps e com outros não, e um app pode bloquear a gravação a qualquer momento em uma atualização.</string>
+    <string name="whatsnew_147_title">Grave chamadas de apps (VoIP)</string>
+    <string name="whatsnew_147_where">Configurações ▸ Experimental ▸ Chamadas VoIP</string>
+    <string name="whatsnew_148_body">Em alguns celulares, o Callrex ficava ligando e desligando a Depuração sem fio sem nunca ficar pronto para gravar. Isso foi corrigido. Onde a Depuração sem fio é a única forma de acesso, o Callrex agora a mantém ativada e informa qual configuração permitiria desligá-la.\n\nTambém corrigido: uma chamada de app podia relatar falha mesmo tendo gravado corretamente, e podia ser identificada com o app errado.</string>
+    <string name="whatsnew_148_title">Inicialização mais confiável</string>
+    <string name="whatsnew_150_body">Ativar a Depuração USB permite que o Callrex desligue a Depuração sem fio e a mantenha desligada. Não é preciso cabo e, ao contrário da Depuração sem fio, ela não abre nenhuma porta de rede — por isso é a mais segura das duas para deixar ativada. Opcional: a gravação funciona de qualquer forma.\n\nTambém corrigido: desativar a Depuração USB podia deixar o Callrex sem conseguir gravar, sem avisar.</string>
+    <string name="whatsnew_150_title">Desative a Depuração sem fio</string>
+    <string name="whatsnew_150_where">Configurações ▸ Experimental ▸ Depuração USB</string>
+    <string name="whatsnew_153_body">O cartão de status agora informa se a gravação realmente funcionou, com base nas suas chamadas reais e não em um sinal verde que só indica que o app iniciou. Se uma chamada não foi gravada, ele diz isso e o motivo — uma pasta que nunca foi definida, as Opções do desenvolvedor desativadas, uma permissão perdida em uma atualização.\n\nAlém disso: o Callrex agora fala português do Brasil, e todos os outros idiomas foram atualizados.</string>
+    <string name="whatsnew_153_title">Sua configuração, verificada pelas suas próprias chamadas</string>
+    <string name="whatsnew_154_body">Uma falha rara na conexão com o gravador podia deixar a gravação desligada em silêncio até o app ser reiniciado — sem nada na tela avisando. Agora ela expira e se recupera sozinha.\n\nVocê também pode escolher quando as gravações são enviadas ao Drive: na hora, diariamente ou semanalmente. Fica em Configurações ▸ Armazenamento, junto com a Retenção, que passou para a mesma seção.</string>
+    <string name="whatsnew_154_title">Gravação que se recupera sozinha</string>
+    <string name="whatsnew_155_body">As configurações agora deslizam sobre o app em vez de substituí-lo, agrupadas para que cada tela seja uma lista curta. As gravações mostram quando a chamada aconteceu e quanto tempo durou.\n\nPor baixo: várias formas de perder ou estragar uma gravação foram corrigidas, incluindo o áudio estalado com a gravação resiliente e um lado sumindo nas chamadas VoIP em aparelhos Samsung.</string>
+    <string name="whatsnew_155_title">Configurações em painel e gravações mais confiáveis</string>
+    <string name="whatsnew_156_body">Chamadas telefônicas e de apps podem gravar automaticamente, perguntar antes ou ser ignoradas por completo — então «somente chamadas de apps» agora é uma configuração de verdade, e não uma combinação a deduzir.\n\nAs gravações podem ser compartilhadas e, mantendo uma pressionada, dá para selecionar várias para compartilhar ou excluir. Excluir uma gravação salva no aparelho e no Drive agora pergunta quais cópias remover.</string>
+    <string name="whatsnew_156_title">Escolha o que é gravado e organize as gravações</string>
+    <string name="whatsnew_156_where">Configurações ▸ Gravação ▸ Chamadas telefônicas</string>
+    <string name="whatsnew_157_body">Se você configurou a exclusão automática, algumas gravações eram mantidas para sempre sem aviso: a verificação só enxergava as gravações das quais o Callrex ainda tinha registro, e as demais nunca eram removidas, por mais antigas que fossem. Em um celular configurado para guardar uma semana, 131 arquivos haviam ultrapassado esse prazo.\n\nA verificação diária agora também lê suas pastas de gravação, então só a idade decide. Apenas arquivos nomeados pelo Callrex são tocados, e os que não podem ser datados ficam intactos.\n\nMudar o horário da verificação também passa a valer na hora, em vez de esperar um dia.</string>
+    <string name="whatsnew_157_title">A exclusão automática agora remove tudo o que deveria</string>
+    <string name="whatsnew_157_where">Configurações ▸ Armazenamento ▸ Retenção</string>
+    <string name="whatsnew_200_body">Duas grandes novidades, ambas rodando inteiramente no seu telefone. Nada é enviado e as duas funcionam sem rede alguma.\n\nA transcrição transforma uma gravação em texto que você pode ler e pesquisar, em catorze idiomas. Toque em uma linha para pular para aquele momento da chamada.\n\nOs resumos vão além: do que a chamada tratou, o que foi decidido e o que cada um disse que faria — com o horário ao lado dos pontos que têm um, então tocar leva você direto para lá.\n\nCada um precisa baixar um modelo por Wi-Fi antes; o app diz quanto cada um custa antes de começar.</string>
+    <string name="whatsnew_200_title">Suas chamadas, transcritas — e resumidas</string>
+    <string name="whatsnew_200_where">Configurações ▸ Transcrição e Configurações ▸ Resumos de chamadas</string>
+    <string name="whatsnew_210_body">As chamadas gravadas de agora em diante são transcritas com o interlocutor ao lado de cada linha.\n\nIsso é lido da própria chamada enquanto ela é gravada — seu telefone mantém os dois lados separados antes de misturá-los — então não custa tempo extra, nenhum download e nenhum palpite. Não dá para fazer isso com chamadas que já estão no telefone, porque essa informação só existe durante a gravação.\n\nOs dois lados começam como Interlocutor A e Interlocutor B. Quando duas chamadas efetuadas concordarem sobre qual lado é qual, eles viram você e a pessoa com quem você falava — na transcrição, no que você copia ou compartilha e no resumo.</string>
+    <string name="whatsnew_210_title">As transcrições mostram quem estava falando</string>
+    <string name="whatsnew_210_where">Qualquer chamada gravada de agora em diante, na sua transcrição</string>
+    <string name="whatsnew_211_body">A transcrição agora pula o silêncio antes de o modelo ler a chamada e pesa várias transcrições possíveis em vez de ficar com a primeira palavra que lhe vem à cabeça. Mesmo fazendo mais, ficou um pouco mais rápida do que antes, e em uma chamada de teste recuperou uma frase inteira que a versão anterior tinha deixado passar.\n\nOs resumos não se repetem mais — isso acontecia porque a lista de pontos não tinha um limite de verdade. Eles também podem dizer mais: os pontos eram no máximo cinco e cada um devia caber em uma única linha curta, e o modelo obedecia às duas coisas à custa do conteúdo. Um resumo longo em um idioma que precisa de mais palavras — e o português é um deles — não é mais descartado por falta de espaço.\n\nAs gravações também vinham sendo degradadas em silêncio no caminho: reduzi-las à taxa de amostragem que o modelo espera acrescentava ruído à fala em vez de filtrá-lo. As chamadas efetuadas eram as mais afetadas, porque são as que mais carregam a sua própria voz.</string>
+    <string name="whatsnew_211_title">Transcrições melhores, resumos melhores</string>
+    <plurals name="merge_row_badge">
+        <item quantity="one">%1$d chamada</item>
+        <item quantity="other">%1$d chamadas</item>
+    </plurals>
+    <plurals name="merge_summary">
+        <item quantity="one">%1$d chamada · %2$s</item>
+        <item quantity="other">%1$d chamadas · %2$s</item>
+    </plurals>
+    <string name="merge_confirm">Mesclar</string>
+    <string name="merge_menu_action">Mesclar com outra chamada</string>
+    <string name="merge_menu_take_apart">Separar</string>
+    <string name="merge_no_candidates">Não há outras chamadas com este número no telefone.</string>
+    <string name="merge_only_in_drive">Somente no Drive</string>
+    <string name="merge_pick_hint">Marque o que a continua. Os números seguem a ordem em que você marca.</string>
+    <string name="merge_primary_hint">Começa a chamada mesclada</string>
+    <string name="merge_title">Mesclar chamadas com %1$s</string>
+    <string name="settings_merge_keep_originals_description">Depois de mesclar, deixar também no telefone as chamadas que a formaram. Desativado por padrão, para que uma mesclagem deixe uma única gravação. Separar uma chamada mesclada funciona nos dois casos.</string>
+    <string name="settings_merge_keep_originals_title">Manter as chamadas originais</string>
+    <string name="unmerge_confirm">Separar</string>
+    <string name="unmerge_message">Ela volta a ser estas chamadas, cada uma com a transcrição e as marcações que tinha:</string>
+    <string name="unmerge_title">Separar esta chamada?</string>
+    <string name="merge_note_will_delete">As outras chamadas são removidas. Separá-la depois as traz de volta.</string>
+    <string name="merge_note_will_keep">As outras chamadas também são mantidas no telefone.</string>
+    <string name="home_scroll_to_top">Topo</string>
+    <string name="home_whatsnew_full_notes">Notas de versão completas</string>
+    <string name="whatsnew_245_title">Novos idiomas, backups e mais</string>
+    <string-array name="whatsnew_245_items">
+        <item>Persa e árabe — dois novos idiomas do app, da direita para a esquerda</item>
+        <item>Chamadas por app no vivo — para gravar a outra pessoa, ative o Gravador do vivo → Gravação de chamadas em apps</item>
+        <item>Backups de transcrição — salve transcrições e notas como texto ao lado de cada gravação</item>
+        <item>Modelos de nome de arquivo — novas ordens começando por contato ou número</item>
+        <item>Exportar e importar — faça backup das suas configurações em um arquivo</item>
+        <item>Corrigido — sem mais falso «Uma chamada foi interrompida»</item>
+    </string-array>
+    <string name="whatsnew_244_title">Gravação mais confiável, reemparelhamento fácil e avisos de atualização</string>
+    <string name="whatsnew_244_where">Configurações ▸ Confiabilidade ▸ Emparelhar de novo</string>
+    <string-array name="whatsnew_244_items">
+        <item>Novo — Se o telefone fechar o Callrex durante uma chamada, a parte gravada até ali é salva e você é avisado</item>
+        <item>Novo — Emparelhe de novo nas Configurações se a conexão com o gravador cair, sem reinstalar</item>
+        <item>Novo — Um pop-up e verificações mais frequentes avisam assim que há uma nova versão</item>
+        <item>Alterado — Configurações que a versão do Android não suporta ficam esmaecidas, com o motivo</item>
+    </string-array>
+    <string name="whatsnew_243_title">Chamadas por app sincronizadas, notas salvas enquanto você digita e grave só quem você escolher</string>
+    <string name="whatsnew_243_where">Configurações ▸ Gravação ▸ Chamadas recebidas ▸ Gravar somente os contatos selecionados</string>
+    <string-array name="whatsnew_243_items">
+        <item>Novo — Grave somente os contatos que você escolher, em chamadas recebidas ou realizadas</item>
+        <item>Corrigido — Em chamadas por app, a outra pessoa não fica mais fora de sincronia com você</item>
+        <item>Corrigido — Digitar uma nota não perde nenhuma letra, e mostra Salvo</item>
+        <item>Corrigido — Nenhuma notificação de chamada fica para trás depois da ligação</item>
+        <item>Corrigido — Se você instalou uma versão de teste, a atualização final é oferecida</item>
+        <item>Corrigido — Um download de modelo que deu errado é limpo e baixado de novo, em vez de falhar como danificado</item>
+        <item>Corrigido — Com a gravação resiliente ativada, alguns celulares perdiam uma a cada duas chamadas</item>
+        <item>Corrigido — Chamadas por app são gravadas em celulares vivo e iQOO</item>
+    </string-array>
+    <string name="whatsnew_241_title">Busca em cada página, e gravar quando atenderem</string>
+    <string-array name="whatsnew_241_items">
+        <item>Novo — Uma linha de busca em Gravações, Transcrições e Resumos: um contato ou uma palavra dita</item>
+        <item>Novo — Gravar uma chamada de saída só quando a outra pessoa atende (desligado por padrão)</item>
+        <item>Novo — Gravações com Shizuku ganham rótulos de falante</item>
+        <item>Corrigido — Chamadas de apps no Android 14 e anteriores levam o nome do contato</item>
+        <item>Corrigido — Uma atualização no modo Shizuku não custa mais a próxima chamada</item>
+        <item>Corrigido — Uma linha compartilhada pelos dois falantes é cortada onde o falante muda</item>
+        <item>Corrigido — Uma transcrição no alfabeto errado é decodificada de novo</item>
+        <item>Corrigido — Uma linha em que só uma pessoa falou não fica mais sem nome</item>
+    </string-array>
+    <string name="whatsnew_241_where">Configurações ▸ Gravação ▸ Chamadas de saída ▸ Começar quando atenderem</string>
+    <string name="whatsnew_240_title">Gravações, transcrições e resumos têm cada um o seu lugar</string>
+    <string-array name="whatsnew_240_items">
+        <item>Novo — Uma tela inicial com Gravações, Transcrições e Resumos, que abre onde você parou</item>
+        <item>Novo — Importe um arquivo de áudio, ou compartilhe um com o Callrex de outro aplicativo</item>
+        <item>Novo — Importe só pelo texto: o áudio é apagado assim que a transcrição fica pronta</item>
+        <item>Novo — Leia uma transcrição em uma página só dela e adicione uma nota</item>
+        <item>Novo — Escolha várias transcrições ou resumos de uma vez para apagar, compartilhar ou salvar</item>
+        <item>Novo — Um aviso quando uma transcrição termina</item>
+        <item>Corrigido — Reiniciar o telefone não o deixa mais sem gravar</item>
+        <item>Corrigido — O Shizuku é iniciado de novo quando o Callrex precisa pará-lo</item>
+        <item>Corrigido — A configuração funciona no Android 17</item>
+    </string-array>
+    <string name="whatsnew_240_where">Início ▸ Transcrições ▸ Importar áudio</string>
+    <string name="whatsnew_230_title">Chamadas que eram uma conversa podem ser uma gravação</string>
+    <string-array name="whatsnew_230_items">
+        <item>Novo — Junte em uma gravação as chamadas de uma mesma conversa</item>
+        <item>Novo — Salve o relatório de erros na pasta que você escolher</item>
+        <item>Corrigido — Girar o telefone mantém o seu lugar</item>
+        <item>Corrigido — Sem mais chiado nas gravações</item>
+        <item>Corrigido — Uma gravação que não começa agora avisa</item>
+        <item>Corrigido — Mudar para AAC mantém a próxima chamada</item>
+        <item>Corrigido — A caixa postal não é mais registrada como falha</item>
+        <item>Corrigido — Horários corretos na transcrição após pausa longa</item>
+        <item>Corrigido — Atualizar mantém a gravação da próxima chamada</item>
+        <item>Corrigido — Suporte ao modo oculto do Shizuku</item>
+        <item>Corrigido — A depuração sem fio que você liga continua ligada</item>
+        <item>Corrigido — A gravação sem Wi-Fi diz o que realmente falhou</item>
+        <item>Corrigido — O ponto do microfone não fica aceso depois da chamada</item>
+        <item>Corrigido — O progresso da transcrição não recomeça ao girar</item>
+        <item>Corrigido — Excluir uma chamada interrompe sua transcrição</item>
+        <item>Corrigido — Sem aviso de aquecimento em uma transcrição que você iniciou</item>
+        <item>Corrigido — Chamadas gravadas automaticamente não mostram mais o botão Gravar</item>
+        <item>Corrigido — O progresso da transcrição não para mais em três quartos</item>
+        <item>Corrigido — Uma chamada gravada mostra uma notificação, não duas</item>
+        <item>Corrigido — O visualizador de registros ocupa a tela e quebra as linhas longas</item>
+    </string-array>
+    <string name="whatsnew_230_where">O menu ⋮ de qualquer gravação ▸ Mesclar com outra chamada</string>
+    <string name="merge_progress_title">Mesclando</string>
+    <string name="unmerge_progress_title">Separando</string>
+    <string name="merge_progress_step">Chamada %1$d de %2$d</string>
+    <string name="merge_progress_done">Mescladas com sucesso</string>
+    <string name="unmerge_progress_done">Separadas com sucesso</string>
+    <string name="progress_closing_in">Fecha em %1$d s</string>
+    <string name="merge_progress_working">Juntando as chamadas</string>
+    <string name="unmerge_progress_working">Separando as chamadas</string>
+    <string name="whatsnew_220_body">Marque um momento enquanto ainda está falando. Um botão na notificação da chamada deixa um marcador exatamente onde você toca, e a gravação os mostra como fichas que tocam a partir dali — tanto em ligações telefônicas quanto de aplicativos. Chamadas de aplicativos agora têm controles: pausar, retomar, parar e marcar, quando antes só era possível começar e terminar.\n\nEncontrar uma ligação ficou mais fácil: marque com estrela as que valem a pena, rotule com suas próprias palavras e pesquise também nos resumos e nas suas notas, não apenas no que foi dito. As transcrições são exportadas como texto, Markdown, SRT, VTT ou JSON.\n\nO Callrex também avisa quando parou de funcionar em silêncio — se a gravação não iniciar após reiniciar, ou se as gravações deixarem de chegar ao Drive. Antes, os dois casos eram silenciosos. A nova limpeza pode limitar o espaço ocupado pelas gravações ou descartar as muito curtas. Tudo vem desativado, e uma gravação com estrela nunca é excluída automaticamente.</string>
+    <string name="whatsnew_220_title">Encontre uma ligação de novo e conduza uma enquanto acontece</string>
+    <string name="whatsnew_220_where">Configurações ▸ Armazenamento ▸ Retenção para as opções de limpeza</string>
+    <string name="whatsnew_221_body">O Callrex volta a abrir rápido, e continua rápido por mais chamadas que você guarde. A versão 2.2.0 relia a duração de cada gravação toda vez que a lista era desenhada, de modo que com algumas dezenas de chamadas a lista ficava lenta o bastante para uma chamada gravada minutos antes parecer que nunca havia sido gravada.\n\nO aviso de que as gravações haviam parado de chegar ao Google Drive não aparece mais quando isso não é verdade. Duas pessoas foram avisadas de que o backup havia falhado enquanto todas as gravações chegavam perfeitamente.\n\nOs títulos dentro de uma transcrição exportada, o número de aplicativos selecionados e o botão voltar agora seguem o idioma que você escolheu, em vez de permanecerem em inglês. O relatório de depuração também pode dizer qual aplicativo está segurando o microfone, para um problema que está se mostrando difícil de flagrar.</string>
+    <string name="whatsnew_221_title">Mais rápido para abrir, e mais quieto sobre problemas que não existem</string>
+    <string name="offline_failed_no_wifi">Não foi possível ativar — você não está conectado ao Wi-Fi. Conecte-se uma vez a qualquer rede Wi-Fi e tente de novo.</string>
+    <string name="offline_failed_wd_refused">Não foi possível ativar — o Android não permitiu a depuração por Wi-Fi nesta rede. Ative-a uma vez nas Opções do desenvolvedor, aceite o aviso e tente de novo.</string>
+    <string name="offline_failed_needs_usb">Ative primeiro a depuração USB — a gravação sem Wi-Fi não funciona sem ela. Configurações ▸ Experimental ▸ Depuração USB.</string>
+
+    <!-- Home: the hub of cards, and the two sections its cards open -->
+    <string name="home_hub_library_title">Biblioteca</string>
+    <string name="home_hub_recordings_body">Todas as chamadas que o Callrex gravou.</string>
+    <string name="home_hub_transcripts_body">Suas chamadas em palavras — e qualquer áudio que você trouxer.</string>
+    <string name="home_hub_summaries_body">Resumos com IA, feitos no seu telefone.</string>
+    <string name="home_transcripts_title">Transcrições</string>
+    <string name="home_summaries_title">Resumos</string>
+    <string name="home_transcripts_count">%1$d transcritas</string>
+    <string name="home_summaries_count">%1$d resumidas</string>
+    <string name="home_transcripts_empty_title">Nada transcrito ainda</string>
+    <string name="home_transcripts_empty_hint">Peça uma transcrição no menu de uma gravação ou importe um arquivo de áudio acima; qualquer um dos dois aparece aqui assim que ficar pronto.</string>
+    <string name="home_summaries_empty_title">Nada resumido ainda</string>
+    <string name="home_summaries_empty_hint">Abra uma chamada que tenha transcrição e peça um resumo; ele aparece aqui assim que ficar pronto.</string>
+
+    <!-- Transcripts: the two headings above the finished transcripts -->
+    <string name="transcripts_working_header">Sendo transcrito</string>
+    <string name="transcripts_failed_header">Não foi concluída</string>
+    <string name="transcripts_failed_hint">Toque em uma para tentar de novo.</string>
+    <string name="transcripts_waiting_header">Aguardando transcrição</string>
+    <string name="transcripts_waiting_hint">Você compartilhou estes arquivos para lê-los, não para guardá-los. Toque em um para começar, ou abra para ouvir ou excluir.</string>
+    <string name="summaries_working_header">Sendo resumido</string>
+    <string name="summaries_failed_header">Não foi concluída</string>
+    <string name="summaries_failed_hint">Abra um para pedir de novo.</string>
+    <!-- Transcripts: bringing in audio Callrex did not record -->
+    <string name="transcripts_import_title">Importar áudio</string>
+    <string name="transcripts_import_working">Importando…</string>
+    <string name="transcripts_import_body">Transcreva um áudio de voz ou qualquer outro arquivo de som que já esteja no celular.</string>
+    <string name="import_failed_title">Não foi possível importar o arquivo</string>
+    <string name="import_failed_not_audio">O Callrex não consegue ler esse tipo de arquivo. Tente uma gravação .opus, .ogg, .m4a, .mp3 ou .wav.</string>
+    <string name="import_failed_empty">Esse arquivo está vazio, então não haveria nada para transcrever.</string>
+    <string name="import_failed_no_folder">Não há uma pasta de gravações para guardá-lo. Escolha uma nas configurações e tente de novo.</string>
+    <string name="import_failed_copy">Não foi possível gravar o arquivo na sua pasta de gravações. Verifique se há espaço no celular e se a pasta continua disponível.</string>
+    <string name="import_failed_undecodable">Este celular não consegue ler o áudio desse arquivo, então ele nunca poderia ser transcrito. Pode estar danificado ou em um formato que o Android não decodifica.</string>
+    <string name="home_row_imported">Importado</string>
+    <string name="home_row_text_only">Só texto</string>
+    <!-- Menu de compartilhamento: áudio enviado ao Callrex por outro app -->
+    <string name="share_import_label">Importar áudio</string>
+    <string name="share_import_working_body">Copiando o arquivo e conferindo se este telefone consegue lê-lo.</string>
+    <string name="share_import_done_title">Adicionado às suas gravações</string>
+    <string name="share_import_done_body">Já está no Callrex. Abra para ouvir ou para pedir uma transcrição.</string>
+    <string name="share_import_open">Abrir</string>
+    <string name="share_import_open_app">Abrir o Callrex</string>
+    <string name="share_import_close">Fechar</string>
+    <string name="share_import_nothing">Nada chegou junto com esse compartilhamento. Tente compartilhar o próprio arquivo de áudio, e não a mensagem em que ele está.</string>
+    <string name="share_import_not_set_up_title">Termine a configuração do Callrex primeiro</string>
+    <string name="share_import_not_set_up_body">O Callrex ainda não concluiu a configuração inicial, então ainda não há onde guardar este arquivo. Abra o app, termine a configuração e compartilhe de novo.</string>
+    <string name="share_import_choice_title">O que o Callrex deve fazer com isto?</string>
+    <string name="share_import_choice_unnamed">O áudio compartilhado</string>
+    <string name="import_choice_keep">Importar e transcrever</string>
+    <string name="import_choice_keep_hint">Mantém o áudio nas suas gravações e o transcreve.</string>
+    <string name="import_choice_transcribe_only">Apenas transcrever</string>
+    <string name="import_choice_transcribe_only_hint">Transcreve e depois apaga o áudio. Ele nunca aparece nas suas gravações — só o texto, em Transcrições.</string>
+    <string name="share_import_queued_keep_title">Adicionado e na fila</string>
+    <string name="share_import_queued_keep_body">Está nas suas gravações. A transcrição aparecerá em Transcrições quando ficar pronta.</string>
+    <string name="share_import_queued_only_title">Na fila para transcrição</string>
+    <string name="share_import_queued_only_body">Você encontrará o texto em Transcrições. O áudio é apagado assim que a transcrição é salva.</string>
+    <string name="share_import_kept_title">Salvo, mas não transcrito</string>
+    <string name="share_import_kept_body">Está nas suas gravações. Você pode iniciar a transcrição por lá quando quiser.</string>
+    <string name="share_import_kept_only_body">Está esperando em Transcrições. Inicie por lá quando quiser, ou apague no mesmo lugar.</string>
+    <string name="share_import_too_long">Esse áudio tem %1$d minutos, e o Callrex só transcreve até %2$d minutos de uma vez. O arquivo foi salvo, então você ainda pode ouvi-lo.</string>
+    <string name="share_import_no_model">Ainda não há nenhum modelo de transcrição instalado, então o Callrex não consegue ler isto. O áudio foi salvo — instale um modelo em Configurações e depois inicie em Transcrições.</string>
+</resources>

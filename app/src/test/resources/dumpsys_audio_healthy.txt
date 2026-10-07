@@ -1,0 +1,60 @@
+Events log: recording activity received by AudioService
+08-31 16:48:55:950 rec start riid:43383 uid:2000 session:54097 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 16:49:16:073 rec stop riid:43383 uid:2000 session:54097 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 19:11:11:566 rec start riid:43623 uid:2000 session:54553 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 19:12:53:811 rec stop riid:43623 uid:2000 session:54553 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:13:49:297 rec start riid:43847 uid:10394 session:54905 src:MIC not silenced pack:com.whatsapp
+08-31 20:13:55:296 rec stop riid:43847 uid:10394 session:54905 src:MIC not silenced pack:com.whatsapp
+08-31 20:16:16:425 rec start riid:43895 uid:2000 session:54993 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:16:39:790 rec stop riid:43895 uid:2000 session:54993 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:16:56:664 rec start riid:43911 uid:2000 session:55017 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:16:59:104 rec stop riid:43911 uid:2000 session:55017 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:18:49:449 rec start riid:43935 uid:2000 session:55049 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:21:20:563 rec stop riid:43935 uid:2000 session:55049 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:28:06:375 rec update riid:44087 uid:2000 session:55185 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:28:13:442 rec stop riid:44087 uid:2000 session:55185 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:32:31:275 rec update riid:44159 uid:2000 session:55265 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:32:40:473 rec stop riid:44159 uid:2000 session:55265 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:33:06:536 rec update riid:44183 uid:2000 session:55297 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:33:19:138 rec stop riid:44183 uid:2000 session:55297 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 20:33:23:403 rec update riid:44215 uid:2000 session:55337 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 21:19:32:720 rec stop riid:44215 uid:2000 session:55337 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 21:20:48:999 rec update riid:44247 uid:2000 session:55393 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 21:21:08:272 rec stop riid:44247 uid:2000 session:55393 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 21:21:13:041 rec update riid:44255 uid:2000 session:55409 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 21:49:44:162 rec stop riid:44255 uid:2000 session:55409 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 21:52:58:782 rec start riid:44279 uid:2000 session:55489 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 21:53:25:100 rec stop riid:44279 uid:2000 session:55489 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 22:19:07:039 rec start riid:44423 uid:2000 session:55673 src:VOICE_CALL not silenced pack:com.android.shell
+08-31 22:37:12:202 rec stop riid:44423 uid:2000 session:55673 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 08:26:01:997 rec start riid:45015 uid:10394 session:56329 src:MIC not silenced pack:com.whatsapp
+09-01 08:26:14:589 rec stop riid:45015 uid:10394 session:56329 src:MIC not silenced pack:com.whatsapp
+09-01 08:42:54:318 rec start riid:45071 uid:2000 session:56441 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 08:43:04:102 rec stop riid:45071 uid:2000 session:56441 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 08:43:25:674 rec start riid:45087 uid:2000 session:56465 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 08:51:21:991 rec stop riid:45087 uid:2000 session:56465 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 08:51:57:066 rec update riid:45095 uid:2000 session:56489 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 08:52:19:298 rec stop riid:45095 uid:2000 session:56489 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 08:56:30:875 rec start riid:45183 uid:2000 session:56609 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 09:40:09:341 rec stop riid:45183 uid:2000 session:56609 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 09:42:17:035 rec update riid:45455 uid:2000 session:56889 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 09:47:23:893 rec stop riid:45455 uid:2000 session:56889 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 09:52:26:237 rec update riid:45575 uid:2000 session:57017 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 09:52:33:935 rec stop riid:45575 uid:2000 session:57017 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 09:58:11:332 rec update riid:45639 uid:2000 session:57089 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 10:17:12:217 rec stop riid:45639 uid:2000 session:57089 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 10:18:56:322 rec start riid:45719 uid:2000 session:57169 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 10:37:23:730 rec stop riid:45719 uid:2000 session:57169 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 11:04:26:168 rec update riid:45855 uid:2000 session:57337 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 11:19:23:714 rec stop riid:45855 uid:2000 session:57337 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 11:34:29:104 rec update riid:46047 uid:2000 session:57513 src:VOICE_CALL not silenced pack:com.android.shell
+09-01 11:40:09:798 rec stop riid:46047 uid:2000 session:57513 src:VOICE_CALL not silenced pack:com.android.shell
+
+AudioDeviceBroker:
+  Message handler (watch for unhandled messages):
+    Handler (com.android.server.audio.AudioDeviceBroker$BrokerHandler) {c2129c} @ 655024033
+      Looper (AudioDeviceBroker, tid 175) {b62aaa1}
+        (MessageQueue is using Legacy implementation)
+        (Total messages: 0, polling=true, quitting=false)
+
+  BECOMING_NOISY_INTENT_DEVICES_SET=

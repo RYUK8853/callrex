@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brazilian Portuguese. Do not hand-edit placeholders (%1$s etc.). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="home_copy_device">Dispositivo</string>
+    <string name="home_copy_drive">Drive</string>
+    <string name="home_delete_confirm_device_message">Excluir a cópia de %1$s no dispositivo? A cópia no Drive será mantida.</string>
+    <string name="home_delete_confirm_drive_message">Excluir a cópia de %1$s no Drive? A cópia no dispositivo será mantida.</string>
+    <string name="home_delete_copy_device_content_desc">Excluir a cópia no dispositivo</string>
+    <string name="home_delete_copy_drive_content_desc">Excluir a cópia no Drive</string>
+    <string name="home_filter_date_all">Todas as datas</string>
+    <string name="home_filter_date_all_short">Todas</string>
+    <string name="home_filter_date_chip">Data: %1$s</string>
+    <string name="home_filter_date_label">Data</string>
+    <string name="home_filter_direction_all">Todas</string>
+    <string name="home_filter_direction_chip">Sentido: %1$s</string>
+    <string name="home_filter_direction_incoming">Recebidas</string>
+    <string name="home_filter_direction_label">Sentido</string>
+    <string name="home_filter_direction_outgoing">Efetuadas</string>
+    <string name="home_filter_source_all">Todas</string>
+    <string name="home_filter_source_chip">Origem: %1$s</string>
+    <string name="home_filter_source_drive">Somente no Drive</string>
+    <string name="home_filter_source_label">Origem</string>
+    <string name="home_filter_source_local">Somente no dispositivo</string>
+    <string name="home_source_badge_both">Dispositivo + Drive</string>
+    <string name="home_source_badge_drive">Drive</string>
+    <string name="home_source_badge_local">Dispositivo</string>
+
+    <!-- Tag facet (chip label + "all" option). %1$s = current value shown on the chip. -->
+    <string name="home_filter_tag_label">Etiqueta</string>
+    <string name="home_filter_tag_chip">Etiqueta: %1$s</string>
+    <string name="home_filter_tag_all">Todas as etiquetas</string>
+    <string name="home_filter_tag_all_short">Todas</string>
+
+</resources>

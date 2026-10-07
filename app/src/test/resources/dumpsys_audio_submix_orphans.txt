@@ -1,0 +1,53 @@
+RecordActivityMonitor dump (real capture, OnePlus 12 / OxygenOS 16.0.9.400, 2026-09-03)
+This device shows NO stuck-microphone symptom. Every REMOTE_SUBMIX entry here is an
+orphaned 'rec update' that Android can never pair with a 'rec stop'.
+09-02 18:35:01:090 rec update riid:3039 uid:2000 session:3617 src:VOICE_CALL not silenced pack:com.android.shell
+09-02 18:35:28:215 rec stop riid:3039 uid:2000 session:3617 src:VOICE_CALL not silenced pack:com.android.shell
+09-02 18:44:30:696 rec start riid:3143 uid:10394 session:3713 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-02 18:44:31:270 rec update riid:3151 uid:2000 session:3721 src:REMOTE_SUBMIX not silenced pack:com.android.shell
+09-02 18:44:31:300 rec start riid:3159 uid:2000 session:3729 src:MIC not silenced pack:com.android.shell
+09-02 18:45:30:162 rec stop riid:3143 uid:10394 session:3713 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-02 18:45:34:511 rec stop riid:3159 uid:2000 session:3729 src:MIC not silenced pack:com.android.shell
+09-02 19:21:27:369 rec start riid:3279 uid:2000 session:3921 src:VOICE_CALL not silenced pack:com.android.shell
+09-02 19:21:47:889 rec stop riid:3279 uid:2000 session:3921 src:VOICE_CALL not silenced pack:com.android.shell
+09-02 20:23:12:867 rec start riid:3519 uid:2000 session:4257 src:VOICE_CALL not silenced pack:com.android.shell
+09-02 20:23:34:248 rec stop riid:3519 uid:2000 session:4257 src:VOICE_CALL not silenced pack:com.android.shell
+09-02 22:29:50:477 rec start riid:3767 uid:2000 session:4625 src:VOICE_CALL not silenced pack:com.android.shell
+09-02 22:30:04:285 rec stop riid:3767 uid:2000 session:4625 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 08:29:53:570 rec update riid:4319 uid:2000 session:5361 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 08:33:28:243 rec stop riid:4319 uid:2000 session:5361 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 08:34:19:977 rec update riid:4335 uid:2000 session:5385 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 08:34:36:888 rec stop riid:4335 uid:2000 session:5385 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 08:54:14:833 rec update riid:4535 uid:2000 session:5657 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 09:52:47:275 rec stop riid:4535 uid:2000 session:5657 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 10:02:33:283 rec update riid:4671 uid:10394 session:5785 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-03 10:02:33:652 rec update riid:4679 uid:2000 session:5793 src:REMOTE_SUBMIX not silenced pack:com.android.shell
+09-03 10:02:33:694 rec update riid:4687 uid:2000 session:5801 src:MIC not silenced pack:com.android.shell
+09-03 10:38:58:024 rec stop riid:4671 uid:10394 session:5785 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-03 10:39:00:667 rec stop riid:4687 uid:2000 session:5801 src:MIC not silenced pack:com.android.shell
+09-03 10:39:06:876 rec update riid:4735 uid:10394 session:5881 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-03 10:39:07:233 rec update riid:4743 uid:2000 session:5889 src:REMOTE_SUBMIX not silenced pack:com.android.shell
+09-03 10:39:07:262 rec start riid:4751 uid:2000 session:5897 src:MIC not silenced pack:com.android.shell
+09-03 11:33:29:229 rec stop riid:4735 uid:10394 session:5881 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-03 11:33:31:887 rec stop riid:4751 uid:2000 session:5897 src:MIC not silenced pack:com.android.shell
+09-03 11:38:25:084 rec update riid:4799 uid:2000 session:6025 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 11:39:49:758 rec stop riid:4799 uid:2000 session:6025 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 11:57:36:693 rec update riid:4911 uid:2000 session:6137 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 12:24:14:749 rec stop riid:4911 uid:2000 session:6137 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 12:33:43:602 rec update riid:4951 uid:2000 session:6185 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 12:47:49:418 rec stop riid:4951 uid:2000 session:6185 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 13:31:36:715 rec update riid:6343 uid:10394 session:7577 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-03 13:31:37:145 rec update riid:6351 uid:2000 session:7585 src:REMOTE_SUBMIX not silenced pack:com.android.shell
+09-03 13:31:37:170 rec update riid:6359 uid:2000 session:7593 src:MIC not silenced pack:com.android.shell
+09-03 13:51:38:620 rec update riid:6375 uid:2000 session:7657 src:MIC not silenced pack:com.android.shell
+09-03 13:51:38:632 rec stop riid:6359 uid:2000 session:7593 src:MIC not silenced pack:com.android.shell
+09-03 13:51:41:637 rec stop riid:6375 uid:2000 session:7657 src:MIC not silenced pack:com.android.shell
+09-03 13:51:43:156 rec stop riid:6343 uid:10394 session:7577 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-03 13:51:43:662 rec start riid:6383 uid:2000 session:7665 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 13:55:48:684 rec stop riid:6383 uid:2000 session:7665 src:VOICE_CALL not silenced pack:com.android.shell
+09-03 13:55:49:800 rec start riid:6407 uid:10394 session:7705 src:VOICE_COMMUNICATION silenced pack:com.whatsapp
+09-03 13:55:50:022 rec update riid:6407 uid:10394 session:7705 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-03 13:55:50:686 rec update riid:6415 uid:2000 session:7713 src:REMOTE_SUBMIX not silenced pack:com.android.shell
+09-03 13:55:50:721 rec update riid:6423 uid:2000 session:7721 src:MIC not silenced pack:com.android.shell
+09-03 13:56:07:308 rec stop riid:6407 uid:10394 session:7705 src:VOICE_COMMUNICATION not silenced pack:com.whatsapp
+09-03 13:56:09:960 rec stop riid:6423 uid:2000 session:7721 src:MIC not silenced pack:com.android.shell

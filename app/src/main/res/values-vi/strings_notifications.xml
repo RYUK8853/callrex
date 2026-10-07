@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto-completed notification translations. -->
+<resources>
+    <string name="notif_call_monitor_channel">Theo dõi cuộc gọi</string>
+    <string name="notif_pairing_action_enter_code">Nhập mã ghép nối</string>
+    <string name="notif_pairing_action_stop">Dừng</string>
+    <string name="notif_pairing_channel">Ghép nối ADB</string>
+    <string name="notif_pairing_failed_title">Ghép nối thất bại</string>
+    <string name="notif_pairing_found_text">Nhập mã ghép nối gồm 6 chữ số.</string>
+    <string name="notif_pairing_found_title">Đã tìm thấy dịch vụ ghép nối</string>
+    <string name="notif_pairing_remote_input_label">Mã ghép nối</string>
+    <string name="notif_pairing_searching_text">Mở hộp thoại \'Ghép nối thiết bị bằng mã ghép nối\' trên điện thoại.</string>
+    <string name="notif_pairing_searching_title">Đang tìm dịch vụ ghép nối…</string>
+    <string name="notif_pairing_success_text">Đã ghép nối Gỡ lỗi không dây. Nhấn để hoàn tất thiết lập Callrex.</string>
+    <string name="notif_pairing_success_title">Đã ghép nối ✓</string>
+    <string name="notif_pairing_waiting_wd_text">Bật Gỡ lỗi không dây để bắt đầu ghép nối.</string>
+    <string name="notif_pairing_waiting_wd_title">Đang chờ Gỡ lỗi không dây…</string>
+    <string name="notif_pairing_working_text">Đang thiết lập Callrex. Quá trình này mất vài giây.</string>
+    <string name="notif_pairing_working_title">Đang ghép nối…</string>
+    <string name="notif_readiness_channel">Trạng thái sẵn sàng ghi âm cuộc gọi</string>
+    <string name="notif_readiness_ready_text">Trình ghi âm đã được kết nối.</string>
+    <string name="notif_readiness_ready_title">Sẵn sàng ghi âm cuộc gọi</string>
+    <string name="notif_readiness_reboot_ready_text">Đang chờ cuộc gọi sau khi khởi động lại.</string>
+    <string name="notif_readiness_starting_text">Đang kết nối trình ghi âm — cuộc gọi sẽ không được ghi cho đến khi hoàn tất.</string>
+    <string name="notif_readiness_starting_title">Trình ghi âm cuộc gọi đang khởi động…</string>
+    <string name="notif_startup_channel">Khởi động</string>
+    <string name="notif_startup_preparing">Đang chuẩn bị trình ghi âm cuộc gọi…</string>
+    <string name="notif_usb_check_unavailable">Nếu việc này không hoàn tất, hãy đặt “USB khi mở khóa màn hình” thành Chỉ sạc trong Cài đặt ▸ Thử nghiệm — trên một số điện thoại, chế độ USB truyền dữ liệu khiến trình ghi âm không kết nối được.</string>
+    <string name="notif_usb_lock_warning">Khóa màn hình trong cuộc gọi có thể làm dừng ghi âm. Trong Cài đặt ▸ Thử nghiệm, đặt “USB khi mở khóa màn hình” thành Chỉ sạc.</string>
+    <string name="update_notif_available_text">Mở ứng dụng và nhấn Cập nhật để cài đặt.</string>
+    <string name="update_notif_available_title">Đã có Callrex %1$s</string>
+    <string name="update_notif_channel">Cập nhật ứng dụng</string>
+    <string name="update_notif_downloading_title">Đang tải bản cập nhật…</string>
+    <string name="update_notif_failure_download_text">Không thể tải bản cập nhật. Nhấn để tải từ GitHub.</string>
+    <string name="update_notif_failure_install_text">Không thể cài đặt bản cập nhật. Nhấn để tải từ GitHub.</string>
+    <string name="update_notif_failure_title">Cập nhật thất bại</string>
+    <string name="update_notif_failure_verify_text">Bản cập nhật đã tải không vượt qua kiểm tra bảo mật và đã bị loại bỏ. Nhấn để tải từ GitHub.</string>
+    <string name="update_notif_installing_title">Đang cài đặt bản cập nhật…</string>
+    <string name="update_notif_success_text">Callrex hiện là phiên bản %1$s.</string>
+    <string name="update_notif_success_title">Đã cài đặt bản cập nhật</string>
+    <string name="notif_readiness_down_title">Cuộc gọi không được ghi âm</string>
+    <string name="notif_readiness_no_debugging_text">Cả gỡ lỗi USB và gỡ lỗi không dây đều đang tắt. Hãy bật lại một trong hai trong Tùy chọn cho nhà phát triển.</string>
+    <string name="notif_readiness_needs_wifi_text">Gỡ lỗi USB đang tắt và không có Wi-Fi. Hãy kết nối Wi-Fi hoặc bật gỡ lỗi USB.</string>
+    <string name="notif_readiness_stuck_text">Trình ghi âm liên tục không khởi động được. Mở Callrex để xem lý do.</string>
+    <string name="notif_readiness_needs_wifi_restart_text">Trình ghi âm đã dừng và cần Wi-Fi để khởi động lại. Hãy bật ghi âm ngoại tuyến khi đang dùng Wi-Fi để tránh tình trạng này.</string>
+    <string name="notif_readiness_wd_off_by_user_text">Bạn đã tắt gỡ lỗi không dây và Callrex không còn cách nào khác để khởi động lại trình ghi âm. Hãy bật lại hoặc bật gỡ lỗi USB.</string>
+    <string name="notif_readiness_offline_paused_text">Ghi âm không cần Wi-Fi đang tạm dừng: cần bật gỡ lỗi USB. Cuộc gọi khi có Wi-Fi vẫn được ghi.</string>
+    <string name="notif_action_turn_wd_on">Bật gỡ lỗi không dây</string>
+
+    <!-- Transcription finished / didn't finish -->
+    <string name="transcript_notice_channel">Bản chép lời</string>
+    <string name="transcript_notice_ready_title">Đã chép lời xong</string>
+    <string name="transcript_notice_ready_deleted_text">%1$s — tệp âm thanh đã bị xoá, đúng như bạn chọn.</string>
+    <string name="transcript_notice_ready_many_title">Bản chép lời đã xong: %1$d</string>
+    <string name="transcript_notice_ready_many_text">Chạm để đọc.</string>
+    <string name="transcript_notice_failed_title">Việc chép lời chưa hoàn tất</string>
+    <string name="transcript_notice_failed_text">%1$s. Chạm để thử lại.</string>
+    <string name="transcript_notice_failed_many_title">Lượt chép lời chưa hoàn tất: %1$d</string>
+    <string name="transcript_notice_failed_many_text">Chạm để xem.</string>
+</resources>

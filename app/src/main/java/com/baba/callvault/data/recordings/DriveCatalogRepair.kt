@@ -1,0 +1,118 @@
+/*
+ * CallVault: FOSS call recording, self-contained over embedded ADB
+ *  Copyright (C) 2026-present The CallVault Authors
+ *  This software is licensed under the GNU General Public License v3 or later, with additional terms as permitted under Section 7.
+ *  The full license text is available in the LICENSE file at the root of this project.
+ *  This software is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+package com.baba.callvault.data.recordings
+
+import android.content.Context
+import androidx.core.net.toUri
+import com.baba.callvault.data.AppPreferences
+import com.baba.callvault.utils.AppLogger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+/**
+ * Re-points catalog rows whose Drive URI was issued under a folder grant we no longer hold.
+ *
+ * **Why a stored Drive URI stops working.** Google Drive's SAF document URIs carry the account slot they
+ * were issued for — `…/tree/acc=1;doc=encoded=…`. That slot is an index, not an identity, and Drive
+ * renumbers it when accounts are added, removed or re-ordered. Measured on 2026-08-04: every stored URI
+ * pointed at `acc=1`, the live grant was `acc=4`, and every Drive call threw
+ * `SecurityException: Permission Denial` — uploads, deletes and folder listings alike. Re-picking the
+ * folder in Settings restores the grant, but does nothing for the URIs already written into the catalog.
+ *
+ * **Why that would otherwise be permanent.** A row holding a dead Drive URI is stuck between the two
+ * halves of the retention sweep: the catalog pass tries the dead URI and fails for ever, while the
+ * untracked pass skips the file because the row claims a Drive copy already exists. The recording becomes
+ * undeletable — the same shape of trap that stranded 124 files, arrived at from the other direction.
+ *
+ * So each sweep re-points what it can and forgets only what is genuinely absent, and the file is then
+ * governed normally again.
+ */
+object DriveCatalogRepair {
+
+    private const val TAG = "CV:DriveRepair"
+
+    /**
+     * Matches stale rows against the live folder listing by display name, re-pointing each to its real
+     * URI and dropping the reference when the file is not there at all.
+     *
+     * Enumerates the Drive folder itself rather than sharing the sweep's later listing: this runs once a
+     * day, off the recording path, and the sweep's own scan has to see the repaired state rather than the
+     * one this started from. Never throws; returns how many rows were changed.
+     */
+    suspend fun reconcile(context: Context): Int = withContext(Dispatchers.IO) {
+        runCatching {
+            val folder = AppPreferences(context).getDriveFolderUri() ?: return@withContext 0
+            val folderUri = folder.toString()
+            val stale = RecordingCatalog.all(context)
+                .mapNotNull { row -> row.driveUri?.let { uri -> row to uri } }
+                .filter { (_, uri) -> isStaleReference(uri, folderUri) }
+            if (stale.isEmpty()) return@withContext 0
+
+            val live = RecordingsRepository.enumerateFolder(context, folder).associateBy { it.displayName }
+            var repointed = 0
+            var forgotten = 0
+            for ((row, driveUri) in stale) {
+                val match = live[row.displayName]
+                if (match != null) {
+                    RecordingCatalog.markDrive(
+                        context = context,
+                        displayName = row.displayName,
+                        driveUri = match.uri,
+                        driveSizeBytes = match.sizeBytes.takeIf { it > 0L },
+                        deleteLocalAfter = false,
+                        lastModified = row.lastModified,
+                    )
+                    repointed++
+                } else {
+                    // Not in the folder under the live grant, so the reference points at nothing we can
+                    // reach or reason about. Dropping it is safe now in a way it was not before: if the
+                    // file does turn up in a later listing, the sweep's untracked pass finds it by
+                    // enumeration rather than by a URI we remembered.
+                    RecordingCatalog.removeCopyByUri(context, driveUri.toUri())
+                    forgotten++
+                }
+            }
+            AppLogger.i(TAG, "Drive references repaired: $repointed re-pointed, $forgotten forgotten")
+            repointed + forgotten
+        }.getOrElse {
+            AppLogger.w(TAG, "Could not repair Drive references: ${it.message}")
+            0
+        }
+    }
+
+    /**
+     * Whether [documentUri] was issued under a different SAF tree than [folderUri] — i.e. a grant we no
+     * longer hold.
+     *
+     * Compared rather than probed on purpose. A failed call cannot tell "this URI is dead" from "Drive is
+     * offline", and clearing a row on a transient failure is how recordings got lost in the first place;
+     * the tree the URI was minted under is a fact we can read locally, with no network and no ambiguity.
+     * Anything without a tree segment is left alone — unjudged rather than assumed stale.
+     */
+    internal fun isStaleReference(documentUri: String, folderUri: String): Boolean {
+        val docTree = treeIdOf(documentUri) ?: return false
+        val folderTree = treeIdOf(folderUri) ?: return false
+        return authorityOf(documentUri) != authorityOf(folderUri) || docTree != folderTree
+    }
+
+    /** The `tree/<id>` segment of a SAF URI, or null when it has none (e.g. a plain document URI). */
+    private fun treeIdOf(uri: String): String? {
+        val marker = "/tree/"
+        val start = uri.indexOf(marker)
+        if (start < 0) return null
+        return uri.substring(start + marker.length).substringBefore('/').takeIf { it.isNotEmpty() }
+    }
+
+    /** The authority of a `content://authority/…` URI, or null when it does not look like one. */
+    private fun authorityOf(uri: String): String? {
+        val start = uri.indexOf("://")
+        if (start < 0) return null
+        return uri.substring(start + 3).substringBefore('/').takeIf { it.isNotEmpty() }
+    }
+}

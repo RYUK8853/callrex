@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ CallVault: FOSS call recording, self-contained over embedded ADB
+  ~  Copyright (C) 2026-present The CallVault Authors
+  ~  This software is licensed under the GNU General Public License v3 or later, with additional terms as permitted under Section 7.
+  ~  The full license text is available in the LICENSE file at the root of this project.
+  ~  This software is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Optional: only meaningful when the user has chosen Shizuku mode. Absent Shizuku, this
+         permission simply never gets granted and nothing in the app asks for it. -->
+    <uses-permission android:name="moe.shizuku.manager.permission.API_V23" />
+    <!-- Granted via our own ADB shell (pm grant). Lets the app re-enable Wireless debugging
+         (adb_wifi_enabled) on boot so recording survives reboots hands-free. -->
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- In-app updater: query GitHub Releases + download the update APK. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- In-app updater: commit a PackageInstaller session for the tap-to-update flow. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!--
+         Required to read call log history and to receive the phone number in the PHONE_STATE broadcast intent.
+
+         NOTE: During tests I discovered that we receive two PHONE_STATE broadcast when requesting this permission. Later found mention of it in the docs.
+         The first one seems to be due to permission.READ_PHONE_STATE. It gives us the broadcast data but strictly redacts the number as null.
+         The second one, only happen when permission.READ_CALL_LOG is granted, give us the same broadcast data but with the number field filled.
+         They are both sends at around the same time, with something around 100-400ms between them, and the docs claim there is no specific order between them.
+    -->
+    <uses-permission android:name="android.permission.READ_CALL_LOG" tools:ignore="SmsAndCallLogPolicy" />
+
+    <!-- Recording Foreground Job -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:ignore="ForegroundServicesPolicy" />
+    <!-- Android 14+ Onwards (API 34) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Android 11+ Onwards () -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+    <!--
+      Package visibility (Android 11+). Without this an app sees almost no other packages, so the VoIP
+      recording badge could never resolve the calling app's icon and always fell back to a generic
+      glyph.
+
+      Scoped to apps that have a launcher entry rather than requesting QUERY_ALL_PACKAGES, which is far
+      broader than needed and is exactly the kind of permission a call recorder should not be asking
+      for. This grants no ability to read anything from those apps — only to see that they exist and
+      load their public label and icon.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
+    <!-- Stock Shizuku and most forks ship this applicationId; without the entry Android 11+ filters
+         the package out and Shizuku looks uninstalled even while it is running. It is NOT how Shizuku
+         is detected, though: a fork's stealth mode reinstalls Shizuku under a random package name and
+         Sui installs no app at all, so ShizukuBackend resolves it from the permission it declares. -->
+    <queries>
+        <package android:name="moe.shizuku.privileged.api" />
+    </queries>
+
+    <application
+        android:name=".CallVaultApplication"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Callrex">
+        <!-- MainActivity must be run when Android want to show the application UI (with the app launcher) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Callrex">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" /> <!-- Show "Additional settings in the app" button in Settings App Info -->
+                <category android:name="android.intent.category.NOTIFICATION_PREFERENCES" /> <!-- Show "Additional settings in the app" button in Settings App Info -> notifications -->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            Share target: one audio file sent to CallVault from another app.
+
+            A separate Activity, not MainActivity, and the reasons are in ShareImportActivity's own
+            KDoc — the short version is that MainActivity reads no EXTRA_STREAM, routes an
+            unfinished setup into the wizard, and is launchMode="standard", so a share would be
+            discarded, buried in onboarding, or open a second copy of the whole app over the first.
+
+            ## Which types appear in the share sheet, and how the list was arrived at
+
+            There is no single answer to "what type is a voice note": the type on the Intent is
+            whatever the SENDING app decided to put there, and the framework never re-derives it.
+            What the senders do was read out of their own source where it is open:
+
+            - Telegram sets its voice recorder's document type to audio/ogg, and shares a document
+              under its own mime_type (MediaController, ChatActivity).
+            - Signal records AAC and shares audio/aac, through Intent.normalizeMimeType, so it can
+              never hand over a parameterised type (AudioRecorder, MediaOverviewContextMenu).
+            - Files, Downloads and any SAF provider use the platform map, where .opus has resolved
+              to audio/ogg since API 29 (debian.mime.types: "audio/ogg  oga ogg opus spx"). Two of
+              its answers are surprising and both still land inside audio/*: .m4a is audio/mpeg and
+              .wav is audio/x-wav.
+            - WhatsApp is closed and could not be proved. Its voice notes are Ogg/Opus and it knows
+              they are, so audio/ogg is the expectation; application/ogg is the other spelling it
+              has been reported under.
+
+            audio/* covers every one of those, and covers them even when the sender spells out its
+            codec. IntentFilter compares a wildcard filter against only the part of the type before
+            the slash (IntentFilter.findMimeType), so "audio/ogg; codecs=opus" matches audio/* —
+            where it would NOT match a concrete audio/ogg filter, which is compared with exact
+            string equality. That is the reason not to list concrete audio types here at all.
+
+            application/ogg is listed beside it because a wildcard on one top-level type never
+            reaches another: audio/* does not match application/ogg, nor would it match anything
+            else under application/. It is narrow — nothing but an Ogg container carries it.
+
+            application/octet-stream is deliberately NOT here, though a voice note is sometimes
+            labelled with it. It is the type for bytes Android could not identify, so accepting it
+            would put a call recorder in the share sheet of every .bin, .dat, backup and unknown
+            download on the phone, where the entry would be wrong far more often than right. If a
+            real WhatsApp share turns out not to offer CallVault at all, that is the measurement
+            that changes this decision and the change is this one line. Meanwhile such a file is
+            still reachable through Transcripts → Import audio, whose picker filters on the
+            wildcard for exactly this reason.
+
+            ## The label
+
+            The share sheet draws the APP's label on one line and this Activity's underneath it, in
+            a column about a dozen characters wide — "Import to CallVault" came out as
+            "Import to C…" on the emulator. So the label carries only the verb and leaves the
+            identity to the line above it, which already says CallVault and draws the icon.
+
+            ## Task and recents
+
+            taskAffinity="" keeps the card in a task of its own rather than on top of CallVault's,
+            so dismissing it returns to the app that sent the file instead of revealing the
+            recordings list. excludeFromRecents goes with it: a share is finished when it is
+            finished, and leaving it in the recents list would also leave a thumbnail of somebody's
+            file name there.
+        -->
+        <activity
+            android:name=".ShareImportActivity"
+            android:exported="true"
+            android:label="@string/share_import_label"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.Callrex.Share">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/ogg" />
+            </intent-filter>
+        </activity>
+
+        <!-- Foreground service that drives ADB wireless pairing via a notification -->
+        <service
+            android:name=".integrations.adb.AdbPairingService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="ADB wireless-debugging pairing." />
+        </service>
+
+        <!-- Support different languages on Android 11 and 12 https://developer.android.com/guide/topics/resources/app-languages#api-implementation:~:text=Support%20Android%2012%20and%20lower -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+
+        <service
+            android:name=".services.recording.RecordingForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync|specialUse">
+            <!--
+                Required by Android 14+ FGS type enforcement.
+                Describes why this service uses the specialUse type (call recording).
+                See: https://developer.android.com/about/versions/14/changes/fgs-types-required#special-use
+            -->
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Call recording: captures audio during phone calls." />
+        </service>
+
+        <receiver
+            android:name=".services.call.PhoneStateReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Re-anchors the daily retention sweep to local time on a time-zone/clock change (travel). -->
+        <!-- The paused-recording notification's "Turn Wireless debugging on" button. Internal only. -->
+        <receiver
+            android:name=".services.recording.WirelessDebuggingActionReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name=".services.boot.RetentionTimezoneReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+        </receiver>
+
+        <!-- In-app updater: PackageInstaller session status (confirm dialog + failures). -->
+        <receiver
+            android:name=".system.updates.UpdateInstallReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.baba.callvault.UPDATE_INSTALL_STATUS" />
+            </intent-filter>
+        </receiver>
+
+        <!-- In-app updater: reports "updated successfully" after this app was replaced. -->
+        <receiver
+            android:name=".system.updates.UpdatePackageReplacedReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Boot receiver: re-enables Wireless debugging and reconnects ADB after reboot -->
+        <receiver
+            android:name=".services.boot.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- CallVault Plan 5 (PRODUCTION): exported provider that RECEIVES the privileged recorder
+             daemon's IBinder. exported=true is REQUIRED so the non-app shell-uid daemon
+             (RecorderServer) can call("sendBinder", ...) — this mirrors Shizuku's ShizukuProvider,
+             which is likewise exported so the privileged server can deliver its binder. The provider
+             is a pure binder-delivery channel; no app data is exposed. -->
+        <!-- Shizuku's client-side provider: how the Shizuku API receives its binder in our process.
+             Ours (below) is the mirror image of it for our own daemon. -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        <provider
+            android:name=".server.RecorderBinderProvider"
+            android:authorities="${recorderAuthority}"
+            android:enabled="true"
+            android:exported="true" />
+
+
+        <!-- FileProvider used to share the diagnostic log report via the system share-sheet
+             (ACTION_SEND). Not exported; access is granted per-share via temporary read URI
+             permissions. Only the cache/logs sub-folder is exposed (see res/xml/file_paths.xml). -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Foreground service used by BootReceiver to reconnect ADB off the main thread -->
+        <service
+            android:name=".services.boot.AdbConnectionService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Re-establish ADB wireless-debugging connection after boot." />
+        </service>
+
+        <!-- Post-boot foreground service that holds a LIVE telephony call-state listener for a bounded
+             window, so the first call(s) after a reboot are detected in real time instead of via the
+             post-boot-delayed PHONE_STATE broadcast. Stops itself after the window. -->
+        <service
+            android:name=".services.call.CallMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Call recording: listen for call state after reboot to record reliably." />
+        </service>
+
+        <!-- Persistent keep-alive: anchors our process + watchdog-relaunches the privileged recorder
+             daemon so calls are captured instantly (over binder, no Wi-Fi needed) instead of paying a
+             cold-start. Our equivalent of Shizuku's always-on manager presence. -->
+        <service
+            android:name=".services.recording.DaemonKeepAliveService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Call recording: keep the privileged recorder daemon warm so calls are captured instantly." />
+        </service>
+
+        <!--
+            WorkManager's own foreground service, given a type so transcription and summarisation can
+            promote themselves out of cached-process priority.
+
+            Without this the two workers ran a multi-minute, multi-gigabyte job at the priority Android
+            reclaims first - so the phone could kill a transcription halfway through precisely because
+            it was using memory. From Android 14 a foreground service must declare a type, and the
+            declaration has to be merged onto the library's service rather than added as a new one.
+
+            specialUse rather than dataSync: dataSync is capped at a few hours a day from Android 15,
+            and this is on-device computation rather than a data transfer. CallVault is not distributed
+            through Play, so the specialUse justification is not a review risk.
+        -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="specialUse"
+            tools:node="merge">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="On-device transcription and summarisation of the user's own call recordings." />
+        </service>
+
+    </application>
+
+</manifest>

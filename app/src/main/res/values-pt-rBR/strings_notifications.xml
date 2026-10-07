@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brazilian Portuguese. Do not hand-edit placeholders (%1$s etc.). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="notif_call_monitor_channel">Monitor de chamadas</string>
+    <string name="notif_pairing_action_enter_code">Digitar o código de pareamento</string>
+    <string name="notif_pairing_action_stop">Parar</string>
+    <string name="notif_pairing_channel">Pareamento ADB</string>
+    <string name="notif_pairing_failed_title">Falha no pareamento</string>
+    <string name="notif_pairing_found_text">Digite o código de pareamento de 6 dígitos.</string>
+    <string name="notif_pairing_found_title">Serviço de pareamento encontrado</string>
+    <string name="notif_pairing_remote_input_label">Código de pareamento</string>
+    <string name="notif_pairing_searching_text">Abra a caixa de diálogo \'Parear dispositivo com código de pareamento\' do celular.</string>
+    <string name="notif_pairing_searching_title">Procurando o serviço de pareamento…</string>
+    <string name="notif_pairing_success_text">Depuração sem fio pareada. Toque para terminar de configurar o Callrex.</string>
+    <string name="notif_pairing_success_title">Pareado ✓</string>
+    <string name="notif_pairing_waiting_wd_text">Ative a Depuração sem fio para iniciar o pareamento.</string>
+    <string name="notif_pairing_waiting_wd_title">Aguardando a Depuração sem fio…</string>
+    <string name="notif_pairing_working_text">Configurando o Callrex. Isso leva alguns segundos.</string>
+    <string name="notif_pairing_working_title">Pareando…</string>
+    <string name="notif_readiness_channel">Prontidão do gravador de chamadas</string>
+    <string name="notif_readiness_ready_text">O gravador está conectado.</string>
+    <string name="notif_readiness_ready_title">Pronto para gravar chamadas</string>
+    <string name="notif_readiness_reboot_ready_text">Aguardando chamadas após a reinicialização.</string>
+    <string name="notif_readiness_starting_text">Conectando o gravador — as chamadas não serão gravadas até isso terminar.</string>
+    <string name="notif_readiness_starting_title">Iniciando o gravador de chamadas…</string>
+    <string name="notif_startup_channel">Inicialização</string>
+    <string name="notif_startup_preparing">Preparando o gravador de chamadas…</string>
+    <string name="notif_usb_check_unavailable">Se isto não terminar, defina “USB ao desbloquear a tela” como Somente carregamento em Configurações ▸ Experimental — em alguns celulares, um modo USB de dados impede que o gravador se conecte.</string>
+    <string name="notif_usb_lock_warning">Bloquear a tela durante uma chamada pode interromper a gravação. Em Configurações ▸ Experimental, defina “USB ao desbloquear a tela” como Somente carregamento.</string>
+    <string name="update_notif_available_text">Abra o app e toque em Atualizar para instalar.</string>
+    <string name="update_notif_available_title">O Callrex %1$s está disponível</string>
+    <string name="update_notif_channel">Atualizações do app</string>
+    <string name="update_notif_downloading_title">Baixando a atualização…</string>
+    <string name="update_notif_failure_download_text">Não foi possível baixar a atualização. Toque para obtê-la no GitHub.</string>
+    <string name="update_notif_failure_install_text">Não foi possível instalar a atualização. Toque para obtê-la no GitHub.</string>
+    <string name="update_notif_failure_title">Falha na atualização</string>
+    <string name="update_notif_failure_verify_text">A atualização baixada não passou na verificação de segurança e foi descartada. Toque para obtê-la no GitHub.</string>
+    <string name="update_notif_installing_title">Instalando a atualização…</string>
+    <string name="update_notif_success_text">O Callrex agora está na versão %1$s.</string>
+    <string name="update_notif_success_title">Atualização instalada</string>
+    <string name="notif_readiness_down_title">As chamadas não estão sendo gravadas</string>
+    <string name="notif_readiness_no_debugging_text">A depuração USB e a depuração por Wi-Fi estão desativadas. Ative uma delas de novo nas Opções do desenvolvedor.</string>
+    <string name="notif_readiness_needs_wifi_text">A depuração USB está desativada e não há Wi-Fi. Conecte-se a uma rede Wi-Fi ou ative a depuração USB.</string>
+    <string name="notif_readiness_stuck_text">O gravador não está conseguindo iniciar. Abra o Callrex para ver o motivo.</string>
+    <string name="notif_readiness_needs_wifi_restart_text">O gravador parou e precisa de Wi-Fi para iniciar de novo. Ative a gravação offline enquanto estiver no Wi-Fi para evitar isso.</string>
+    <string name="notif_readiness_wd_off_by_user_text">Você desativou a depuração por Wi-Fi, e o Callrex não tem outro jeito de reiniciar o gravador. Ative-a de novo ou ative a depuração USB.</string>
+    <string name="notif_readiness_offline_paused_text">A gravação sem Wi-Fi está pausada: ela precisa da depuração USB. Chamadas no Wi-Fi continuam sendo gravadas.</string>
+    <string name="notif_action_turn_wd_on">Ativar a depuração por Wi-Fi</string>
+
+    <!-- Transcription finished / didn't finish -->
+    <string name="transcript_notice_channel">Transcrições</string>
+    <string name="transcript_notice_ready_title">Transcrição pronta</string>
+    <string name="transcript_notice_ready_deleted_text">%1$s — o áudio foi excluído, como você pediu.</string>
+    <string name="transcript_notice_ready_many_title">Transcrições prontas: %1$d</string>
+    <string name="transcript_notice_ready_many_text">Toque para lê-las.</string>
+    <string name="transcript_notice_failed_title">A transcrição não foi concluída</string>
+    <string name="transcript_notice_failed_text">%1$s. Toque para tentar de novo.</string>
+    <string name="transcript_notice_failed_many_title">Transcrições não concluídas: %1$d</string>
+    <string name="transcript_notice_failed_many_text">Toque para vê-las.</string>
+</resources>
