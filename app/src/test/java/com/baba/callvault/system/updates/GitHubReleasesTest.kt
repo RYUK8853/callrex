@@ -26,7 +26,7 @@ class GitHubReleasesTest {
           "prerelease": false,
           "assets": [
             {"name": "mapping.txt", "browser_download_url": "https://example.com/mapping.txt", "size": 10},
-            {"name": "CallVault.apk", "browser_download_url": "https://github.com/madkongo/CallVault/releases/download/v1.2.4/CallVault.apk", "size": 83061613}
+            {"name": "Callrex.apk", "browser_download_url": "https://github.com/RYUK8853/callrex/releases/download/v1.2.4/Callrex.apk", "size": 83061613}
           ]
         }
     """.trimIndent()
@@ -37,7 +37,7 @@ class GitHubReleasesTest {
 
         assertEquals("v1.2.4", release?.tag)
         assertEquals(
-            "https://github.com/madkongo/CallVault/releases/download/v1.2.4/CallVault.apk",
+            "https://github.com/RYUK8853/callrex/releases/download/v1.2.4/Callrex.apk",
             release?.apkUrl
         )
         assertEquals(83061613L, release?.apkSizeBytes)
@@ -64,7 +64,7 @@ class GitHubReleasesTest {
 
     @Test
     fun missing_apk_asset_returns_null() {
-        val noApk = goodJson.replace("CallVault.apk", "CallVault-other.zip")
+        val noApk = goodJson.replace("Callrex.apk", "Callrex-other.zip")
 
         assertNull(GitHubReleases.parseLatestRelease(noApk))
     }
