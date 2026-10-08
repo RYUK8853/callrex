@@ -19,6 +19,7 @@ import com.baba.callvault.R
 import com.baba.callvault.data.AppPreferences
 import com.baba.callvault.data.recordings.RecordingMetadata
 import com.baba.callvault.integrations.adb.AdbShell
+import com.baba.callvault.integrations.adb.TransportReadiness
 import com.baba.callvault.integrations.scrcpy.ScrcpyAudioCodec
 import com.baba.callvault.integrations.scrcpy.ScrcpyAudioMuxer
 import com.baba.callvault.integrations.scrcpy.ScrcpyAudioSource
@@ -70,6 +71,19 @@ class AudioRecordingEngine {
 
         /** Capture rate for the resilient-recording (handoff) path — matches DirectAudioRecorderSession. */
         private const val HANDOFF_SAMPLE_RATE = 48000
+
+        /**
+         * The user-facing error for "no ADB transport at start time", chosen per dead end so the
+         * notification says what to FIX instead of repeating a generic "an error occurred".
+         * [TransportReadiness.Verdict.REACHABLE] (or an unknown check) keeps the old generic text:
+         * the attempt path ran and failed for a reason the live probe cannot name.
+         */
+        internal fun noTransportMessageRes(verdict: TransportReadiness.Verdict?): Int = when (verdict) {
+            TransportReadiness.Verdict.DEAD_END_NO_GRANT -> R.string.recording_error_no_transport_no_grant
+            TransportReadiness.Verdict.DEAD_END_NO_WIFI -> R.string.recording_error_no_transport_no_wifi
+            TransportReadiness.Verdict.DEAD_END_WD_OFF -> R.string.recording_error_no_transport_wd_off
+            else -> R.string.recording_error_no_transport_generic
+        }
     }
 
     /**
@@ -362,9 +376,10 @@ class AudioRecordingEngine {
         }
         AppLogger.w(TAG, "Persistent daemon unavailable; falling back to local ADB recording path")
         if (!AdbShell.ensureConnected(context)) {
+            val verdict = runCatching { TransportReadiness.forContext(context, false) }.getOrNull()
             throw PipelineInitializationException(
-                userFriendlyMessage = context.getString(R.string.recording_error_start_failed),
-                technicalLogMessage = "Neither the recorder daemon nor a direct ADB connection is available"
+                userFriendlyMessage = context.getString(noTransportMessageRes(verdict)),
+                technicalLogMessage = "Neither the recorder daemon nor a direct ADB connection is available (transport readiness: $verdict)"
             )
         }
 

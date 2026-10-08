@@ -399,6 +399,10 @@
     <string name="recording_error_server_missing">Scrcpy-server binary is missing or the security SHA256 check failed. This should not happen, please report this.</string>
     <string name="recording_error_file_creation">Failed to create recording file. Please check the storage permissions and/or select a new recording folder in the app settings.</string>
     <string name="recording_error_start_failed">Failed to start the recording. An error occurred when calling the ShellService binder method.</string>
+    <string name="recording_error_no_transport_generic">This call was NOT recorded — Callrex could not reach the recording engine. Check Developer options and Wireless debugging, then try the next call.</string>
+    <string name="recording_error_no_transport_no_grant">This call was NOT recorded — Callrex needs the special "modify system settings" permission (granted over USB once, during setup). Recreate the setup with USB connected: Settings → Pairing/Setup.</string>
+    <string name="recording_error_no_transport_no_wifi">This call was NOT recorded — Wireless debugging needs Wi-Fi to work, and Wi-Fi was not connected. Connect to Wi-Fi (any network, internet not required), or turn on USB debugging in Developer options.</string>
+    <string name="recording_error_no_transport_wd_off">This call was NOT recorded — Wireless debugging is off and Callrex was not allowed to switch it on. Turn it on in Developer options, or enable "Keep Wireless debugging on for recording" in Settings → Recording.</string>
     <string name="recording_error_empty_file_shizuku">The recording is empty — no audio was captured. Open Shizuku and check it is still running; it stops whenever the phone restarts.</string>
     <string name="recording_error_empty_file">The recording is empty — no audio was captured because the recorder daemon was not running. Check that Developer options and Wireless debugging are enabled.</string>
     <string name="recording_error_daemon_died">The recorder daemon stopped — this call is NOT being recorded. Check that Developer options and Wireless debugging are enabled.</string>

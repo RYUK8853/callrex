@@ -12,6 +12,7 @@ import android.content.Context
 import android.os.SystemClock
 import com.baba.callvault.data.AppPreferences
 import com.baba.callvault.integrations.adb.AdbShell
+import com.baba.callvault.integrations.adb.TransportReadiness
 import com.baba.callvault.integrations.adb.UsbDefaultConfig
 import com.baba.callvault.utils.AppLogger
 
@@ -150,6 +151,20 @@ object RecorderServerLauncher {
             AppLogger.d(TAG, "Recorder daemon already connected; reusing existing binder")
             applyWdPolicy(context)
             return true
+        }
+
+        // Fail fast when no transport can exist at all (2026-10-08, Nothing A001: adbd stopped, USB
+        // debugging off, Wireless debugging refused by the enable gate — and the launcher still ran
+        // its full ~84 s of attempts before failing, long after the call had ended; the user read the
+        // notification coming down as a crash). Reading the device now costs milliseconds and turns
+        // a certain failure into an immediate, actionable error notification. Only *proven* dead ends
+        // short-circuit: any unknown reading falls through to the normal attempt path.
+        val verdict = runCatching { TransportReadiness.forContext(context, RecorderConnection.isConnected) }
+            .onFailure { AppLogger.w(TAG, "Transport readiness check failed (${it.message}); proceeding with the normal attempts") }
+            .getOrNull()
+        if (verdict != null && verdict != TransportReadiness.Verdict.REACHABLE) {
+            AppLogger.e(TAG, "No ADB transport can be brought up ($verdict); failing fast instead of burning the launch attempts")
+            return false
         }
 
         val apk = context.applicationInfo.sourceDir

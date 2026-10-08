@@ -1470,10 +1470,18 @@ class AppPreferences(context: Context) {
     fun setWirelessDebuggingTurnedOffByUser(byUser: Boolean) = setBoolean(Key.WD_TURNED_OFF_BY_USER, byUser)
 
     /**
-     * The opt-in "keep Wireless debugging on for recording" setting. Off by default (decided 2026-09-14): a
-     * switch the user turned off stays off, and the notification says recording is paused.
+     * The "keep Wireless debugging on for recording" setting.
+     *
+     * Was off by default (decided 2026-09-14, when the flip-on fought the user's tap). Reversed
+     * 2026-10-08 after the Nothing A001 field log: with the default off, a phone that shipped with
+     * Wireless debugging off could not be brought up at all — the enable gate saw "the user turned
+     * it off" (a boot/Wi-Fi drop the classifier attributed to the user) plus "no override", refused
+     * the write, and every call failed after ~84 s of silent retries with zero recordings. For an
+     * app whose only job is recording calls, the recording path must be the default. The setting
+     * stays in Settings, so a user who wants the old behaviour (their switch is absolute) switches
+     * it off once; that choice is still respected exactly as before.
      */
-    fun isWirelessDebuggingEnforced() = getBoolean(Key.WD_ENFORCED, false)
+    fun isWirelessDebuggingEnforced() = getBoolean(Key.WD_ENFORCED, true)
 
     fun setWirelessDebuggingEnforced(enforced: Boolean) = setBoolean(Key.WD_ENFORCED, enforced)
 

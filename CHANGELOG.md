@@ -3,6 +3,29 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.4.9] — 2026-10-08
+
+### Fixed
+
+- **Calls on a fresh phone no longer fail silently after ~85 seconds.** Field log (Nothing A001,
+  2026-10-08): Wireless debugging was off, USB debugging was off, the daemon was stopped, and the
+  app's own auto-enable was blocked because the "keep Wireless debugging on" setting was off by
+  default — so every call burned ~85 s of invisible retries, the recording notification came down,
+  and the user saw a "crash" with zero recordings. Two changes:
+  - **"Keep Wireless debugging on for recording" now defaults to ON.** The app is now allowed to
+    switch Wireless debugging on by itself when nothing else can reach the recording engine. The
+    setting stays in Settings — turning it off once restores the old behaviour (your switch is
+    absolute), which is still respected exactly as before.
+  - **Fail fast instead of retrying into a wall.** Before spending the launch attempts, the app now
+    checks whether any transport can exist at all (no ADB, no USB debugging, no Wireless debugging,
+    and no permission/path to enable one). When the dead end is proven, it fails in milliseconds.
+    Unknown readings never short-circuit, so nothing that might have worked is cut off.
+- **The start-failure notification now says what to fix.** Instead of the generic "an error
+  occurred", it names the actual dead end: missing Wi-Fi (connect to any network, or enable USB
+  debugging), Wireless debugging off (enable it, or the Keep-WD setting), or the missing setup
+  permission (redo pairing over USB). Every message starts with "This call was NOT recorded" so a
+  failed start can never look like a successful one.
+
 ## [2.4.8] — 2026-10-08
 
 ### Fixed

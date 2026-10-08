@@ -776,6 +776,33 @@ object AdbShell {
     }
 
     /**
+     * Whether [enableWirelessDebugging] would be allowed to write right now, without writing anything.
+     *
+     * The pre-launch probe for [TransportReadiness]: when this is false, no launch attempt can ever
+     * produce a transport, and the caller should fail fast with an actionable error instead of
+     * burning the whole attempt budget (the 2026-10-08 Nothing A001 log: ~84 s of retry, zero
+     * recordings, a "crash" that was in fact a refused permission the user could fix in one tap).
+     *
+     * Deliberately NOT the user-request path: it answers "would an unrequested background write be
+     * allowed?", which is exactly the question a cold launch faces.
+     */
+    fun wirelessDebuggingWriteAllowed(context: Context): Boolean =
+        when (
+            WirelessDebuggingEnableGate.decide(
+                alreadyOn = isWirelessDebuggingEnabled(context),
+                hasGrant = hasWriteSecureSettings(context),
+                wifi = WifiState.of(context),
+                userTurnedOff = AppPreferences(context).wasWirelessDebuggingTurnedOffByUser(),
+                enforced = AppPreferences(context).isWirelessDebuggingEnforced(),
+                userRequested = false,
+                borrowingForLoopback = mayBorrowWirelessDebugging(context),
+            )
+        ) {
+            WirelessDebuggingEnable.ALREADY_ON, WirelessDebuggingEnable.WRITE -> true
+            else -> false
+        }
+
+    /**
      * Whether this moment is one CallVault may borrow the user's Wireless debugging switch for.
      *
      * Kept next to its two callers rather than inside [LoopbackBorrowPolicy] so the policy itself stays

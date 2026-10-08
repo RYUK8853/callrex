@@ -1,5 +1,32 @@
 # DECISION.md — Callrex (CallVault fork)
-_Last updated: 2026-10-08 — v2.4.8 shipped (screen-off crash fix + log share/copy)_
+_Last updated: 2026-10-08 — v2.4.9 shipped (transport fail-fast + WD auto-enable default ON)_
+
+## 2.4.9 — Transport fix (v2.4.8 log ka root cause)
+
+### Kya hua
+1. **Root cause (v2.4.8 log, Nothing A001):** recording kabhi start NAHI hui. WD off + USB off +
+   adbd STOPPED tha. App khud WD on karna chahti thi par gate ne `RESPECT_USER` bola —
+   `enforced=false` (setting default OFF) + `userTurnedOff=true` (false-positive: boot/default-off
+   ko user-off maan liya). Isliye ~84s silent retry → notification removed → "crash" perception.
+   0 recordings. Screen-off timing coincidental tha.
+2. **`isWirelessDebuggingEnforced()` default `false` → `true`** (AppPreferences.kt)
+   - Reason: app ka kaam hi recording hai; fresh phone pe transport available hona chahiye.
+   - Safety: setting Settings mein hai; user off kare toh purana behaviour (switch absolute) — respected.
+3. **Fail-fast probe — naya `TransportReadiness.kt`**
+   - Launcher start se pehle check: kya koi transport possible hai? Proven dead end → ms-level fail.
+   - Sirf PROVEN dead end short-circuit (adbd STOPPED + USB proven OFF + gate refuse).
+   - Koi bhi UNKNOWN reading → REACHABLE (path mat kato). Probe crash → runCatching → normal path (fail-open).
+4. **Error notification actionable** (4 naye strings, verdict-based):
+   - "This call was NOT recorded — …" + exact fix (Wi-Fi / WD on / pairing over USB / generic).
+5. Version 20455 / 2.4.9. Naya test: `TransportReadinessTest.kt` (12 cases).
+
+### Verified
+- Build SUCCESS (40s), tests **1913/1913** (1901 purane + 12 naye; failures=0 errors=0)
+- APK: /tmp/Callrex.apk, sha256 `eeb9bbf2e186324789fddd1646a9b3fa638688b8be9731166d9b78e4bb5e5610`
+- State: `v249-STATE.md`
+
+### BAKI (user action)
+- v2.4.9 install karo → ek call karo → log bhejo (WD auto-on + recording confirm karna hai).
 
 ## 2.4.8 — Screen-off crash fix + log export
 
