@@ -139,6 +139,12 @@ fun WizardScreen(
     // Drive folder picker — same contract.
     val driveFolderPicker = rememberLauncherForActivityResult(PersistentFolderPickerContract()) { uri ->
         if (uri != null) {
+            if (SafHelper.isSameFolder(uri, viewModel.preferences.getRecordingFolderUri())) {
+                // Same-folder-as-recordings is the 2026-10-08 data-loss misconfiguration; refusing
+                // it at the wizard keeps users from walking into it before their first call.
+                Toast.makeText(context, context.getString(R.string.folder_same_as_recording_rejected), Toast.LENGTH_LONG).show()
+                return@rememberLauncherForActivityResult
+            }
             context.takePersistableFolderPermission(uri)
             viewModel.setDriveFolderUri(uri)
         }

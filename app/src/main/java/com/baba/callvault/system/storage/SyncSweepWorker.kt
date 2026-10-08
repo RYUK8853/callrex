@@ -15,6 +15,8 @@ import androidx.work.WorkerParameters
 import com.baba.callvault.data.AppPreferences
 import com.baba.callvault.data.StorageTarget
 import com.baba.callvault.data.recordings.RecordingCatalog
+import com.baba.callvault.data.transcripts.db.TranscriptDatabase
+import com.baba.callvault.data.transcripts.db.TranscriptState
 import com.baba.callvault.utils.AppLogger
 
 /**
@@ -40,6 +42,15 @@ class SyncSweepWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(
         val driveFolderUri = prefs.getDriveFolderUri()
         if (sourceFolderUri == null || driveFolderUri == null) {
             AppLogger.w(TAG, "Sweep skipped: source or Drive folder not configured (source=$sourceFolderUri drive=$driveFolderUri).")
+            return Result.success()
+        }
+        // The 2026-10-08 field bug, in the scheduled path: the Drive folder IS the recordings
+        // folder. Every file "already in Drive" is the file itself, and in cloud-only mode the
+        // sweep would delete the whole library while reporting success. Nothing here can heal
+        // that configuration — the per-recording copy refuses the same way — so the sweep just
+        // says so and stops touching files.
+        if (SafHelper.isSameFolder(sourceFolderUri, driveFolderUri)) {
+            AppLogger.e(TAG, "Sweep skipped: the Drive folder is the recordings folder itself — nothing to copy, nothing to delete.")
             return Result.success()
         }
         if (!SafHelper.isFolderValid(applicationContext, driveFolderUri)) {
@@ -122,6 +133,14 @@ class SyncSweepWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(
             } ?: continue
 
             existingInDrive[name.lowercase()] = DriveCopy(driveUri, sourceSize)
+            // Same protection as the per-recording copy: the device copy may go only when no
+            // transcription still needs it. A FAILED row keeps the file too — that is the one a
+            // user retries by tapping, and deleting it under a tap is destroying the only audio.
+            if (deleteLocal && !transcriptSettled(name)) {
+                AppLogger.i(TAG, "Keeping the device copy of '$name': a transcription still needs it.")
+                RecordingCatalog.markDrive(applicationContext, name, driveUri, sourceSize, deleteLocalAfter = false)
+                continue
+            }
             if (deleteLocal) SafHelper.deleteDocument(file, "the device copy of '$name'")
             // Stamp the Drive copy onto the catalog (clearing the local copy for DRIVE-only mode) so
             // the Home list reflects the swept file without re-scanning the Drive folder.
@@ -136,6 +155,26 @@ class SyncSweepWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(
 
     /** A file already present in the Drive folder: where it is, and how much of it arrived. */
     private data class DriveCopy(val uri: android.net.Uri, val sizeBytes: Long)
+
+    /**
+     * Whether a transcription still needs the local file of [name] — the same question the
+     * per-recording copy asks before its delete, kept in lock-step with it (see
+     * [RecordingCopyWorker.transcriptionSettled]). The transcription reads ONLY the local copy,
+     * so the file may go only once the transcript says [TranscriptState.DONE]; every other state —
+     * QUEUED, RUNNING, FAILED, or no row at all — keeps the file. A recording kept on the device
+     * is recoverable; one absent from both places is not.
+     */
+    private suspend fun transcriptSettled(name: String): Boolean {
+        val state = runCatching {
+            if (!TranscriptDatabase.exists(applicationContext)) return@runCatching null
+            TranscriptDatabase.get(applicationContext).transcriptDao().findTranscript(name)?.state
+        }.getOrNull()
+        if (state == null) {
+            AppLogger.i(TAG, "'$name': no transcript row yet — the local file is the only copy a transcription could read")
+            return false
+        }
+        return state == TranscriptState.DONE
+    }
 
     companion object {
         private const val TAG = "CV:SyncSweep"

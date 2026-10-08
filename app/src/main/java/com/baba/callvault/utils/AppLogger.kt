@@ -30,6 +30,7 @@ import com.baba.callvault.integrations.scrcpy.ScrcpyConfig
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
 import com.baba.callvault.data.AppPreferences
+import com.baba.callvault.system.storage.SafHelper
 import com.baba.callvault.server.RecorderConnection
 import com.baba.callvault.integrations.adb.AdbShell
 import com.baba.callvault.server.RecorderBackend
@@ -506,6 +507,11 @@ object AppLogger {
         writer.println("Ignore cross-country in/out: " +
             "${p.yesNo { isIgnoreCrossCountryIncomingEnabled() }}/${p.yesNo { isIgnoreCrossCountryOutgoingEnabled() }}")
         writer.println("Storage target: ${runCatching { p.getStorageTarget().name }.getOrDefault("?")}")
+        // Named, not just the URIs: the 2026-10-08 field bug was "storage target DRIVE with the
+        // Drive folder pointed at the recordings folder", and the export that should have said so
+        // only showed the target. The names are what separate that from a healthy cloud backup.
+        writer.println("Recordings folder: ${runCatching { SafHelper.getFolderDisplayNameOrNull(context, p.getRecordingFolderUri()) }.getOrNull() ?: "not set"}")
+        writer.println("Drive folder: ${runCatching { SafHelper.getFolderDisplayNameOrNull(context, p.getDriveFolderUri()) }.getOrNull() ?: "not set"}")
 
         writer.println("--- Recorder ---")
         writer.println("Binder connected: ${runCatching { RecorderConnection.isConnected }.getOrDefault(false)}")

@@ -237,6 +237,47 @@ object SafHelper {
     fun isCloudFolder(uri: Uri?): Boolean =
         uri?.authority?.let { it in CLOUD_PROVIDER_AUTHORITIES } == true
 
+    /**
+     * True when the document [srcUri] sits in the SAME SAF tree as [treeUri] — that is, the tree's
+     * document id is a prefix of the document's own id (which is exactly how a tree's children are
+     * addressed: `<treeId>/<childId>`), or IS the tree.
+     *
+     * Pure URI id comparison — no provider round-trip, so it also answers the question the field
+     * report needed in 2026-10-08: a recording whose "Drive" folder is the recordings folder itself
+     * is a document in that very tree, and a cloud-only delete of it removes the only copy of the
+     * call. Both [isDocumentInTree] and the UI's same-folder rejection build on this one notion of
+     * "same folder".
+     *
+     * Document id comparison, not URI string comparison: the same tree is re-addressed with
+     * different percent-encodings and different document suffixes, and only the id carries the
+     * parentage.
+     */
+    fun isDocumentInTree(srcUri: Uri, treeUri: Uri?): Boolean {
+        if (treeUri == null) return false
+        if (srcUri.authority != treeUri.authority) return false
+        val treeId = runCatching { DocumentsContract.getTreeDocumentId(treeUri) }.getOrNull() ?: return false
+        val docId = runCatching { DocumentsContract.getDocumentId(srcUri) }.getOrNull() ?: return false
+        return docId == treeId || docId.startsWith("$treeId/")
+    }
+
+    /**
+     * True when the two folder (tree) URIs address the SAME folder — same provider, same tree id.
+     *
+     * The picker-level guard for the 2026-10-08 field bug: the Drive backup folder was set to the
+     * recordings folder itself, so under the cloud-only storage target every "copy to Drive" found
+     * the file already "in Drive" (it was the file itself) and then deleted the local original —
+     * the only copy. Rejecting the same folder at pick time stops the misconfiguration at the door
+     * instead of after the first lost recording; [isDocumentInTree] is the runtime backstop for
+     * settings that predate the guard.
+     */
+    fun isSameFolder(folderA: Uri?, folderB: Uri?): Boolean {
+        if (folderA == null || folderB == null) return false
+        if (folderA.authority != folderB.authority) return false
+        val a = runCatching { DocumentsContract.getTreeDocumentId(folderA) }.getOrNull() ?: return false
+        val b = runCatching { DocumentsContract.getTreeDocumentId(folderB) }.getOrNull() ?: return false
+        return a == b
+    }
+
     @OptIn(ExperimentalContracts::class)
     fun isFolderValid(context: Context, folderUri: Uri?): Boolean {
         // Tells the compiler: if we returns true, folderUri is not null. Prevent false compiler error and warnings.

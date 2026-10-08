@@ -31,13 +31,14 @@
    unknowns-never-dead-end, every REACHABLE branch).
 
 ## Build/test status
-- [ ] assembleRelease + testReleaseUnitTest — proc_4512e4b3ab12 (running)
-- [ ] APK copy /tmp/Callrex.apk
-- [ ] GitHub release v2.4.9 (asset Callrex.apk) + tag push
-- [ ] Catbox upload
-- [ ] User ko Hinglish mein deliver + manual tap-path
+- [x] assembleRelease + testDebugUnitTest — BUILD SUCCESSFUL (40s), **1913/1913** (failures=0 errors=0)
+- [x] APK copy /tmp/Callrex.apk — 67,898,329 B, sha256 eeb9bbf2e186324789fddd1646a9b3fa638688b8be9731166d9b78e4bb5e5610
+- [x] Git: commit f51fa77, tag v2.4.9, push callrex + main
+- [x] GitHub release v2.4.9 (asset Callrex.apk, 67,898,329 B) — `releases/latest` = v2.4.9 (in-app updater fire karega)
+- [x] Catbox: https://files.catbox.moe/4ssw10.apk
+- [x] User ko Hinglish mein deliver + manual tap-path
 
-## Verify on device (user call se log)
+## Verify on device (user call se log — PENDING)
 - WD auto-on hua ya nahi (log: "enabling Wireless debugging")
 - Recording start hua, recordings list mein entry
 - Agar WD auto-on fail (koi reason) → turant "NOT recorded" error notif, 84s nahi

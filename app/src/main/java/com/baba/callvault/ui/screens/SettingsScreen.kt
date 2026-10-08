@@ -298,6 +298,14 @@ fun SettingsScreen(
     // Drive folder picker — same contract; persists READ + WRITE access across reboots.
     val driveFolderPickerLauncher = rememberLauncherForActivityResult(PersistentFolderPickerContract()) { uri ->
         if (uri != null) {
+            if (SafHelper.isSameFolder(uri, viewModel.preferences.getRecordingFolderUri())) {
+                // The 2026-10-08 field bug at the door: picking the recordings folder as the cloud
+                // backup would make every "copy to Drive" find the file in its own folder and, in
+                // cloud-only mode, delete the only copy of it. Refuse the pick; the runtime guard in
+                // RecordingCopyWorker covers settings that predate this check.
+                Toast.makeText(context, context.getString(R.string.folder_same_as_recording_rejected), Toast.LENGTH_LONG).show()
+                return@rememberLauncherForActivityResult
+            }
             context.takePersistableFolderPermission(uri)
             viewModel.setDriveFolderUri(uri)
         }

@@ -3,6 +3,34 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.4.10] — 2026-10-08
+
+### Fixed
+
+- **Recordings no longer vanish when the cloud-backup folder is set to the recordings folder.**
+  Field log (Nothing A001, 2026-10-08): storage target "cloud only" (DRIVE) with the Drive folder
+  pointed at the recordings folder. Every "copy to Drive" then found the file in its own folder —
+  "already in Drive" five hundred milliseconds after the call ended, before any upload could have
+  happened — and the cloud-only delete afterwards removed the local original: the only copy of the
+  call. Both calls of the report (a WhatsApp VoIP call and a normal call) were recorded correctly
+  and then deleted by their own backup. Now:
+  - **The copy worker refuses a copy into the folder the source sits in.** It keeps the device
+    copy, warns with a notification that names the misconfiguration, and points the catalog row at
+    where the file actually is — so the list, playback and transcription all resolve it.
+  - **The scheduled sweep stops touching files in the same misconfiguration** instead of
+    "backing up" the whole library onto itself and deleting it.
+  - **Picking the recordings folder as the cloud backup is refused** in Settings and the setup
+    wizard, with a message explaining why.
+- **The cloud-only delete can no longer run ahead of the transcription.** Transcription reads the
+  local file and has no cloud fallback, so the worker now deletes the device copy only once the
+  transcript is DONE; while it is queued, running, failed (a retry may still come) or not started
+  at all, the file stays on the device. When the retry budget is spent, the device copy stays for
+  good and the catalog row keeps both copies. The field log's "Failed to transcribe:
+  FileNotFoundException" / "no longer in the catalog" pair cannot happen on this path again.
+- **The debug export now names the two folders.** The Configuration block prints the recordings
+  folder and the Drive backup folder by name, so the next log shows this misconfiguration on the
+  first read instead of after three exchanges.
+
 ## [2.4.9] — 2026-10-08
 
 ### Fixed

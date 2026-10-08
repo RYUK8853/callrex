@@ -408,6 +408,8 @@
     <string name="recording_error_daemon_died">The recorder daemon stopped — this call is NOT being recorded. Check that Developer options and Wireless debugging are enabled.</string>
     <string name="recording_error_capture_never_started">Recording did not start — try a different audio format in Settings</string>
     <string name="recording_error_drive_copy_failed">A recording could not be copied to your cloud folder. It is still saved on this device — check the folder in Settings.</string>
+    <string name="recording_error_drive_folder_is_recordings">Your cloud backup folder is set to the same folder recordings are saved in. A "backup" there would copy each file onto itself and, in cloud-only mode, delete the only copy — so the app will NOT do that. Pick a different folder for the cloud backup in Settings.</string>
+    <string name="folder_same_as_recording_rejected">That is the same folder recordings are saved in. Pick a different folder for the cloud backup.</string>
     <string name="recording_unexpected_error">An unexpected error occurred during recording. Please report this with the steps to reproduce and the apps logs.</string>
 
     <!-- Setup Wizard -->
