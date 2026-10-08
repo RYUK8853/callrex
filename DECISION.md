@@ -1,5 +1,36 @@
 # DECISION.md — Callrex (CallVault fork)
-_Last updated: 2026-10-08 — v2.4.6 shipped to GitHub_
+_Last updated: 2026-10-08 — v2.4.8 shipped (screen-off crash fix + log share/copy)_
+
+## 2.4.8 — Screen-off crash fix + log export
+
+### Kya hua
+1. **Screen-off crash fix** — recording ab whole call ke liye CPU wake lock
+   (PARTIAL, 1h time-boxed) hold karti hai. Root cause: poore codebase mein
+   koi wake lock NAHI tha (na WAKE_LOCK permission, na code) — foreground
+   service sirf process rakhta hai, CPU nahi; screen off → CPU soya →
+   capture thread suspend → mid-call break. Yahi user ka symptom tha.
+2. **Log export fix** — Settings → Debug mein Share/Save buttons ab HAMESHA
+   visible (pehle sirf jab logging OFF — exactly tab chhup jaate jab user
+   bug capture karke log bhejne aata tha). Log viewer mein Copy button
+   (clipboard) — WhatsApp/Telegram/email mein paste.
+
+### Decisions + kyun
+- **Wake lock recording service mein, acquire = pipeline Active, release =
+  stopRecordingSessionAndService() ke top + onDestroy()** — service kill
+  ho jaye to bhi lock held nahi rahega; 1h lease se stuck release se phone
+  brown-out nahi hota.
+- **stringResource onClick lambda mein nahi chalta** (plain lambda, no
+  composable context) → strings composable-level hoist kiye. (Compile error
+  aaya, fix.)
+- **GitHub: purana v2.4.7 release delete, naya v2.4.8** — in-app updater
+  `releases/latest` check karta hai; asset exact `Callrex.apk` naam.
+- **v2.4.7 release asset ab tak missing tha** → ab v2.4.8 ke saath live;
+  in-app mandatory update dono ke liye fire karega (old users latest = 2.4.8).
+
+### Verified
+- Tests 1901/1901 pass; aapt2: 20454/2.4.8; `releases/latest` = v2.4.8 +
+  Callrex.apk (67,888,197 B); Catbox: https://files.catbox.moe/2hnvt5.apk
+- State: `v248-STATE.md`
 
 ## 2.4.6 — Hybrid AI + mandatory updates + sponsor removal
 

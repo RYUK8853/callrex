@@ -48,12 +48,18 @@
 6. `app/build.gradle.kts` — version 2.4.7/20453 → **2.4.8/20454**.
 7. `CHANGELOG.md` — [2.4.8] entry.
 
-## Verification status
-- `:app:compileReleaseKotlin` → BUILD SUCCESSFUL (after fixing the
-  composable-in-lambda compile error).
-- `:app:testDebugUnitTest` → RUNNING (background session proc_8792eeaa57f3).
-- Release APK, Catbox upload, git tag v2.4.8, push, GitHub release asset
-  Callrex.apk → PENDING (after tests).
+## Verification status — ALL DONE
+- `:app:compileReleaseKotlin` → BUILD SUCCESSFUL.
+- `:app:testDebugUnitTest` → **1901 tests, 0 failures, 0 errors** (226 result files).
+- Release APK built: v2.4.8 / versionCode 20454 (aapt2 verified:
+  `com.vishal.callrex versionCode='20454' versionName='2.4.8'`), 67,888,197 bytes.
+- Git: commit `fde755a`, tag `v2.4.8`, pushed to remote `callrex`
+  (branch + tag + `callrex:main`).
+- GitHub release "Callrex 2.4.8" (id 406870673) created; old v2.4.7 release
+  deleted; asset `Callrex.apk` uploaded (201, state=uploaded).
+  `releases/latest` verified: tag v2.4.8 + Callrex.apk 67888197 → in-app
+  mandatory update will now fire.
+- Catbox direct link: https://files.catbox.moe/2hnvt5.apk
 
 ## Open / deferred
 - VoIP (WhatsApp) capture failure — still needs device log (now exportable:
