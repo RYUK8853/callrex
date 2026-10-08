@@ -14,6 +14,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.baba.callvault.data.AppPreferences
 import com.baba.callvault.utils.AppLogger
 
 /**
@@ -62,6 +63,31 @@ object SummaryScheduler {
         WorkManager.getInstance(context)
             .enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request)
         AppLogger.i(TAG, "Summary requested with ${model.id}")
+    }
+
+    /**
+     * The automatic variant: a transcription just finished, and the user asked for a summary to
+     * follow it. Everything the worker does the manual tap does, with one addition — no transcript,
+     * or already summarised, are no-ops here instead of failures. A failed automatic job would
+     * surface a red "Summarize" row next to a call whose problem the user did not ask about; a
+     * no-op cannot be wrong. The model, the engine, and the abort semantics are the same, because
+     * a summary the user asked for automatically must cost exactly what the tap costs.
+     */
+    fun auto(context: Context, displayName: String, model: SummaryModel = SummaryModel.DEFAULT) {
+        val request = OneTimeWorkRequestBuilder<SummaryWorker>()
+            .setInputData(
+                workDataOf(
+                    SummaryWorker.KEY_DISPLAY_NAME to displayName,
+                    SummaryWorker.KEY_MODEL_ID to model.id,
+                    SummaryWorker.KEY_AUTO to true
+                )
+            )
+            .addTag(tagFor(displayName))
+            .build()
+
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request)
+        AppLogger.i(TAG, "Automatic summary requested for $displayName with ${model.id}")
     }
 
     /**

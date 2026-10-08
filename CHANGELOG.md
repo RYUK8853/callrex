@@ -3,6 +3,26 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.4.7] — 2026-10-08
+
+### Changed
+
+- **Automatic transcription actually runs after the call ends.** The "wait for the charger"
+  switch now defaults to **off**. Before, "transcribe after each call" was quietly waiting on a
+  charger that was rarely plugged in, so transcription only ever happened when tapped by hand.
+- **Summaries are made right after a transcription finishes.** A new "Summarise after
+  transcription" switch (default on) queues the call's summary automatically once its transcript
+  is stored — no second tap. An automatic summary that has nothing to summarise (no words, or
+  already summarised) ends quietly instead of leaving an error row; a manual tap still reports
+  problems. A large batch (a nightly sweep) never auto-summarises, so a sweep of many calls does
+  not line up that many full-CPU summaries for pages nobody asked for.
+
+### Notes
+
+- Recording reliability on VoIP (WhatsApp) and the speaker labelling for multi-speaker calls are
+  still under diagnosis against real device logs from affected calls; they land in the next
+  release once the capture path on the failing phone is confirmed.
+
 ## [2.4.6] — 2026-10-08
 
 ### Added

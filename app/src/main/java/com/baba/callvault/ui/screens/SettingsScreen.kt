@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
@@ -603,6 +604,16 @@ fun SettingsContent(
                             val askFirst = remember(updateTrigger) {
                                 preferences.getSummaryConfirmRequirements()
                             }
+                            val autoAfterTranscription = remember(updateTrigger) {
+                                preferences.getAutoSummarizeAfterTranscription()
+                            }
+                            SettingsToggleRow(
+                                icon = Icons.Filled.AutoAwesome,
+                                label = stringResource(R.string.summary_auto_after_transcription),
+                                description = stringResource(R.string.summary_auto_after_transcription_description),
+                                checked = autoAfterTranscription,
+                                onCheckedChange = { actions.setAutoSummarizeAfterTranscription(it) }
+                            )
                             SettingsToggleRow(
                                 icon = Icons.Filled.Info,
                                 label = stringResource(R.string.summary_requirements_heading),
@@ -3373,6 +3384,7 @@ private fun SettingsScreenPreview() {
             override fun setSummaryCloudBaseUrl(url: String) {}
             override fun setSummaryCloudApiKey(key: String) {}
             override fun setSummaryCloudModel(model: String) {}
+            override fun setAutoSummarizeAfterTranscription(enabled: Boolean) {}
             override fun clearCloudSettings() {}
             override fun cancelTranscriptionModelDownload(model: TranscriptionModel) {}
             override fun deleteTranscriptionModel(model: TranscriptionModel) {}

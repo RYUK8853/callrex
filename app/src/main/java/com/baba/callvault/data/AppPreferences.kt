@@ -61,6 +61,7 @@ class AppPreferences(context: Context) {
             "sync_schedule_mode", "sync_time_hour", "sync_time_minute", "sync_day_of_week",
             // Transcription + summary policy
             "transcription_mode", "transcription_hour", "transcription_minute", "transcription_requires_charging",
+            "summary_auto_after_transcription",
             "transcription_batch_limit", "transcription_confirm_before_run", "transcription_model_id",
             "transcription_language", "transcription_ask_language",
             "summary_confirm_requirements", "summary_language",
@@ -186,7 +187,8 @@ class AppPreferences(context: Context) {
         val TRANSCRIPTION_MODE = TranscriptionMode.MANUAL.key
         const val TRANSCRIPTION_HOUR = 2       // 0-23, device local time
         const val TRANSCRIPTION_MINUTE = 0     // 0-59
-        const val TRANSCRIPTION_REQUIRES_CHARGING = true
+        const val TRANSCRIPTION_REQUIRES_CHARGING = false
+        const val SUMMARY_AUTO_AFTER_TRANSCRIPTION = true
         // How many recordings one automatic run takes on. 0 means no limit. Configurable because the
         // right answer depends entirely on call length: 25 short calls is a quick sweep, 25 long ones
         // is most of a night.
@@ -342,6 +344,7 @@ class AppPreferences(context: Context) {
         TRANSCRIPTION_HOUR("transcription_hour"),
         TRANSCRIPTION_MINUTE("transcription_minute"),
         TRANSCRIPTION_REQUIRES_CHARGING("transcription_requires_charging"),
+        SUMMARY_AUTO_AFTER_TRANSCRIPTION("summary_auto_after_transcription"),
         TRANSCRIPTION_BATCH_LIMIT("transcription_batch_limit"),
         TRANSCRIPTION_CONFIRM_BEFORE_RUN("transcription_confirm_before_run"),
         SUMMARY_CONFIRM_REQUIREMENTS("summary_confirm_requirements"),
@@ -771,13 +774,22 @@ class AppPreferences(context: Context) {
     /** Sets the minute (0-59) of the automatic transcription run. */
     fun setTranscriptionMinute(minute: Int) = setInt(Key.TRANSCRIPTION_MINUTE, minute)
 
-    /** Whether the automatic run waits for the phone to be charging. On by default. */
+    /** Whether the automatic run waits for the phone to be charging. Off by default — an
+     *  "after the call ends" transcription must actually run, not wait silently for a charger. */
     fun getTranscriptionRequiresCharging() =
         getBoolean(Key.TRANSCRIPTION_REQUIRES_CHARGING, DefaultsValue.TRANSCRIPTION_REQUIRES_CHARGING)
 
     /** Sets whether the automatic run waits for the phone to be charging. */
     fun setTranscriptionRequiresCharging(required: Boolean) =
         setBoolean(Key.TRANSCRIPTION_REQUIRES_CHARGING, required)
+
+    /** Whether a finished transcription summarises itself. On by default. */
+    fun getAutoSummarizeAfterTranscription() =
+        getBoolean(Key.SUMMARY_AUTO_AFTER_TRANSCRIPTION, DefaultsValue.SUMMARY_AUTO_AFTER_TRANSCRIPTION)
+
+    /** Sets whether a finished transcription summarises itself. */
+    fun setAutoSummarizeAfterTranscription(enabled: Boolean) =
+        setBoolean(Key.SUMMARY_AUTO_AFTER_TRANSCRIPTION, enabled)
 
     /** How many recordings one automatic run takes on; 0 means no limit. */
     fun getTranscriptionBatchLimit() =

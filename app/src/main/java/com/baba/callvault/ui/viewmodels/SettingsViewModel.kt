@@ -118,6 +118,8 @@ interface SettingsActions {
     fun setSummaryCloudBaseUrl(url: String)
     fun setSummaryCloudApiKey(key: String)
     fun setSummaryCloudModel(model: String)
+    /** Whether a finished transcription summarises itself. */
+    fun setAutoSummarizeAfterTranscription(enabled: Boolean)
 
     /** Deletes the stored endpoints and keys of both engines; the engine choice itself is kept. */
     fun clearCloudSettings()
@@ -569,6 +571,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     override fun setSummaryCloudModel(model: String) {
         preferences.setSummaryCloudModel(model)
+        refresh()
+    }
+
+    override fun setAutoSummarizeAfterTranscription(enabled: Boolean) {
+        preferences.setAutoSummarizeAfterTranscription(enabled)
         refresh()
     }
 

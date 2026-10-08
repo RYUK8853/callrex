@@ -23,6 +23,9 @@ import com.baba.callvault.data.transcripts.db.TranscriptDatabase
 import com.baba.callvault.data.transcripts.db.TranscriptEntry
 import com.baba.callvault.data.transcripts.db.TranscriptSegmentEntry
 import com.baba.callvault.data.transcripts.db.TranscriptState
+import com.baba.callvault.summary.SummaryModel
+import com.baba.callvault.summary.SummaryScheduler
+import com.baba.callvault.transcription.model.ModelRepository
 import com.baba.callvault.transcription.model.TranscriptionModel
 import com.baba.callvault.server.speakers.OfflineSpeakerLabeller
 import com.baba.callvault.utils.AppLogger
@@ -107,6 +110,15 @@ class TranscriptionRunner(
     ): Int {
         var transcribed = 0
         var reached = 0
+        // Auto-summary is a per-call convenience, not a sweep: after a small batch (the per-call
+        // flow is one recording) each finished transcript asks for its summary. A nightly sweep of
+        // dozens of calls would line up the same number of full-CPU summaries for pages nobody
+        // asked for — the design point SummaryQueue makes about batch summaries, applied here.
+        val autoSummarise = displayNames.size <= AUTO_SUMMARY_MAX_BATCH &&
+            AppPreferences(context).getAutoSummarizeAfterTranscription()
+        if (autoSummarise.not() && displayNames.size > AUTO_SUMMARY_MAX_BATCH) {
+            AppLogger.i(TAG, "Batch of ${displayNames.size} is too large for automatic summaries; use the Summaries page")
+        }
 
         for (displayName in displayNames) {
             if (shouldStop()) {
@@ -117,10 +129,39 @@ class TranscriptionRunner(
             // the run forward, and a counter that stalls on a bad file looks like a hang.
             onProgress(reached, displayNames.size, displayName)
             reached++
-            if (runOne(modelId, modelPath, language, displayName, shouldStop)) transcribed++
+            if (runOne(modelId, modelPath, language, displayName, shouldStop)) {
+                transcribed++
+                if (autoSummarise) maybeAutoSummarise(displayName)
+            }
         }
 
         return transcribed
+    }
+
+    /**
+     * Enqueues the automatic summary for a transcript that finished just now.
+     *
+     * Checked at enqueue time, not at run time: a missing local model would not fail an automatic
+     * job — it would retry, four times, and leave a red row next to a call the user never asked to
+     * summarise. Skipping with a log line costs nothing, because the manual Summaries page still
+     * offers the download and the tap. Cloud is checked for a configured endpoint, for the same
+     * reason.
+     */
+    private suspend fun maybeAutoSummarise(displayName: String) {
+        runCatching {
+            val prefs = AppPreferences(context)
+            val model = SummaryModel.DEFAULT
+            val ready = if (prefs.getSummaryEngine() == AppPreferences.ENGINE_CLOUD) {
+                prefs.getSummaryCloudConfig() != null
+            } else {
+                ModelRepository.pathFor(context, model) != null
+            }
+            if (!ready) {
+                AppLogger.i(TAG, "Automatic summary not queued for $displayName: summariser not ready")
+                return
+            }
+            SummaryScheduler.auto(context, displayName, model)
+        }.onFailure { AppLogger.w(TAG, "Automatic summary not queued for $displayName: ${it.message}") }
     }
 
     /**
@@ -458,6 +499,13 @@ class TranscriptionRunner(
 
     private companion object {
         const val TAG = "CV:TranscriptionRunner"
+
+        /**
+         * Automatic summaries follow only a small batch. The per-call flow transcribes one
+         * recording, so it always qualifies; a nightly sweep of many calls does not, because it
+         * would line up that many full-CPU summaries for pages nobody asked for.
+         */
+        const val AUTO_SUMMARY_MAX_BATCH = 3
 
         /** Only ever used to say a refused length out loud in minutes. */
         const val MS_PER_MINUTE = 60_000L

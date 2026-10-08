@@ -920,6 +920,8 @@
     <!-- Cloud AI (the user's own endpoint) -->
     <string name="transcription_engine_label">Transcription engine</string>
     <string name="summary_engine_label">Summariser engine</string>
+    <string name="summary_auto_after_transcription">Summarise after transcription</string>
+    <string name="summary_auto_after_transcription_description">When a call is transcribed automatically, its summary is made right after. Off to keep summaries manual.</string>
     <string name="cloud_engine_local">On-device (private)</string>
     <string name="cloud_engine_cloud">Cloud (your own API)</string>
     <string name="cloud_local_note">Everything runs on this phone. Nothing about your calls ever leaves it.</string>

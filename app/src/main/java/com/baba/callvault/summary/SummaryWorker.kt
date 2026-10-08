@@ -16,6 +16,7 @@ import androidx.work.workDataOf
 import com.baba.callvault.R
 import com.baba.callvault.data.AppPreferences
 import com.baba.callvault.data.transcripts.db.TranscriptDatabase
+import com.baba.callvault.data.transcripts.db.TranscriptState
 import com.baba.callvault.transcription.HeavyWorkNotification
 import com.baba.callvault.transcription.TranscriptionEngine
 import com.baba.callvault.transcription.TranscriptionProgress
@@ -66,6 +67,19 @@ class SummaryWorker(
                 AppLogger.e(TAG, "Summary job started with no recording name; nothing to summarise")
                 return@withContext Result.failure()
             }
+        // Automatic jobs are a no-op, not a failure, when there is nothing to summarise: no
+        // transcript, or one that is already done. A red row next to a call the user never asked
+        // to summarise would be noise; the manual tap keeps failing so its mistake is visible.
+        val isAuto = inputData.getBoolean(KEY_AUTO, false)
+
+        if (isAuto && TranscriptDatabase.exists(applicationContext) &&
+            TranscriptDatabase.get(applicationContext).summaryDao().summary(displayName) != null
+        ) {
+            // A redo from the manual tap does not carry the flag; this branch is the automatic
+            // path only, where a second summary of the same call is not wanted.
+            AppLogger.i(TAG, "Automatic summary skipped: $displayName already has one")
+            return@withContext Result.success()
+        }
 
         val prefs = AppPreferences(applicationContext)
 
@@ -109,6 +123,13 @@ class SummaryWorker(
             .transcriptDao()
             .observe(displayName)
             .first()
+        if (isAuto && (transcript?.transcript?.state != TranscriptState.DONE)) {
+            // The automatic job can start before the transcript is flushed; a no-op is the honest
+            // result here — a tap has already said "transcribe" and it is not the summary's job to
+            // turn that into an error row.
+            AppLogger.i(TAG, "Automatic summary no-op: no finished transcript for $displayName yet")
+            return@withContext Result.success()
+        }
         val language = SummaryLanguage.resolve(
             chosen = prefs.getSummaryLanguage(),
             transcriptionSetting = prefs.getTranscriptionLanguage(),
@@ -183,6 +204,10 @@ class SummaryWorker(
             summary != null -> Result.success()
             // Stopped on purpose. Not a failure, and retrying would restart work the user cancelled.
             isStopped -> Result.success()
+            // Automatic jobs end quietly on an empty result: a garbled or near-silent transcript has
+            // nothing to summarise, and a red row next to a call nobody asked to summarise would be
+            // noise. The manual tap keeps failing so its mistake stays visible.
+            isAuto -> Result.success()
             else -> Result.failure(workDataOf(KEY_ERROR to ERROR_NO_SUMMARY))
         }
     }
@@ -197,6 +222,9 @@ class SummaryWorker(
 
         /** Which model to use. Absent means the default. */
         const val KEY_MODEL_ID = "modelId"
+
+        /** Set when the job was queued automatically after a transcription, not from a tap. */
+        const val KEY_AUTO = "auto"
 
         /**
          * Progress keys, mirroring the transcription worker's so the UI reads them the same way.
