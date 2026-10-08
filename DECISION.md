@@ -45,6 +45,11 @@ DIRECT AudioRecord) — phir dono GAYAB:
   https://github.com/RYUK8853/callrex/releases/tag/v2.4.10 — asset `Callrex.apk` 67,910,449 B
   (API /releases/latest se verify: size exact match). In-app updater ab v2.4.10 dega.
 
+- **FIELD TEST PASSED (user-confirmed, 2026-10-08):** v2.4.10 install ke baad ek normal test call
+  karo — **record + transcription + AI summary sab on-device kaam kiya.** Recording engine ab
+  verified. Auto-record (incoming/outgoing/VoIP) config mein already ON → koi bhi aane wali
+  call khud record hogi. Remaining watch: Wireless debugging ON rakhna (transport dependency).
+
 ### Known / BAKI
 - API se release nahi bana paya (git credential = git-only scope, 401 on /releases + basic-auth;
   keychain secret yahan visible nahi; `.env.bak` token placeholder tha) → BrowserOS neo browser
