@@ -1,5 +1,59 @@
 # DECISION.md — Callrex (CallVault fork)
-_Last updated: 2026-10-08 — v2.4.9 shipped (transport fail-fast + WD auto-enable default ON)_
+_Last updated: 2026-10-08 — v2.4.10 shipped (recordings-vanishing fix + transcription-first delete)_
+
+## 2.4.10 — Recordings-vanishing fix (v2.4.9 log ka root cause)
+
+### Kya hua (field log 21:01:10 export, Nothing A001)
+Transport ab THEK tha (20:40 pe WD auto-on → loopback :50838 → daemon binder → journal-end success).
+**Dono calls RECORD hui** (20:45 WhatsApp VoIP 813KB/50s farPartyHeard=true; 20:59 normal call 363KB/22s
+DIRECT AudioRecord) — phir dono GAYAB:
+1. `Storage target: DRIVE` + **Drive folder = wahi Recordings folder** (dono `primary:Recordings`).
+2. Publish ke **545ms baad** `RecordingCopyWorker: already in Drive; not uploading it again` —
+   real cloud upload mein possible NAHI → destination mein apni hi file mili (self-reference).
+3. DRIVE mode `KEY_DELETE_LOCAL=true` → `finish()` ne **wahi original delete** kar di → kahin koi nahi.
+4. **Race:** transcription sirf local file se padhti hai (no Drive fallback) → delete pehle jeet gaya
+   → `FileNotFoundException` → "transcription cant be done" → manual tap → "no longer in the catalog".
+5. 21:00:40 `HomeViewModel: Recording gone (deleted outside the app); pruning stale entry` → 0 recordings.
+
+### Changes (kya fix kiya)
+1. **`SafHelper` — 2 naye pure-URI predicates** (`isDocumentInTree`, `isSameFolder`).
+   Reason: pure URI id comparison (percent-encoding safe, no provider round-trip) — field-bug ki
+   shape detect karni hai bina file touch kiye.
+2. **`RecordingCopyWorker`:**
+   - `doWork` start: source destFolder ke andar hai → **refuse** + warning notification
+     (`recording_error_drive_folder_is_recordings`) + `markDrive(src, deleteLocalAfter=false)`
+     (row file ki real jagah point karegi → list/playback/transcription sab resolve) + success.
+   - `finish()`: delete se pehle re-check `isDocumentInTree` (settings mid-flight badal sakti hain)
+     + `transcriptionSettled(name)`: **sirf DONE = delete OK**; QUEUED/RUNNING/FAILED/no-row =
+     file device pe rahegi; `Result.retry()` jab tak `DELETE_WAIT_ATTEMPTS` (= MAX_ATTEMPTS=10)
+     na ho; phir terminal success with **BOTH copies** on the row.
+3. **`SyncSweepWorker`:** same-folder (tree-vs-tree) → sweep skip (library self-delete se bacha);
+   per-file delete pe wahi `transcriptSettled` gate (DONE-only).
+4. **Settings + Wizard:** recordings folder ko cloud backup ke roop mein pick karna REFUSE
+   (`folder_same_as_recording_rejected` toast) — misconfiguration ko darwaze pe roka.
+5. **`AppLogger.writeConfiguration`:** export ab "Recordings folder: X" + "Drive folder: Y" naam
+   dikhata hai — agla log first-read pe misconfiguration batayega (3 exchanges nahi).
+
+### Verified
+- Build SUCCESS, tests **1921/1921** (1913 purane + 8 naye `SafHelperSameFolderTest`; failures=0 errors=0)
+- APK: /tmp/Callrex.apk, 67,910,449 B, sha256 `b9f2623f4a34a56eb0d981de23e38b635f44e0a3ad690b9dc9047bfdb04c585f`
+- aapt verified: `versionCode='20456' versionName='2.4.10'`
+- Git: commit 2f6a5ab, tag v2.4.10, push callrex→main + tag done
+- Catbox: **https://files.catbox.moe/zcwobt.apk**
+- State: `v2410-STATE.md`
+- **GitHub release v2.4.10 LIVE** (BrowserOS neo signed-in profile se banaya, v2.4.6/2.4.9 waisa):
+  https://github.com/RYUK8853/callrex/releases/tag/v2.4.10 — asset `Callrex.apk` 67,910,449 B
+  (API /releases/latest se verify: size exact match). In-app updater ab v2.4.10 dega.
+
+### Known / BAKI
+- API se release nahi bana paya (git credential = git-only scope, 401 on /releases + basic-auth;
+  keychain secret yahan visible nahi; `.env.bak` token placeholder tha) → BrowserOS neo browser
+  session se publish kiya. **Pattern: agle releases bhi wahi raasta.**
+- **Dono purani recordings (20:45 + 20:59) device se gayab** — v2.4.9 ne delete ki thi; recover
+  impossible. v2.4.10 sirf future ko rokta hai (yeh user ko batana zaroori hai).
+- User ko: v2.4.10 install → Settings → Storage → **Drive backup folder dobara select karo**
+  (v2.4.10 picker same-folder refuse karega; purani config rahe toh runtime guard + notification
+  handle karegi) ya storage target "Both"/"Local" pe le jao (tab koi delete nahi hota).
 
 ## 2.4.9 — Transport fix (v2.4.8 log ka root cause)
 

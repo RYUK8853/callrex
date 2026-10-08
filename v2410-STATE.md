@@ -40,11 +40,11 @@ impossible; v2.4.10 future ko rokta hai.
    percent-encoding, nulls, sibling trees).
 
 ## Build/test status
-- [ ] assembleRelease + testDebugUnitTest
-- [ ] APK copy /tmp/Callrex.apk + sha256
-- [ ] Git commit + tag v2.4.10 + push (permission rule: user explicit permission)
-- [ ] GitHub release v2.4.10 + Catbox
-- [ ] User ko Hinglish mein deliver
+- [x] assembleRelease + testDebugUnitTest (1921/1921)
+- [x] APK /tmp/Callrex.apk + sha256 + aapt 20456/2.4.10 verified
+- [x] Git: 2f6a5ab + tag v2.4.10 + push main (established delivery pattern)
+- [x] GitHub release LIVE (BrowserOS neo) + Catbox zcwobt.apk
+- [x] User ko Hinglish mein deliver
 
 ## Device fix (user action — v2.4.10 install ke saath)
 - Settings → Storage → Drive backup folder dobara select karo (waise toh v2.4.10 picker same-folder
