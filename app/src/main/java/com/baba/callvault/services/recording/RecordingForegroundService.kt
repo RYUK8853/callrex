@@ -17,6 +17,7 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import android.content.pm.ServiceInfo
 import android.provider.CallLog
 import android.provider.DocumentsContract
@@ -98,6 +99,13 @@ class RecordingForegroundService : Service() {
 
         /** Intent action sent to this service when the user dismisses the notification (Android 14+). */
         const val ACTION_NOTIFICATION_DISMISSED = "com.baba.callvault.SERVICE_NOTIFICATION_DISMISSED"
+
+        /**
+         * Time-box on the CPU wake lock held for a call. A normal call ends far before this, so the
+         * lease is a safety net for a stuck stop path — never a brown-out risk, never held by a
+         * dead service.
+         */
+        private const val WAKE_LOCK_LEASE_MS = 60 * 60 * 1000L // 1 h, well beyond any call
     }
 
     // ── Dependencies ──────────────────────────────────────────────────────────
@@ -153,6 +161,35 @@ class RecordingForegroundService : Service() {
      */
     @Volatile
     private var stopRequested: Boolean = false
+
+    /**
+     * A CPU wake lock held for the whole call.
+     *
+     * A foreground service keeps this PROCESS alive, but it does not keep the CPU awake. When the
+     * screen goes off mid-call the CPU drops into deep sleep, the daemon's capture thread is
+     * suspended, the ring overruns and the recording breaks in the middle of the call — the
+     * reported field failure. A PARTIAL_WAKE_LOCK is device-wide (the daemon is a different
+     * process, but the CPU stays awake for it too). Acquired when the pipeline is Active, released
+     * on stop and in [onDestroy] so a killed service can never leave it held.
+     */
+    @Volatile
+    private var wakeLock: PowerManager.WakeLock? = null
+
+    private fun holdWakeLock(reason: String) {
+        if (wakeLock?.isHeld == true) return
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val lock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "CallVault:recording-cpu")
+        lock.acquire(WAKE_LOCK_LEASE_MS) // time-boxed: a stuck release can never brown out the phone
+        wakeLock = lock
+        AppLogger.i(TAG, "CPU wake lock held for the call ($reason)")
+    }
+
+    private fun releaseWakeLock() {
+        val lock = wakeLock ?: return
+        wakeLock = null
+        runCatching { if (lock.isHeld) lock.release() }
+        AppLogger.i(TAG, "CPU wake lock released")
+    }
 
     /**
      * Position in the saved audio, for marks placed from the notification. Excludes paused time —
@@ -481,6 +518,9 @@ class RecordingForegroundService : Service() {
             // 3. Success
             currentState = RecordingServiceState.Active(activeSession, false, metadata)
             AppLogger.i(TAG, "Recording pipeline started successfully")
+            // The CPU must stay awake for the whole call: the screen can go off mid-call and a
+            // foreground service alone does not prevent the capture thread from being suspended.
+            holdWakeLock("recording started")
             // Belt-and-suspenders: if a STOP landed in the tiny window after the daemon accepted the
             // recording but before we reached here, tear it down immediately so capture (and the mic)
             // does not linger past the call.
@@ -506,6 +546,10 @@ class RecordingForegroundService : Service() {
      * removes the foreground notification, and stops the service.
      */
     private fun stopRecordingSessionAndService() {
+        // The call is over (or the service is going away) — drop the CPU wake lock first so the
+        // device can sleep again even if every step below throws. Covers both the active-session
+        // path and the no-active-session early return.
+        releaseWakeLock()
         // First, so no state change from here on re-posts the notification this is about to remove.
         // The finished recording keeps showing as it was until the notification goes.
         isShuttingDown = true

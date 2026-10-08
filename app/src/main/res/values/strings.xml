@@ -851,6 +851,7 @@
     <string name="settings_bugreport_save">Save</string>
     <string name="settings_bugreport_saved">Report saved</string>
     <string name="settings_bugreport_save_failed">Could not save the report</string>
+    <string name="settings_debug_log_copy">Copy log to clipboard</string>
     <string name="settings_debug_log_wrap">Wrap lines</string>
     <string name="usb_debugging_off_warn_title">Turn off USB debugging?</string>
     <string name="usb_debugging_off_warn_no_way_in">You\'re not on Wi-Fi, so Callrex will have no way to reach the recorder. Calls won\'t be recorded until you connect to Wi-Fi or turn this back on.</string>

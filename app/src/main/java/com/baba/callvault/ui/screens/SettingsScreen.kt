@@ -2058,51 +2058,53 @@ private fun BugReportSection(
             description     = stringResource(R.string.settings_debug_logging_enabled_description)
         )
 
-        if (isLoggingEnabled) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        // Share/Save are always offered, whether or not logging is currently running.
+        //
+        // The previous code hid them while logging was ON and showed only a warning — but that is
+        // exactly the moment a user needs them: you switch logging ON to capture a bug, reproduce
+        // the issue, and only then go looking for a way to send the log. At that point the buttons
+        // had vanished, which read as "there is no way to share logs at all" (field report: "I can't
+        // send the logs, we don't have any feature of that"). The report always carries the
+        // configuration header and the setup journal, so there is something useful to share in
+        // either state; the live log joins in whenever it exists.
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            if (isLoggingEnabled) {
                 Text(
                     text = stringResource(R.string.settings_bugreport_active_warning),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.error
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-            }
-        } else {
-            // Offered whenever logging is off, with no precondition on there being a log: the report
-            // always carries the configuration header, and the setup journal when there is one. The
-            // old gate asked for a log file first, so the maintainer had to switch logging on and off
-            // again just to reach Share — for a report whose useful half needed neither.
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Spacer(modifier = Modifier.height(8.dp))
+            } else {
                 Text(
                     text = stringResource(R.string.settings_bugreport_share_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Side by side: Share hands the report to another app, Save writes it to a file on the phone.
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    // Both teal: two equal ways to get the same report out. Cv buttons, because a plain Button
-                    // is shorter than they are and the row sat uneven.
-                    CvPrimaryButton(
-                        text = stringResource(R.string.settings_bugreport_share),
-                        onClick = onShareLogs,
-                        modifier = Modifier.weight(1f),
-                    )
-                    CvPrimaryButton(
-                        text = stringResource(R.string.settings_bugreport_save),
-                        onClick = onSaveLogs,
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Side by side: Share hands the report to another app, Save writes it to a file on the phone.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // Both teal: two equal ways to get the same report out.
+                CvPrimaryButton(
+                    text = stringResource(R.string.settings_bugreport_share),
+                    onClick = onShareLogs,
+                    modifier = Modifier.weight(1f),
+                )
+                CvPrimaryButton(
+                    text = stringResource(R.string.settings_bugreport_save),
+                    onClick = onSaveLogs,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
         }
 
         // The log file itself — visible whether or not logging is currently running. Until now the
@@ -2216,6 +2218,31 @@ private fun DebugLogViewer(onDismiss: () -> Unit) {
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.weight(1f),
                     )
+                    // Copy the whole visible tail to the clipboard — the no-app route for sending
+                    // the log anywhere (WhatsApp, email, Telegram). The viewer is the only in-app
+                    // place the log text exists as text, so this is where the copy lives.
+                    //
+                    // The strings are read here, at composable level, because the onClick body is a
+                    // plain lambda with no composable context: stringResource cannot run inside it.
+                    val logTitle = stringResource(R.string.settings_debug_log_file)
+                    val logEmpty = stringResource(R.string.settings_debug_log_empty)
+                    val logCopyDesc = stringResource(R.string.settings_debug_log_copy)
+                    val viewerContext = LocalContext.current
+                    IconButton(
+                        onClick = {
+                            val toCopy = text
+                            if (toCopy.isNullOrBlank()) {
+                                Toast.makeText(viewerContext, logEmpty, Toast.LENGTH_SHORT).show()
+                            } else {
+                                viewerContext.copyToClipboard(logTitle, toCopy)
+                            }
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ContentCopy,
+                            contentDescription = logCopyDesc,
+                        )
+                    }
                     Text(
                         text = stringResource(R.string.settings_debug_log_wrap),
                         style = MaterialTheme.typography.labelLarge,

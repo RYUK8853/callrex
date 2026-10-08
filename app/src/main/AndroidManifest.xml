@@ -28,6 +28,9 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Keeps the CPU awake for the duration of a call so screen-off cannot suspend the capture
+         thread and break the recording mid-call (PARTIAL_WAKE_LOCK, time-boxed per call). -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!--
          Required to read call log history and to receive the phone number in the PHONE_STATE broadcast intent.

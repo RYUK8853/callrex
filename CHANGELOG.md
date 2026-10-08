@@ -3,6 +3,22 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.4.8] — 2026-10-08
+
+### Fixed
+
+- **Recording no longer breaks when the screen turns off mid-call.** The app held a foreground
+  service (which keeps the app alive) but no CPU wake lock, so the moment the screen went off the
+  CPU could fall asleep, the capture thread was suspended, and the recording broke. The recording
+  now holds a time-boxed CPU wake lock for the whole call — acquired when the pipeline starts,
+  released as soon as it stops (or the service is destroyed).
+- **The "Share" / "Save" log buttons are now always visible** in Settings → Debug. They used to
+  disappear the moment debug logging was switched on — i.e. exactly when you'd just captured a bug
+  and were looking for a way to send the log, so it looked like there was no way to export logs at
+  all.
+- **The in-app log viewer has a Copy button** that puts the log on the clipboard, so it can be pasted
+  into WhatsApp / email / Telegram with no app needed.
+
 ## [2.4.7] — 2026-10-08
 
 ### Changed
