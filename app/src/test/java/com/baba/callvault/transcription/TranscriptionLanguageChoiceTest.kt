@@ -11,6 +11,7 @@ package com.baba.callvault.transcription
 import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TranscriptionLanguageChoiceTest {
@@ -53,11 +54,14 @@ class TranscriptionLanguageChoiceTest {
     }
 
     @Test
-    fun an_unsupported_device_language_falls_back_to_auto_detect() {
-        // Danish has no label to show for it, so there is nothing honest to pin. Auto-detect is the
-        // fallback here rather than the default everywhere.
-        assertNull(TranscriptionLanguageChoice.defaultLanguage(Locale.forLanguageTag("da-DK")))
-        assertNull(TranscriptionLanguageChoice.defaultLanguage(Locale.ROOT))
+    fun an_unsupported_device_language_pins_english_rather_than_auto_detect() {
+        // A pin this app could not offer left the phone on `lang=auto`, which the logs caught flapping
+        // between Hindi, Urdu and English per call. English is the safer default for such a phone; the
+        // per-call ask covers the calls that are not in English.
+        assertEquals("en", TranscriptionLanguageChoice.defaultLanguage(Locale.forLanguageTag("da-DK")))
+        assertEquals("en", TranscriptionLanguageChoice.defaultLanguage(Locale.ROOT))
+        // And a phone set to Hindi now pins Hindi instead of missing the list.
+        assertEquals("hi", TranscriptionLanguageChoice.defaultLanguage(Locale.forLanguageTag("hi-IN")))
     }
 
     @Test
@@ -66,6 +70,20 @@ class TranscriptionLanguageChoiceTest {
         // the users this defaulting exists for straight back to auto-detect.
         assertEquals("he", TranscriptionLanguageChoice.defaultLanguage(Locale.forLanguageTag("he-IL")))
         assertEquals("he", TranscriptionLanguageChoice.defaultLanguage(Locale.forLanguageTag("iw-IL")))
+    }
+
+    @Test
+    fun a_hindi_phone_pins_hindi() {
+        // The most common call language on this phone is Hindi; auto-detect on it flaps between
+        // Hindi, Urdu and English per call, so it must be pinnable.
+        assertEquals("hi", TranscriptionLanguageChoice.defaultLanguage(Locale.forLanguageTag("hi-IN")))
+        assertEquals("hi", TranscriptionLanguageChoice.resolve(chosen = "hi", setting = "en"))
+    }
+
+    @Test
+    fun urdu_is_offered_and_resolvable() {
+        assertTrue("ur" in TranscriptionLanguageChoice.SUPPORTED)
+        assertEquals("ur", TranscriptionLanguageChoice.resolve(chosen = "ur", setting = "en"))
     }
 
     @Test

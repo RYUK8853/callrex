@@ -50,7 +50,12 @@ internal fun CloudEndpointFields(
     onBaseUrlChange: (String) -> Unit,
     onApiKeyChange: (String) -> Unit,
     onModelChange: (String) -> Unit,
-    onClear: () -> Unit
+    onClear: () -> Unit,
+    /**
+     * Offers the one-tap fill-in for Fish Audio's speech-to-text (fixed base URL + model, only
+     * the key is left to paste). Transcription only — the summary sections never pass this.
+     */
+    showFishSetup: Boolean = false
 ) {
     val isCloud = engine == AppPreferences.ENGINE_CLOUD
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -118,8 +123,31 @@ internal fun CloudEndpointFields(
             modifier = Modifier.padding(top = 8.dp)
         )
 
+        if (showFishSetup) {
+            // One tap instead of three fields: the base URL and the model are fixed for Fish
+            // Audio's speech-to-text, so only the key is left for the user to paste.
+            TextButton(
+                onClick = {
+                    onEngineChange(AppPreferences.ENGINE_CLOUD)
+                    onBaseUrlChange(FISH_BASE_URL)
+                    onModelChange(FISH_TRANSCRIBE_MODEL)
+                },
+                modifier = Modifier.padding(top = 2.dp)
+            ) {
+                Text(stringResource(R.string.cloud_fish_setup))
+            }
+        }
+
         TextButton(onClick = onClear, modifier = Modifier.padding(vertical = 4.dp)) {
             Text(stringResource(R.string.cloud_clear))
         }
     }
 }
+
+/** Fish Audio's speech-to-text endpoint, as the user types it. Trailing-less on purpose: the
+ *  client appends `/asr` to whatever the user entered, and a stray slash would give a double one. */
+internal const val FISH_BASE_URL = "https://api.fish.audio/v1"
+
+/** The model that is actually billed and run — the docs are explicit that a header miss
+ *  silently downgrades to the cheaper `transcribe-1`, so the name must be exact. */
+internal const val FISH_TRANSCRIBE_MODEL = "transcribe-1-pro"

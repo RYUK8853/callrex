@@ -576,6 +576,8 @@
     <string name="transcription_language_label">زبان</string>
     <string name="transcription_language_hebrew">عبری</string>
     <string name="transcription_language_english">انگلیسی</string>
+    <string name="transcription_language_hindi">هندی</string>
+    <string name="transcription_language_urdu">اردو</string>
     <string name="transcription_language_arabic">عربی</string>
     <string name="transcription_language_russian">روسی</string>
     <string name="transcription_language_french">فرانسوی</string>

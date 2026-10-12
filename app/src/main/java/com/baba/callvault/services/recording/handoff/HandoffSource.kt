@@ -115,14 +115,25 @@ object HandoffSource {
 
         // The native android::AudioRecord* lives in an obfuscation-proof-but-unnamed long field; pick the
         // one that actually points at a native AudioRecord rather than trusting a field name.
+        // After `heldRecord = record` above, the daemon HOLDS the microphone. Every return from here
+        // that gives up must release it, or the capture stays open (the "STILL OPEN VOICE_CALL" entries
+        // in the system report, which also strand the microphone app-op and can poison the next call).
         val arPtr = record.javaClass.declaredFields
             .filter { it.type == java.lang.Long.TYPE }
             .mapNotNull { f -> f.isAccessible = true; runCatching { f.getLong(record) }.getOrNull() }
             .firstOrNull { it != 0L && AudioHandoffNative.nativeValidateArPtr(it) }
-        if (arPtr == null) { AppLogger.w(T, "deliver: no native AudioRecord ptr"); return@runCatching false }
+        if (arPtr == null) {
+            AppLogger.w(T, "deliver: no native AudioRecord ptr — releasing the held capture")
+            releaseHeld()
+            return@runCatching false
+        }
 
         val binder = AudioHandoffNative.nativeExtractBinder(arPtr)
-            ?: run { AppLogger.w(T, "deliver: extractBinder null"); return@runCatching false }
+            ?: run {
+                AppLogger.w(T, "deliver: extractBinder null — releasing the held capture")
+                releaseHeld()
+                return@runCatching false
+            }
 
         // Authoritative ring frame count straight from the AudioRecord: the app-side drain wraps on it,
         // and it also IDENTIFIES the cblk ashmem region (whose byte size varies with the sample rate).
@@ -147,8 +158,18 @@ object HandoffSource {
                 .onFailure { AppLogger.w(T, "deliver: could not close the host's copy of the cblk fd: ${it.message}") }
         }
         AppLogger.i(T, "deliver: BinderDelivery.deliverHandoffToApp ok=$ok")
+        if (!ok) {
+            // The app never received a usable track (the receiver stayed not-live), so the daemon's
+            // AudioRecord is now the only holder of the microphone — release it or it leaks open.
+            AppLogger.w(T, "deliver: handoff did not land — releasing the held capture")
+            releaseHeld()
+        }
         ok
-    }.onFailure { AppLogger.e(T, "deliverToApp failed: ${it.message}", it) }.getOrDefault(false)
+    }.onFailure {
+        AppLogger.e(T, "deliverToApp failed: ${it.message}", it)
+        // An exception part-way through leaves heldRecord set (and the mic held) on the throw path.
+        releaseHeld()
+    }.getOrDefault(false)
 
     /**
      * Releases the daemon's own reference to the handed-off track. The app owns the capture after a

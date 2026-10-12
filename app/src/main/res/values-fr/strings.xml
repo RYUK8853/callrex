@@ -453,6 +453,8 @@
     <string name="transcription_language_auto_hint">La détection n\'est pas fiable pour les langues qui ne s\'écrivent pas en caractères latins : l\'hébreu, l\'arabe, le russe et le chinois reviennent souvent écrits en lettres anglaises, ou en un seul long bloc de texte. Indiquez la langue si vous le pouvez.</string>
     <string name="transcription_language_chinese">Chinois</string>
     <string name="transcription_language_english">Anglais</string>
+<string name="transcription_language_hindi">Hindi</string>
+<string name="transcription_language_urdu">Ourdou</string>
     <string name="transcription_language_french">Français</string>
     <string name="transcription_language_german">Allemand</string>
     <string name="transcription_language_hebrew">Hébreu</string>

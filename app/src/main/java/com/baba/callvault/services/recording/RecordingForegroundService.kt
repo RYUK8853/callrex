@@ -754,6 +754,29 @@ class RecordingForegroundService : Service() {
             recordHealth(sizeBytes, name)
             return
         }
+        // Bytes but no audio track: a headless container. The 0-byte guard above passed because the
+        // muxer wrote a file, but capture produced no PCM (the daemon died mid-call before the first
+        // frame). Whisper has nothing to read and the player shows silence — so this is the same
+        // honest-failure case as an empty file, not a recording to catalog.
+        if (!AudioDecoder.hasAudioTrack(applicationContext, uri)) {
+            AppLogger.e(
+                TAG,
+                "Recording '$name' has $sizeBytes bytes but no audio track — capture produced no audio. " +
+                    "Deleting + notifying instead of cataloging a silent file."
+            )
+            if (!daemonLossNotified) {
+                val emptyFileMessage =
+                    if (AppPreferences(this).getPrivilegedMode().needsShizuku) {
+                        R.string.recording_error_empty_file_shizuku
+                    } else {
+                        R.string.recording_error_empty_file
+                    }
+                notificationHelper.showErrorNotification(getString(emptyFileMessage))
+            }
+            SafHelper.deleteDocument(doc, "the no-audio recording '$name'")
+            recordHealth(sizeBytes, name)
+            return
+        }
         // Too short to be worth keeping, if the user asked for that. Before the catalog, the
         // transcription queue and StorageRouter — a recording discarded after any of those has
         // already cost a whisper run or a cloud upload, and would flicker through the Home list on

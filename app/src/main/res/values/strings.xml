@@ -693,6 +693,8 @@
     <string name="transcription_language_label">Language</string>
     <string name="transcription_language_hebrew">Hebrew</string>
     <string name="transcription_language_english">English</string>
+    <string name="transcription_language_hindi">Hindi</string>
+    <string name="transcription_language_urdu">Urdu</string>
     <string name="transcription_language_arabic">Arabic</string>
     <string name="transcription_language_russian">Russian</string>
     <string name="transcription_language_french">French</string>
@@ -706,7 +708,7 @@
     <string name="transcription_language_vietnamese">Vietnamese</string>
     <string name="transcription_language_greek">Greek</string>
     <string name="transcription_language_auto">Detect automatically</string>
-    <string name="transcription_language_auto_hint">Detection is unreliable for languages that are not written in Latin letters — Hebrew, Arabic, Russian and Chinese often come back spelled out in English letters, or as one long block of text. Name the language if you can.</string>
+    <string name="transcription_language_auto_hint">Detection is unreliable for languages that are not written in Latin letters — Hebrew, Arabic, Urdu, Hindi, Russian and Chinese often come back spelled out in English letters, or as one long block of text. Name the language if you can.</string>
     <string name="transcription_note_manual">Transcripts are made only when you ask for one, from the button on a recording.</string>
     <string name="transcription_note_after_each_call">Each call is transcribed as soon as it ends. Older calls are left alone — transcribe those from the button on a recording.</string>
     <string name="transcription_note_automatic">Calls that have no transcript yet are transcribed at the chosen time. A 30-minute call takes about 30 minutes.</string>
@@ -940,4 +942,5 @@
     <string name="cloud_model_hint" translatable="false">e.g. whisper-large-v3</string>
     <string name="cloud_privacy_note">Audio and transcript text are sent only to the endpoint you enter, over HTTPS, with your key. Nothing is sent anywhere else, and the endpoint, key and model are stored only on this device.</string>
     <string name="cloud_clear">Clear saved endpoint</string>
+    <string name="cloud_fish_setup">Set up Fish Audio (one tap)</string>
 </resources>

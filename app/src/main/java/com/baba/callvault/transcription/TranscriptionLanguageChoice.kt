@@ -38,7 +38,7 @@ object TranscriptionLanguageChoice {
      * name. Whisper knows far more; these are the ones with a translated label to show for them.
      */
     val SUPPORTED: List<String> =
-        listOf("he", "en", "ar", "zh", "fr", "de", "hu", "it", "pl", "pt", "ru", "es", "vi", "el")
+        listOf("he", "en", "hi", "ur", "ar", "zh", "fr", "de", "hu", "it", "pl", "pt", "ru", "es", "vi", "el")
 
     /**
      * The obsolete ISO 639 codes [Locale] still reports, mapped to the modern ones whisper uses.
@@ -50,16 +50,23 @@ object TranscriptionLanguageChoice {
     private val LEGACY_LANGUAGE_CODES = mapOf("iw" to "he", "in" to "id", "ji" to "yi")
 
     /**
-     * The language to pin when the user has not said: the phone's own, or null (auto-detect) when the
-     * app does not offer it.
+     * The language to pin when the user has not said: the phone's own, or English when the app does
+     * not offer the phone's language.
      *
      * A guess, but the best one available without asking, and far better than the alternative — a phone
      * set to Hebrew takes Hebrew calls, and auto-detect on those returns Latin-letter transliteration.
+     * A phone set to a language the app does not offer (Danish, Swahili, …) is pinned to English rather
+     * than auto-detect: auto-detect is the measurably-worse path this whole pinning exists to avoid, and
+     * it is what the logs caught doing — an `en-GB`-era phone with a pin this app could not offer ran
+     * every call on `lang=auto` and the transcript language flapped between Hindi, Urdu and English per
+     * call. English is the safer default for calls on such phones; the per-call ask (on by default) lets
+     * the user name the real language for any call that is not in it.
+     *
      * Callers that can ask instead should ask; the setup wizard does.
      */
     fun defaultLanguage(locale: Locale = Locale.getDefault()): String? {
         val code = locale.language.lowercase(Locale.ROOT)
-        return (LEGACY_LANGUAGE_CODES[code] ?: code).takeIf { it in SUPPORTED }
+        return (LEGACY_LANGUAGE_CODES[code] ?: code).takeIf { it in SUPPORTED } ?: "en"
     }
 
     /** [language] (null meaning auto-detect) as a value that survives a trip through work input data. */

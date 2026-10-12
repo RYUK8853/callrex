@@ -21,6 +21,7 @@ import com.baba.callvault.transcription.TranscriptionLanguageChoice
 import com.baba.callvault.transcription.model.TranscriptionModel
 import com.baba.callvault.ui.navigation.HomeSection
 import com.baba.callvault.utils.AppLogger
+import java.util.Locale
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -31,7 +32,7 @@ import org.json.JSONObject
 class AppPreferences(context: Context) {
 
     companion object {
-        private const val PREFS_NAME = "callvault_prefs"
+        internal const val PREFS_NAME = "callvault_prefs"
 
         /**
          * The settings that may be exported and imported — an explicit ALLOW-list, device-independent
@@ -215,10 +216,12 @@ class AppPreferences(context: Context) {
         // premise. An install that predates Shizuku support has no stored value and must land here.
         val PRIVILEGED_MODE: String = PrivilegedMode.STANDALONE.key
 
-        // Off: one language for every call is the right assumption for most phones, and an extra
-        // dialog between a tap and its result is a cost worth paying only by people who take calls in
-        // more than one language.
-        const val TRANSCRIPTION_ASK_LANGUAGE = false
+        // On: this phone takes its calls in more than one language — Hindi and English above all —
+        // and a single pin is wrong about half the time. The per-call dialog is one confirming tap for
+        // the usual language and one switch for the rest, which beats whisper guessing and flapping
+        // between Hindi, Urdu and English per call (measured in the field). A phone whose calls are
+        // always one language can turn this off for the one-less dialog.
+        const val TRANSCRIPTION_ASK_LANGUAGE = true
 
         // --- Cloud AI (the user's own endpoint) ---
         // "local" keeps every word on the device; "cloud" sends audio (transcription) or transcript
@@ -352,6 +355,8 @@ class AppPreferences(context: Context) {
         TRANSCRIPTION_MODEL_ID("transcription_model_id"),
         TRANSCRIPTION_LANGUAGE("transcription_language"),
         TRANSCRIPTION_ASK_LANGUAGE("transcription_ask_language"),
+        // One-shot 2.4.11 migration marker — see migrateAutoDetectToLocalePin.
+        TRANSCRIPTION_LANGUAGE_MIGRATED("transcription_language_migrated"),
         // --- Cloud AI (user's own endpoint; deliberately NOT in EXPORTABLE_KEYS) ---
         TRANSCRIPTION_ENGINE("transcription_engine"),
         TRANSCRIPTION_CLOUD_BASE_URL("transcription_cloud_base_url"),
@@ -934,6 +939,31 @@ class AppPreferences(context: Context) {
     /** Sets the language passed to whisper, or null to auto-detect. */
     fun setTranscriptionLanguage(language: String?) =
         setString(Key.TRANSCRIPTION_LANGUAGE, TranscriptionLanguageChoice.encode(language))
+
+    /**
+     * One-shot 2.4.11: an explicit auto-detect transcription language is re-pinned to the phone's own.
+     *
+     * Measured in the field on 2026-10-12: a phone running `lang=auto` transcribed consecutive calls
+     * as Hindi, then Urdu, then English, with the wrong script twice — auto-detect on this phone's
+     * Hindi-and-English calls flaps. The phone's own language is the far better default (Hindi pins
+     * Hindi, English pins English), and the per-call ask — on by default since 2.4.11 — covers the
+     * calls that are in the other language, one tap at a time.
+     *
+     * Touched exactly once per install (marked by [Key.TRANSCRIPTION_LANGUAGE_MIGRATED]) and only
+     * when the stored value is genuinely auto-detect — a language the user named is left alone, and a
+     * later deliberate return to auto-detect is honoured.
+     *
+     * @param locale the phone's own language, defaulted to the device locale.
+     * @return true when a stored auto-detect was re-pinned, so the caller can log it once.
+     */
+    fun migrateAutoDetectToLocalePin(locale: Locale = Locale.getDefault()): Boolean {
+        if (getBoolean(Key.TRANSCRIPTION_LANGUAGE_MIGRATED, false)) return false
+        setBoolean(Key.TRANSCRIPTION_LANGUAGE_MIGRATED, true)
+        if (getString(Key.TRANSCRIPTION_LANGUAGE) != TranscriptionLanguageChoice.AUTO) return false
+        val pin = TranscriptionLanguageChoice.defaultLanguage(locale) ?: return false
+        setString(Key.TRANSCRIPTION_LANGUAGE, pin)
+        return true
+    }
 
     // ----- Cloud AI (the user's own endpoint) -----
     //

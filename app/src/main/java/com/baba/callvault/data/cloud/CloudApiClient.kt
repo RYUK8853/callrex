@@ -8,6 +8,7 @@
 
 package com.baba.callvault.data.cloud
 
+import androidx.annotation.VisibleForTesting
 import com.baba.callvault.utils.AppLogger
 import org.json.JSONArray
 import org.json.JSONObject
@@ -31,6 +32,9 @@ object CloudApiClient {
     private const val TAG = "CV:CloudApi"
     private const val CONNECT_TIMEOUT_MS = 30_000
     private const val READ_TIMEOUT_MS = 10 * 60_000
+    // Fish Audio's own ceiling for one transcription (docs: 900 s) — a 60-minute recording can
+    // reach it, and a call that hits this is a failure, not a hang.
+    private const val FISH_READ_TIMEOUT_MS = 15 * 60_000
     /** A transcription can outlive a minute of audio; a summary can outlive an hour. */
     private const val WRITE_TIMEOUT_MS = 10 * 60_000
 
@@ -42,7 +46,13 @@ object CloudApiClient {
     data class TimedSegment(val startMs: Long, val endMs: Long, val text: String)
 
     /**
-     * Transcribes [wav] via the endpoint's `/v1/audio/transcriptions` and returns timed segments.
+     * Transcribes [wav] to the endpoint and returns timed segments.
+     *
+     * [fish.audio](https://docs.fish.audio/features/speech-to-text) is auto-detected by its host
+     * (`api.fish.audio`): it is not OpenAI-shaped — the audio field is `audio`, the model is an
+     * HTTP header (a body `model` field is ignored and silently downgraded to a different,
+     * cheaper model), and the timestamp switch is `ignore_timestamps=false`. Everything else
+     * speaks the OpenAI-compatible `/audio/transcriptions`.
      *
      * The response is read in the shape the server actually sent it: OpenAI's `segments`, Groq's
      * `chunks`, or a plain `text` field with no timing at all — the last is returned as a single
@@ -50,6 +60,18 @@ object CloudApiClient {
      * rather than inventing some.
      */
     fun transcribe(
+        config: com.baba.callvault.data.CloudTranscriptionConfig,
+        wav: ByteArray,
+        language: String?,
+    ): List<TimedSegment> {
+        return if (isFish(config.baseUrl)) {
+            fishTranscribe(config, wav, language)
+        } else {
+            openAiTranscribe(config, wav, language)
+        }
+    }
+
+    private fun openAiTranscribe(
         config: com.baba.callvault.data.CloudTranscriptionConfig,
         wav: ByteArray,
         language: String?,
@@ -69,6 +91,116 @@ object CloudApiClient {
         val root = JSONObject(response)
         return parseTranscription(root)
     }
+
+    /**
+     * Whether [baseUrl] is Fish Audio's API. Host match, not a keyword in the URL, because a
+     * user proxy in front of it would keep the host of itself — and a proxy that speaks the
+     * OpenAI shape at a fish-named address is fine on the OpenAI path.
+     */
+    @VisibleForTesting
+    internal fun isFish(baseUrl: String): Boolean =
+        runCatching { URL(baseUrl).host }.getOrNull()?.equals("api.fish.audio", ignoreCase = true) == true
+
+    /**
+     * Fish Audio speech-to-text, `POST {base}/asr`.
+     *
+     * The model must ride the `model` HTTP header, written exactly in lowercase — the docs are
+     * explicit that a header miss does not error, it silently serves and bills `transcribe-1`
+     * instead, so the value comes from [com.baba.callvault.data.CloudTranscriptionConfig.model]
+     * verbatim and the UI hint names the exact string. Timestamps are always requested
+     * ([segment]s, word-level, seconds): this app's transcript view is a timed one, and the
+     * [TranscriptSegment] shape downstream already carries start/end per line.
+     */
+    private fun fishTranscribe(
+        config: com.baba.callvault.data.CloudTranscriptionConfig,
+        wav: ByteArray,
+        // No `language` field: the /asr request takes no language parameter — the server
+        // auto-detects and reports what it found in the response's `language` / `language_code`.
+        // Sending a hint would be an unknown field at best and a 400 `invalid_parameter` at
+        // worst. The parameter stays for signature parity with [openAiTranscribe].
+        @Suppress("UNUSED_PARAMETER") language: String?,
+    ): List<TimedSegment> {
+        val url = "${config.baseUrl}/asr"
+        val boundary = "----CallrexBoundary" + System.nanoTime().toString(16)
+        val out = ByteArrayOutputStream()
+        fun header(vararg lines: String) {
+            lines.forEach { out.write(it.toByteArray()); out.write("\r\n".toByteArray()) }
+        }
+        header(
+            "--$boundary",
+            "Content-Disposition: form-data; name=\"audio\"; filename=\"call.wav\"",
+            "Content-Type: audio/wav",
+            ""
+        )
+        out.write(wav)
+        out.write("\r\n".toByteArray())
+        fun field(name: String, value: String) {
+            header("--$boundary", "Content-Disposition: form-data; name=\"$name\"", "")
+            out.write(value.toByteArray())
+            out.write("\r\n".toByteArray())
+        }
+        // Off by default on the server: without this the response has no `segments` (and no
+        // `speaker_turns`) at all.
+        field("ignore_timestamps", "false")
+        // No `language` field: the /asr request takes no language parameter — the server
+        // auto-detects and reports what it found in the response's `language` / `language_code`.
+        // Sending a hint would be an unknown field at best and a 400 `invalid_parameter` at worst.
+        out.write("--$boundary--\r\n".toByteArray())
+
+        val headers = mutableMapOf("model" to config.model)
+        if (config.apiKey.isNotBlank()) headers["Authorization"] = "Bearer ${config.apiKey}"
+        val response = post(
+            url = url,
+            headers = headers,
+            contentType = "multipart/form-data; boundary=$boundary",
+            body = out.toByteArray(),
+            readTimeoutMs = FISH_READ_TIMEOUT_MS,
+        )
+        return parseFish(JSONObject(response))
+    }
+
+    /**
+     * Fish Audio's response, mapped to the app's timed segments.
+     *
+     * **`speaker_turns` when timestamps are requested.** With `ignore_timestamps=false`, a
+     * multi-speaker run also returns the turns: each is an utterance with a clean [text] and
+     * [start]/[end] in seconds — the granularity the local whisper path stores, and what the
+     * runner's speaker labeller assigns A/B to by time overlap.
+     *
+     * **`text` fallback (the default shape).** A plain run — or a single voice with no turns —
+     * returns one punctuated [text] plus word-level `segments`. The word segments are the wrong
+     * unit here (one word a piece, no line breaks, no punctuation), so the whole [text] becomes
+     * a single segment spanning the reported [duration]: the transcript stays complete and clean,
+     * and only the per-line scrubbing timing is coarse. That is the honest trade rather than
+     * inventing word-line breaks.
+     */
+    @VisibleForTesting
+    internal fun parseFish(root: JSONObject): List<TimedSegment> {
+        root.optJSONArray("speaker_turns")?.let { turns ->
+            val parsed = (0 until turns.length()).mapNotNull { i ->
+                val t = turns.optJSONObject(i) ?: return@mapNotNull null
+                val text = stripSpeakerMarkers(t.optString("text")).trim()
+                if (text.isEmpty()) null
+                else TimedSegment(
+                    startMs = (t.optDouble("start", 0.0) * 1000).toLong(),
+                    endMs = (t.optDouble("end", 0.0) * 1000).toLong(),
+                    text = text,
+                )
+            }
+            if (parsed.isNotEmpty()) return parsed
+        }
+        // The `text` field carries inline `<|speaker:N|>` markers on multi-speaker runs; they
+        // belong to no one in the app's lines.
+        val text = stripSpeakerMarkers(root.optString("text")).trim()
+        if (text.isEmpty()) throw CloudApiException(0, "The transcription response carried no text")
+        val durationMs = (root.optDouble("duration", 0.0) * 1000).toLong()
+        return listOf(TimedSegment(0L, durationMs, text))
+    }
+
+    /** Drop the inline `<|speaker:0|>` turn markers so a turn's text is the words alone. */
+    @VisibleForTesting
+    internal fun stripSpeakerMarkers(text: String): String =
+        text.replace(Regex("<\\|speaker:\\d+\\|>"), "")
 
     /**
      * Runs one chat completion and returns the first choice's text.
@@ -181,11 +313,12 @@ object CloudApiClient {
         headers: Map<String, String>,
         contentType: String,
         body: ByteArray,
+        readTimeoutMs: Int = READ_TIMEOUT_MS,
     ): String {
         val connection = (URL(url).openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
             connectTimeout = CONNECT_TIMEOUT_MS
-            readTimeout = READ_TIMEOUT_MS
+            readTimeout = readTimeoutMs
             doOutput = true
             setRequestProperty("Content-Type", contentType)
             headers.forEach { (k, v) -> setRequestProperty(k, v) }

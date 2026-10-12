@@ -354,6 +354,34 @@ object AudioDecoder {
     }
 
     /**
+     * Whether [uri] contains at least one audio track, read from the container without decoding.
+     *
+     * This exists because the publish path's empty-file guard is a byte-count check: a headless
+     * container (the muxer wrote a file but capture produced no PCM — the daemon died mid-call before
+     * the first frame) has some bytes, so it sails past the 0-byte guard and would be cataloged as a
+     * recording whisper then has nothing to read and the player shows as silence. Checking for an
+     * actual audio track catches that. Returns true when an audio track exists even if it declares no
+     * duration, so a valid recording without a duration header is never mistaken for empty.
+     */
+    fun hasAudioTrack(context: Context, uri: Uri): Boolean {
+        val extractor = MediaExtractor()
+        return try {
+            context.contentResolver.openFileDescriptor(uri, "r").use { pfd ->
+                requireNotNull(pfd) { "Cannot open $uri" }
+                extractor.setDataSource(pfd.fileDescriptor)
+            }
+            (0 until extractor.trackCount).any { i ->
+                extractor.getTrackFormat(i).getString(MediaFormat.KEY_MIME)?.startsWith("audio/") == true
+            }
+        } catch (e: Exception) {
+            AppLogger.w(TAG, "Could not read the audio track of $uri: ${e.message}")
+            false
+        } finally {
+            extractor.release()
+        }
+    }
+
+    /**
      * Decodes [uri] to 16 kHz mono float. Blocking and CPU-bound — [TranscriptionEngine] is what moves
      * it off the main thread; do not call it directly from UI code.
      *

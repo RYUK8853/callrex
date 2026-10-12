@@ -21,8 +21,10 @@ object LanguageScript {
     private val NON_LATIN = mapOf(
         "he" to Character.UnicodeScript.HEBREW,
         "ar" to Character.UnicodeScript.ARABIC,
+        "ur" to Character.UnicodeScript.ARABIC,
         "ru" to Character.UnicodeScript.CYRILLIC,
         "zh" to Character.UnicodeScript.HAN,
+        "hi" to Character.UnicodeScript.DEVANAGARI,
     )
 
     fun of(language: String): Character.UnicodeScript = NON_LATIN[language] ?: Character.UnicodeScript.LATIN

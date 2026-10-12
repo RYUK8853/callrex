@@ -1198,7 +1198,8 @@ private fun TranscriptionSection(
             onBaseUrlChange = { actions.setTranscriptionCloudBaseUrl(it) },
             onApiKeyChange = { actions.setTranscriptionCloudApiKey(it) },
             onModelChange = { actions.setTranscriptionCloudModel(it) },
-            onClear = { actions.clearCloudSettings() }
+            onClear = { actions.clearCloudSettings() },
+            showFishSetup = true
         )
 
         if (!isCloud) {

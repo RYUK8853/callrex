@@ -453,6 +453,8 @@
     <string name="transcription_language_auto_hint">Việc nhận diện không đáng tin với những ngôn ngữ không viết bằng chữ Latinh — tiếng Do Thái, tiếng Ả Rập, tiếng Nga và tiếng Trung thường trả về dưới dạng chữ cái tiếng Anh, hoặc thành một khối văn bản dài liền mạch. Nếu được, hãy chọn đúng ngôn ngữ.</string>
     <string name="transcription_language_chinese">Tiếng Trung</string>
     <string name="transcription_language_english">Tiếng Anh</string>
+    <string name="transcription_language_hindi">Tiếng Hindi</string>
+    <string name="transcription_language_urdu">Tiếng Urdu</string>
     <string name="transcription_language_french">Tiếng Pháp</string>
     <string name="transcription_language_german">Tiếng Đức</string>
     <string name="transcription_language_hebrew">Tiếng Do Thái</string>

@@ -1,5 +1,86 @@
 # DECISION.md — Callrex (CallVault fork)
-_Last updated: 2026-10-08 — v2.4.10 shipped (recordings-vanishing fix + transcription-first delete)_
+_Last updated: 2026-10-12 — v2.4.11 built + fish.audio STT integrated (tests 1935/1935). PENDING: key in app, release._
+
+## 2.4.11 addendum — Fish Audio STT (user directive: "we will use fish.audio for stt for now")
+
+### Decision
+- **STT = fish.audio `transcribe-1-pro`** as the cloud engine (user-configurable, local whisper untouched = fallback).
+- **Summary = user's own model** ("summary hm apne model se likhwa lenge") — no summary engine change this round.
+- **Privacy relaxed** (user: "this app is for our use only no privacy problem for now we want accuracy and best results").
+
+### What's built (verified: build green, 1935/1935 tests, APK versionCode 20457 / v2.4.11)
+1. `CloudApiClient.transcribe` routes by host: `api.fish.audio` → fish path, else existing OpenAI path (Groq/OpenAI/Ollama-proxy unaffected).
+2. Fish path = native `POST {base}/asr`: `model` header (docs: header miss silently downgrades to `transcribe-1`),
+   `ignore_timestamps=false`, multipart `audio` field, **no `language` field** (API has none — server auto-detects).
+   15-min read timeout (fish docs ceiling 900s; app's 60-min max recording fits).
+3. `parseFish`: `speaker_turns` → one timed segment per utterance (app's A/B labeller works on the timings);
+   else whole punctuated `text` = ONE clean segment (word `segments` are per-word, no punctuation — wrong unit).
+   `<|speaker:N|>` markers stripped in BOTH paths (bug caught by the empty-turns test).
+4. UI: "Set up Fish Audio" one-tap button in transcription settings (fills base URL + model; user pastes key only).
+   New string `cloud_fish_setup` in default values (cloud_* keys are English-only in this codebase — convention).
+5. Tests: `CloudApiClientFishTest` (8 tests, real live-API response shapes from 2026-10-12 capture).
+
+### Key handling (IMPORTANT)
+- User's key is masked by the platform in chat — **the full key never reaches my tools** (verified: I could only save
+  the 13-char masked form). `~/.callrex/keys/fish_audio` holds ONLY the masked form — useless for API calls.
+- **The key goes into the APP on the phone only** (Settings → Transcription → Cloud → "Set up Fish Audio" → paste key).
+  It is stored in Android SharedPreferences on-device, never in this repo/git/logs. That satisfies
+  "do not expose anywhere just save and give me when asked" — I can never return the full key because I never received it unmasked;
+  the user still has it (they typed it) and it lives on their phone after install.
+- Live API test was BLOCKED (401 with masked key) — the parser is tested against captured real response shapes instead;
+  end-to-end fish verification happens on the first real call after the user installs + pastes the key.
+
+### Release state (v2.4.11, still UNPUBLISHED)
+- Version 20457/2.4.11, CHANGELOG has fish entry, tests 1935/1935 green, release APK built
+  (sha256 13f2feec7f9cb1e6403cb7e15de0cf02f2438db0cca4a72bf56c634301603633).
+- PENDING user GO: commit + tag + push + GitHub release (BrowserOS neo) + Catbox.
+- R3 (handoff root cause) still deferred — R1 diagnostics will surface the daemon-side reason on the next failed call.
+
+## 2.4.11 — Crash fixes (R1/R2/C) + Transcription (T1/T2)
+
+### Kya hua (doni logs verified: 36B5C989 debug + ADE220A8 system)
+- **Handoff ON tha but `startHandoff` 11/11 false** — har call raw daemon path pe, 4 mid-call daemon deaths = audio lost.
+- **System report: 3 STILL OPEN VOICE_CALL captures** (pid 25034) — failed handoff ke leaked mic captures.
+- **Transcription `lang=auto` chal raha tha** — whisper en/hi/ur flap karta tha (user ka exact symptom).
+
+### Changes
+1. **R2 — `HandoffSource.deliverToApp` mic-leak fix**: `heldRecord = record` ke baad 3 failure returns
+   (no native ptr / extractBinder null / delivery !ok) mic release nahi karte the + exception path pe bhi.
+   Ab sab `releaseHeld()` karte hain (idempotent, `CaptureAudit.released` ke saath).
+2. **Fix C — no-audio guard (`RecordingForegroundService.routeFinalRecording`)**: sirf 0-byte check tha;
+   ab `AudioDecoder.hasAudioTrack()` (MediaExtractor, `audio/*` track) — headless container (bytes hain,
+   audio nahi) catalog/transcription mein nahi jata; same "recording was empty" error notification.
+3. **R1 — daemon log ab report aayega**:
+   - Root cause (code+log verified): daemon ka ring in-memory + per-process; report sirf LIVE daemon ka
+     ring drain karta tha; failed daemon "Clearing N other recorder process(es)" se pehle kill ho chuka tha.
+     Ring sirf `ringEnabled` (user logging ON) pe collect karta tha — normal install pe khali.
+   - Fix (a) `AppLogger`: daemon process (`prefs == null`) mein ring ALWAYS collect (bounded 4000, in-memory,
+     disk nahi). (b) `AudioRecordingEngine`: handoff fail hote hi `service.drainDiagnostics()` → app ke
+     persistent log mein. Agla report daemon-side reason dega.
+4. **T1 — Hindi + Urdu first-class**: `SUPPORTED` + `NON_LATIN` (hi→Devanagari, ur→Arabic) + picker labels
+   (14 locale strings files, proper translations) + `TranscriptionLabels.languageOf`. Side effect:
+   `WrongScriptRetry` ab hi/ur pins pe active (Latin-script transcript → re-decode).
+5. **T2 — language flap khatam** (user: "majorly hindi ya english hi rahti hai"):
+   - Fresh install: `defaultLanguage()` ab phone locale pin karta hai (unsupported pe `en` fallback, auto nahi).
+   - **One-time migration** (`migrateAutoDetectToLocalePin`, AppApplication.onCreate): stored `auto` →
+     phone ki language (logged, reversible per-call dialog se). Ye phone `lang=auto` tha — fresh-install
+     fix se kaam nahi padta tha, isliye migration.
+   - **Per-call language dialog ab default ON** — 1 confirming tap (en), 1 switch (hi), koi bhi language reachable.
+6. Version 20457 / 2.4.11. Naye tests: 6 (hi/ur locale mapping + hi unsupported-before + migration x3).
+
+### Verified
+- Tests **1927/1927** (baseline 1921 + 6; failures=0 errors=0 skipped=0)
+- `assembleDebug` + `assembleRelease -PallowMissingTranslations=true` green
+  (checkTranslations ke remaining missing keys pre-existing the — v2.4.10 se, documented escape hatch)
+- APK: /tmp/Callrex.apk, 67,913,553 B, sha256
+  `bef1f6d07f3f83514b0508105ca400d22cdc8117d2c905816e74ae2a9c598a16`
+- aapt2: `versionCode='20457' versionName='2.4.11'`
+
+### Known / BAKI
+- **Handoff ka actual root cause (kyun 11/11 false) abhi unknown** — R1 sirf diagnose karega; next field
+  report ke baad fix (v2.4.12). Mid-call daemon death pe audio tab tak lost ho sakta hai jab tak handoff kaam na kare.
+- WD-off → daemon kill ka correlation valid hai (launcher code + log). User: WD on rakhna.
+- Release (user GO pe): commit + tag v2.4.11 + GitHub release (BrowserOS neo — API token git-only, 401) + Catbox.
 
 ## 2.4.10 — Recordings-vanishing fix (v2.4.9 log ka root cause)
 

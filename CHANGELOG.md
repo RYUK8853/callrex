@@ -3,6 +3,62 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.4.11] — 2026-10-12
+
+### Added
+
+- **Fish Audio speech-to-text is a supported cloud transcription engine.**
+  The cloud engine now recognises `api.fish.audio` and speaks its native `/v1/asr` protocol
+  instead of the OpenAI-shaped one: the model rides the `model` HTTP header (a miss silently
+  downgrades to the cheaper model on their side, so it is sent verbatim), timestamps are
+  requested, and the answer is read in the shape the server actually sent — `speaker_turns`
+  when a multi-speaker run produced them (one timed line per utterance, the app's speaker A/B
+  labelling works on them), otherwise the whole punctuated `text` as a single clean line rather
+  than inventing per-word breaks from the word-level `segments`. A one-tap "Set up Fish Audio"
+  button in the transcription settings fills the endpoint and model, leaving only the key to
+  paste.
+
+### Fixed
+
+- **A failed "Resilient recording" handoff no longer leaks the microphone.**
+  Field logs (Nothing A001, 2026-10-12): the handoff was ON but returned false on 11/11 calls,
+  and the system report showed three VOICE_CALL captures STILL OPEN from the recorder daemon —
+  the microphone's app-op was stranded open by every failed attempt, which can poison the next
+  call. The daemon now releases its held capture on every handoff failure path (native pointer
+  missing, binder extract null, delivery not landing, or an exception part-way), audited the same
+  as the success path.
+- **A recording with bytes but no audio is no longer cataloged as a recording.**
+  The publish path only checked for a 0-byte file, so a headless container (the daemon died
+  mid-call before the first audio frame — bytes, no track) was cataloged, sent to whisper (which
+  found nothing) and played back as silence. The publish path now checks for an actual audio
+  track first; a file without one is deleted with the same honest "recording was empty" failure
+  message as a 0-byte file, and the daemon-loss notification is shown once.
+- **The recorder daemon's own log now reaches the report, so a failed handoff says WHY.**
+  Two gaps kept the daemon blind in reports: its in-memory log ring only collected while the
+  user's logging switch was on, and the report drained it only from the daemon that was still
+  alive at export time — which is not the daemon that had just failed (the field log shows the
+  daemon being killed and re-spawned, "Clearing 3 other recorder process(es)"). The daemon now
+  always collects into its bounded ring, and the app copies that daemon's lines into its own
+  persistent log at the exact moment a handoff fails, before the daemon can be killed. The next
+  report after a failed handoff carries the daemon-side reason instead of an app-side "false".
+
+### Added
+
+- **Hindi and Urdu are now first-class transcription languages.**
+  Both were missing from the supported list (whisper supports both), so a phone taking calls in
+  Hindi could not pin it and had no correct script to be corrected against. Both are now in the
+  picker, in the language list, and in the script table (Hindi → Devanagari, Urdu → Arabic),
+  which also activates the wrong-script retry for them: a Hindi call transcribed in Latin letters
+  is now re-decoded instead of shipped.
+- **Transcription no longer leaves whisper guessing the language.**
+  The field log caught the engine running `lang=auto`, with whisper flapping the same calls
+  between English, Hindi and Urdu. Now: a fresh install pins the phone's own language (English
+  on this phone) instead of falling back to auto-detect; the per-call language dialog is ON by
+  default, so every transcribe is one confirming tap in the common language and one switch away
+  from any other (Hindi, English, Urdu, or auto for calls in a language the list does not cover);
+  and a one-time migration re-pins any phone still on the old stored auto-detect to its own
+  language (logged, and reversible from the per-call dialog).
+
 ## [2.4.10] — 2026-10-08
 
 ### Fixed

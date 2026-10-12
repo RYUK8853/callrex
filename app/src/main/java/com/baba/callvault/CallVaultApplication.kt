@@ -49,6 +49,15 @@ class CallVaultApplication : Application() {
         super.onCreate()
         AppLogger.init(applicationContext)
 
+        // One-shot 2.4.11: a phone that transcribed on auto-detect had whisper guessing the language
+        // per call — measured flapping between Hindi, Urdu and English. Re-pin it to the phone's own
+        // language once; the per-call ask (on by default since 2.4.11) covers the other languages.
+        runCatching {
+            if (AppPreferences(applicationContext).migrateAutoDetectToLocalePin()) {
+                AppLogger.i(TAG, "Transcription language re-pinned from auto-detect to the phone's own language")
+            }
+        }.onFailure { AppLogger.w(TAG, "Transcription language migration failed: ${it.message}") }
+
         // Shizuku mode has no keep-alive, so nothing else would notice Shizuku dying while the app runs.
         com.baba.callvault.server.ShizukuLifecycleWatcher.install(applicationContext)
 

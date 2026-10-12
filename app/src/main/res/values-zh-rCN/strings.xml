@@ -453,6 +453,8 @@
     <string name="transcription_language_auto_hint">对于不用拉丁字母书写的语言，自动检测并不可靠——希伯来语、阿拉伯语、俄语和中文常常会以英文字母拼写的形式返回，或者变成一整段没有断句的文字。如果可以，请直接指定语言。</string>
     <string name="transcription_language_chinese">中文</string>
     <string name="transcription_language_english">英语</string>
+    <string name="transcription_language_hindi">印地语</string>
+    <string name="transcription_language_urdu">乌尔都语</string>
     <string name="transcription_language_french">法语</string>
     <string name="transcription_language_german">德语</string>
     <string name="transcription_language_hebrew">希伯来语</string>

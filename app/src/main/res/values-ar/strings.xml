@@ -507,6 +507,8 @@
     <string name="transcription_language_label">اللغة</string>
     <string name="transcription_language_hebrew">العبرية</string>
     <string name="transcription_language_english">الإنجليزية</string>
+    <string name="transcription_language_hindi">الهندية</string>
+    <string name="transcription_language_urdu">الأردية</string>
     <string name="transcription_language_arabic">العربية</string>
     <string name="transcription_language_russian">الروسية</string>
     <string name="transcription_language_french">الفرنسية</string>

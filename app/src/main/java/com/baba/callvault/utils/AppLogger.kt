@@ -605,6 +605,15 @@ object AppLogger {
         // without this every daemon line would be dropped right here and the export would stay blind
         // to the process that actually owns the microphone.
         val toFile = prefs?.isLoggingEnabled() == true
+        // In the daemon process `init` never runs, so `prefs` is null — and the in-memory ring is the
+        // daemon's ONLY diagnostic channel. It must therefore always collect there, not only when the
+        // (unreachable) logging preference happens to be on. Bounded (RING_CAPACITY), in-memory, and
+        // never written to disk by the daemon, so this is cheap and safe. Without this, a handoff that
+        // failed on a daemon that was later killed (WD-off, or the "clearing N other recorder
+        // processes" sweep) left NO reason at all: export-time drainDiagnostics only ever reaches the
+        // still-alive daemon, which is not the one that just failed.
+        val inDaemon = prefs == null
+        val toRing = inDaemon || ringEnabled
         val time = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US).format(Date())
 
         // The setup journal is written whether or not logging is on, so it is fed before the gate
@@ -612,7 +621,7 @@ object AppLogger {
         // and the message reaching here is already redacted.
         SetupJournal.record(tag, "$time [$level] $tag: $message")
 
-        if (!toFile && !ringEnabled) return
+        if (!toFile && !toRing) return
 
         // The trace is redacted HERE, not by the callers. They redact only their own message and hand
         // the raw throwable down, so until this line an exception message quoting a recording URI or a
@@ -625,7 +634,7 @@ object AppLogger {
 
         val formattedLine = "$time [$level] $tag: $fullMessage"
         if (toFile) channel.trySend(formattedLine)
-        if (ringEnabled) {
+        if (toRing) {
             synchronized(ring) {
                 while (ring.size >= RING_CAPACITY) ring.removeFirst()
                 ring.addLast(formattedLine)

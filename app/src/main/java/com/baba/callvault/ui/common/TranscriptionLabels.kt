@@ -131,6 +131,8 @@ object TranscriptionLabels {
     fun languageOf(code: String?): Int = when (code) {
         "he" -> R.string.transcription_language_hebrew
         "en" -> R.string.transcription_language_english
+        "hi" -> R.string.transcription_language_hindi
+        "ur" -> R.string.transcription_language_urdu
         "ar" -> R.string.transcription_language_arabic
         "zh" -> R.string.transcription_language_chinese
         "fr" -> R.string.transcription_language_french

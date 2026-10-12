@@ -453,6 +453,8 @@
     <string name="transcription_language_auto_hint">Il rilevamento non è affidabile per le lingue che non si scrivono in caratteri latini: ebraico, arabo, russo e cinese tornano spesso scritti con lettere inglesi, o come un unico lungo blocco di testo. Se puoi, indica la lingua.</string>
     <string name="transcription_language_chinese">Cinese</string>
     <string name="transcription_language_english">Inglese</string>
+<string name="transcription_language_hindi">Hindi</string>
+<string name="transcription_language_urdu">Urdu</string>
     <string name="transcription_language_french">Francese</string>
     <string name="transcription_language_german">Tedesco</string>
     <string name="transcription_language_hebrew">Ebraico</string>

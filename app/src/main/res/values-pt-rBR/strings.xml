@@ -456,6 +456,8 @@
     <string name="transcription_language_auto_hint">A detecção não é confiável para idiomas que não são escritos em letras latinas — hebraico, árabe, russo e chinês costumam voltar escritos com letras do inglês, ou como um único bloco longo de texto. Informe o idioma se puder.</string>
     <string name="transcription_language_chinese">Chinês</string>
     <string name="transcription_language_english">Inglês</string>
+<string name="transcription_language_hindi">Hindi</string>
+<string name="transcription_language_urdu">Urdu</string>
     <string name="transcription_language_french">Francês</string>
     <string name="transcription_language_german">Alemão</string>
     <string name="transcription_language_hebrew">Hebraico</string>

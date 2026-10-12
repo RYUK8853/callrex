@@ -592,6 +592,21 @@ class AudioRecordingEngine {
             return true
         }
         AppLogger.w(TAG, "Handoff did not establish (delivered=$delivered); releasing + falling back to daemon path")
+        // The daemon's ring is in-memory and this daemon is about to be killed (WD-off, or the
+        // "clearing N other recorder processes" sweep) — so this is the ONLY moment its reason for
+        // failing is reachable. Copy it into the app's own (persistent, file-backed) log before it
+        // dies. Without this the report can never show WHY a handoff failed: export-time drain only
+        // ever reaches the still-alive daemon, which is not the one that just failed.
+        val daemonDiag = runCatching { service.drainDiagnostics() }.getOrDefault(emptyArray())
+        if (daemonDiag.isNotEmpty()) {
+            AppLogger.w(
+                TAG,
+                "Daemon diagnostics from the failed handoff (${daemonDiag.size} lines):\n" +
+                    daemonDiag.joinToString("\n")
+            )
+        } else {
+            AppLogger.w(TAG, "Daemon diagnostics empty at handoff failure (no reason captured)")
+        }
         HandoffReceiver.abort()
         runCatching { service.stopHandoff() }
         return false

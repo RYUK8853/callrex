@@ -453,6 +453,8 @@
     <string name="transcription_language_auto_hint">Для языков с нелатинской письменностью определение работает ненадёжно — иврит, арабский, русский и китайский часто возвращаются записанными английскими буквами или одним сплошным куском текста. Если можете, укажите язык.</string>
     <string name="transcription_language_chinese">Китайский</string>
     <string name="transcription_language_english">Английский</string>
+    <string name="transcription_language_hindi">Хинди</string>
+    <string name="transcription_language_urdu">Урду</string>
     <string name="transcription_language_french">Французский</string>
     <string name="transcription_language_german">Немецкий</string>
     <string name="transcription_language_hebrew">Иврит</string>

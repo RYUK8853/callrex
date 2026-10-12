@@ -453,6 +453,8 @@
     <string name="transcription_language_auto_hint">Bei Sprachen, die nicht in lateinischen Buchstaben geschrieben werden, ist die Erkennung unzuverlässig — Hebräisch, Arabisch, Russisch und Chinesisch kommen oft in englischen Buchstaben zurück oder als ein einziger langer Textblock. Nennen Sie die Sprache, wenn Sie können.</string>
     <string name="transcription_language_chinese">Chinesisch</string>
     <string name="transcription_language_english">Englisch</string>
+<string name="transcription_language_hindi">Hindi</string>
+<string name="transcription_language_urdu">Urdu</string>
     <string name="transcription_language_french">Französisch</string>
     <string name="transcription_language_german">Deutsch</string>
     <string name="transcription_language_hebrew">Hebräisch</string>
