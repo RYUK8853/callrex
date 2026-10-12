@@ -1,5 +1,5 @@
 # DECISION.md — Callrex (CallVault fork)
-_Last updated: 2026-10-12 — v2.4.11 built + fish.audio STT integrated (tests 1935/1935). PENDING: key in app, release._
+_Last updated: 2026-10-12 — v2.4.11 PUBLISHED (commit 13ced3f, tag v2.4.11, GitHub release + Catbox live, in-app update path verified). NEXT: user installs + fish key + 1-2 calls → report → R3 root-cause fix v2.4.12._
 
 ## 2.4.11 addendum — Fish Audio STT (user directive: "we will use fish.audio for stt for now")
 
@@ -30,10 +30,23 @@ _Last updated: 2026-10-12 — v2.4.11 built + fish.audio STT integrated (tests 1
 - Live API test was BLOCKED (401 with masked key) — the parser is tested against captured real response shapes instead;
   end-to-end fish verification happens on the first real call after the user installs + pastes the key.
 
-### Release state (v2.4.11, still UNPUBLISHED)
-- Version 20457/2.4.11, CHANGELOG has fish entry, tests 1935/1935 green, release APK built
-  (sha256 13f2feec7f9cb1e6403cb7e15de0cf02f2438db0cca4a72bf56c634301603633).
-- PENDING user GO: commit + tag + push + GitHub release (BrowserOS neo) + Catbox.
+### Release state (v2.4.11, PUBLISHED 2026-10-12 21:32 UTC — user GO "clean push + build")
+- Commit `13ced3f` (33 files, +790/−27) → branch `callrex` pushed to RYUK8853/callrex (f51fa77..13ced3f).
+- Annotated tag `v2.4.11` pushed.
+- **GitHub release LIVE**: `https://github.com/RYUK8853/callrex/releases/tag/v2.4.11`
+  (release id 410809732), asset `Callrex.apk` 67,921,409 B, state=uploaded.
+- **In-app update path verified end-to-end** (simulated GitHubReleases.kt): `/releases/latest`
+  → tag v2.4.11, not draft/prerelease, asset name `Callrex.apk`, https URL, size>0;
+  download URL live; **Range → 206** (resumable download works); **sha256 live == local**
+  (`13f2feec7f9cb1e6`). Phone pe app kholne se update banner dikhega (versionCode 20457 > installed).
+- **Catbox mirror**: `https://files.catbox.moe/bvyrel.apk` (Range-verified full size 67,921,409).
+- Build note: `assembleRelease` needed the documented `-PallowMissingTranslations=true`
+  escape (21 new base strings, present since v2.4.10, not yet in 13 locales). Follow-up:
+  translate the 21 keys (cloud_*, recording_error_*, settings_debug_log_copy, summary_engine_label,
+  transcription_engine_label, transcription_model_highest) — v2.4.12 scope.
+- Token note: keychain git token HAS API scope this time (v2.4.6-era "git-only 401" was a
+  different token); asset upload pitfall: URL is `uploads.github.com`, not `api.github.com`
+  (the latter 404s on /assets).
 - R3 (handoff root cause) still deferred — R1 diagnostics will surface the daemon-side reason on the next failed call.
 
 ## 2.4.11 — Crash fixes (R1/R2/C) + Transcription (T1/T2)
@@ -80,7 +93,7 @@ _Last updated: 2026-10-12 — v2.4.11 built + fish.audio STT integrated (tests 1
 - **Handoff ka actual root cause (kyun 11/11 false) abhi unknown** — R1 sirf diagnose karega; next field
   report ke baad fix (v2.4.12). Mid-call daemon death pe audio tab tak lost ho sakta hai jab tak handoff kaam na kare.
 - WD-off → daemon kill ka correlation valid hai (launcher code + log). User: WD on rakhna.
-- Release (user GO pe): commit + tag v2.4.11 + GitHub release (BrowserOS neo — API token git-only, 401) + Catbox.
+- Release: DONE 2026-10-12 — commit 13ced3f + tag v2.4.11 + GitHub release (API token had scope) + Catbox bvyrel.apk.
 
 ## 2.4.10 — Recordings-vanishing fix (v2.4.9 log ka root cause)
 
