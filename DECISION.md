@@ -509,3 +509,46 @@ Decision: "okay we will go for option a then" — Callrex ek baar default dialer
 - Default dialer banne se Callrex ka dial pad bhi phone ka default ban jata hai (minimal stock-style) — ye role ka OS requirement hai, hata nahi sakte.
 - Vobiz number field me jo daala gaya usi pe forward hoga — galat number ka guard = blank to toast.
 - Push/tag/release: NAHI hua (strict rule) — sirf local build + DECISION.md.
+
+---
+
+## LOG ANALYSIS — 2026-10-14 raat (user logs scan)
+
+**Kya check kiya:** dono phone se bheje logs (server pe `data/debug-logs/`):
+- `A001_callrex_2.5.4_(20504)_manual_2026-10-14T16-14-35-743Z.log` (20:52→21:44)
+- `A001_callrex_2.5.1_(20501)_crash_2026-10-14T11-16-37-880Z.log`
+
+**Findings (log se, guess nahi):**
+
+1. **REAL BUG — process death loop (v2.5.3 era):** 11× new process start mila
+   (`Application.onCreate` marker "Released 1 stale transcription row(s)").
+   20:53:19–20:56:10 me **7 deaths in 3 min** (17–64s gap) — har death ke turant
+   pehle `TranscriptionWorker: Transcribing 1 recording(s)` + `SummaryWorker: gemma`.
+   Matlab: **process transcription (whisper large-v3 + gemma 2B) ke dauran mar raha tha**,
+   naya process wahi stuck row retry → phir marta. Yahi "app band ho jata hai" hai.
+   21:21 pe v2.5.4 install hote hi same recording ki transcription **bina death ke complete**
+   hui (`setup took 5742 ms`, process 21:44 tak healthy). v2.5.4 me abhi far death nahi.
+   - Root cause log me nahi (app apni death log nahi kar sakti; native/OOM kill = log me khaali).
+   - Suspected: whisper+gemma models ek saath load = memory peak → LMK/native kill.
+   - **NOT screen-off-correlated** — deaths ka pattern transcription se hai, screen events is
+     log me hain hi nahi (app SCREEN_OFF log nahi karti). R3 screen-off test abhi bhi pending.
+
+2. **Toast crash (v2.5.1, 16:01 IST):** `NPE: Can't toast on a thread that has not called
+   Looper.prepare()` — `SettingsScreen.kt:1944` (log-send button), callback Dispatchers.IO pe.
+   **FIXED in v2.5.4** — `LogBeacon.kt:130-149` ab `postToMain` (Handler + main Looper) se
+   callback bhejta hai. Code me verify kiya, sirf yahan note.
+
+3. **Minor/noise:** 21:09:09 ek baar `ringing poll unreachable: 192.168.1.9:8000` (Mac
+   sleep) — 21:14 tak auto-recovered. `ShizukuBackend: unbindUserService failed` +
+   `USB-default refresh blocked` = noise — recorder ADB loopback pe chal raha tha
+   (`Connected over loopback tcpip :50838`, `daemon alive=true`).
+
+4. **Is log me NAHI hai:** 13:35 ki Akash Sir call (log 20:52 se shuru) — us call ka
+   verification is file se possible nahi. 21:25:59–21:26:12: ek RINGING call aaya, OFFHOOK
+   kabhi nahi hua (missed/declined) → recording na hone ka behaviour theek hai.
+
+**Action:**
+- Far fix abhi nahi. Agar death loop dobara aaye: (a) tombstone/logcat capture add karna
+  hai native death reason dekhne ke liye, (b) whisper+gemma ko parallel load na karwana.
+  User permission ke baad hi code change.
+- R3 screen-off test pending (call + screen off + 5 min) — tabhi 0-death claim verify hoga.
