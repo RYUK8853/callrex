@@ -76,7 +76,15 @@ class RingingMonitorService : Service() {
                 stopSelf()
                 return START_NOT_STICKY
             }
-            ACTION_START -> {
+            ACTION_LOCAL_RINGING -> {
+                // The overlay itself is launched DIRECTLY by [raiseLocalRinging] (before this
+                // intent arrives), so the ringback decision does not depend on the FGS start
+                // succeeding. This branch only satisfies the startForeground() contract and keeps
+                // the process warm with the persistent notification.
+                startAsForeground()
+                return START_NOT_STICKY
+            }
+            else -> {
                 startAsForeground()
                 startPolling()
             }
@@ -251,6 +259,10 @@ class RingingMonitorService : Service() {
 
         const val ACTION_START = "com.baba.callvault.TAKEOVER_MONITOR_START"
         const val ACTION_STOP = "com.baba.callvault.TAKEOVER_MONITOR_STOP"
+        /** Raised by [NormalCallTrigger] for a normal (non-SIP) incoming call on the carrier. */
+        const val ACTION_LOCAL_RINGING = "com.baba.callvault.TAKEOVER_LOCAL_RINGING"
+        /** Extra carrying the caller number for [ACTION_LOCAL_RINGING]. */
+        const val EXTRA_LOCAL_NUMBER = "takeover_local_number"
 
         fun start(context: Context) {
             val i = Intent(context, RingingMonitorService::class.java).apply { action = ACTION_START }
@@ -273,6 +285,27 @@ class RingingMonitorService : Service() {
                 start(context)
             } else {
                 stop(context)
+            }
+        }
+
+        /**
+         * Bring the monitor foreground (so it may launch the overlay) and raise it for a
+         * **normal** incoming call on the carrier. Called by [NormalCallTrigger]. Unlike
+         * [start] this does not require an engine URL — the local path needs no backend to be
+         * armed, only that takeover is enabled.
+         */
+        fun raiseLocalRinging(context: Context, number: String?) {
+            val i = Intent(context, RingingMonitorService::class.java).apply {
+                action = ACTION_LOCAL_RINGING
+                putExtra(EXTRA_LOCAL_NUMBER, number)
+            }
+            runCatching {
+                context.startForegroundService(i)
+            }.onFailure {
+                // Background FGS start is blocked when the app has no BAL exemption yet
+                // (SYSTEM_ALERT_WINDOW not granted). The overlay simply won't raise; the log
+                // tells the field test why. Never crash the phone-state path.
+                AppLogger.w(TAG, "raiseLocalRinging startForegroundService blocked: ${it.message}")
             }
         }
     }

@@ -128,9 +128,15 @@ object LogBeacon {
      * [onResult] receives the human-readable outcome for a UI toast; always called.
      */
     fun sendNow(onResult: (String) -> Unit) {
+        // The caller may toast the result — toasts only work on a Looper (main) thread,
+        // so always hop back to main before invoking [onResult].
+        val postToMain = { msg: String ->
+            val handler = android.os.Handler(android.os.Looper.getMainLooper())
+            handler.post { onResult(msg) }
+        }
         val cfg = config()
         if (cfg == null) {
-            onResult("No Node URL set in Voice Agent settings")
+            postToMain("No Node URL set in Voice Agent settings")
             return
         }
         scope.launch {
@@ -138,7 +144,7 @@ object LogBeacon {
                 send("manual", "sent from settings", nodeUrl = cfg.nodeUrl, token = cfg.nodeToken)
                 "Sent ${TAIL_LINES} log lines to the server"
             }.getOrElse { it.message ?: "Send failed" }
-            onResult(result)
+            postToMain(result)
         }
     }
 

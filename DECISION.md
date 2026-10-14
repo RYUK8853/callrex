@@ -361,3 +361,45 @@ DIRECT AudioRecord) — phir dono GAYAB:
 - **2026-10-05:** Fork decision (CallVault, nahi scratch), CallSage→Callrex rename, Play Store NAHI
   (F-Droid/Obtainium/direct APK), ADB+scrcpy capture arch, on-device AI baseline (whisper.cpp +
   llama.cpp + Gemma 2.6GB), orphan-branch GitHub push, README+screenshots, Telegram APK delivery.
+
+## 2026-10-14 — v2.5.1 release bhi live ho gaya
+- GitHub release v2.5.1 (tag pe sahi, Latest) — Callrex.apk 81,571,556 B, API + HEAD download se verified (200).
+- First publish attempt me tag drop hua (untagged commit pe bana) + APK upload publish se pehle complete nahi hua tha. Fix: release edit, file remove + fresh upload, upload API pe `uploaded` dikhne ke baad hi save.
+- BrowserOS neo gotcha: GitHub release page ka binary file input hidden hai (aria-hidden + sr-only). Unhide karo (aria-hidden hatao + size do), snapshot me "Choose files" button aata hai, us ref pe `upload` tool se file set karo. API token push-scope ka hai — API se release/asset nahi bana sakte, sirf browser hi kaam karta hai.
+
+## 2026-10-14 — Callrex code ab /Users/vishal/code/callrex pe
+- User ne kaha: saara code local sirf /Users/vishal/code/ me, koi aur folder nahi.
+- Repo /Users/vishal/dev/callvault-fork → /Users/vishal/code/callrex move hua (git intact, remote callrex = RYUK8853/callrex, branch callrex, latest commit eea35ea v2.5.1).
+- Node API already /Users/vishal/code/voice-agents/zantacall/nodejs-api pe tha.
+- Ab code locations: app=/Users/vishal/code/callrex, node=/Users/vishal/code/voice-agents/zantacall/nodejs-api.
+
+## 2026-10-14 — Real-call test attempt #1: root cause = carrier, not app
+- Vishal ne +91 80642 69004 (Vobiz) pe call kiya → overlay nahi aaya.
+- Verified chain: phone v2.5.1 engine ko 2s me poll kar raha (logs me 200 OK), beacon crash-log Node pe aaya (beacon+network OK), engine monitor ON, LiveKit list_rooms = **0 rooms** (call LiveKit tak nahi pahunchi), Vobiz console = **0 calls today** (call Vobiz tak nahi pahunchi).
+- Conclusion: PSTN-level provisioning lag — number aaj hi (10-14) purchase hua, external inbound routing abhi live nahi. App/engine sab ready hai.
+- Number final verified: Vobiz console se +91 80642 69004 (Mongo me stale US placeholder tha → +91 80642 69004 me update kiya, vobiz-console-verified metadata ke saath).
+- Alag bug fixed: v2.5.0 crash "Can't toast on thread that has not called Looper.prepare()" (LogBeacon.sendNow callback IO-thread pe → SettingsScreen Toast). Fix: sendNow ab Handler(mainLooper) pe callback post karta hai. compileDebugKotlin GREEN (42s). UNCOMMITTED.
+- Next: 1-2h baad doosre SIM se retest; phir kal. Agar Vobiz console me bhi 0 calls → Vobiz support (carrier provisioning).
+
+## 2026-10-14 — Normal-call takeover overlay: BANAYA (v2.5.2 candidate)
+
+### User ka demand (verbatim, multiple times)
+"i was saying if third person called me on my phone the overlay should trigger where i can select whether i will forward this to agent or not" + "maine jo bataya hai wo working me kar".
+Choice: "Overlay pehle banao, button action main choose karunga".
+
+### Kya bana
+1. **NEW `NormalCallTrigger.kt`** — single choke point `CallSessionManager.handlePhoneState` se feed hota hai (broadcast receiver + post-boot live TelephonyCallback dono yahin se). RINGING + takeover ON + koi call in-flight nahi → overlay raise. Number late (Android double-broadcast) → second broadcast me fill. OFFHOOK/IDLE → local overlay auto-close.
+2. **`RingingMonitorService`** — `ACTION_LOCAL_RINGING` + `raiseLocalRinging()` = best-effort process warmth sirf (persistent notification). Overlay launch FGS pe dependent NAHI (Android 15+ background FGS start block ho sakta hai; overlay primary path hai).
+3. **`TakeoverOverlayActivity`** — local (`roomName == "local_normal_incall"`) vs SIP branch. Local: 3 buttons abhi sirf overlay band karte hain (call dialer par chalti hai) — "agent utha le" ka real action (call-back/forwarding) user ke choice par baad me. SIP path untouched.
+4. **Manifest** — `SYSTEM_ALERT_WINDOW` added. ZAROORI: normal call pe dialer foreground, CallVault background → background activity launch (overlay) Android 10+ sirf is permission se exempt. Bina iske overlay silently block.
+5. **Settings → Voice agent** — naya row "Allow show over other apps" (one-tap system settings, return par ✓ refresh).
+
+### Verified (real)
+- `:app:compileDebugKotlin` GREEN
+- `:app:testDebugUnitTest` **1967/1967, 0 failures, 0 errors** (JUnit XML se count)
+- Field test (phone pe real call) — PENDING v2.5.2 install ke baad
+
+### Known limitations (honest)
+- Overlay permission bina diye overlay nahi aayega (Settings me one-time grant; missing par log + beacon fire).
+- Live carrier call ko app se agent me bridge karna Android pe allowed nahi — provider-side mechanism (call-back/forwarding/InCallService) chahiye; user choose karega.
+- R3 screen-off death field test abhi bhi pending.

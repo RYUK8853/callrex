@@ -288,7 +288,7 @@ private fun RingingPanel(
                 onClick = {
                     if (current != null) {
                         busy = true
-                        onDecline(current, prefs, scope) { busy = false }
+                        onDecline(current, prefs, context, scope) { busy = false }
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
@@ -458,12 +458,16 @@ private fun AgentCallPanel(
 // ------------------------------------------------------------------
 
 /**
- * "Main baat karta hoon": ask the engine for a participant token, join the room over WebRTC with
- * the mic on, and flip to OWNER_CALL. The owner-case RECORDING is not started here — when the
- * LiveKit mic goes live the device audio mode flips to MODE_IN_COMMUNICATION and the existing
- * VoIP detector ([com.baba.callvault.services.recording.VoipCallDetector]) arms the same capture
- * pipeline it uses for WhatsApp/Signal calls; the [TakeoverState.setOwnerWriteback] call here only
- * records WHAT to push to Node once that local recording is transcribed.
+ * "Main baat karta hoon" (SIP path): ask the engine for a participant token, join the room over
+ * WebRTC with the mic on, and flip to OWNER_CALL. The owner-case RECORDING is not started here —
+ * when the LiveKit mic goes live the device audio mode flips to MODE_IN_COMMUNICATION and the
+ * existing VoIP detector ([com.baba.callvault.services.recording.VoipCallDetector]) arms the same
+ * capture pipeline it uses for WhatsApp/Signal calls; the [TakeoverState.setOwnerWriteback] call
+ * here only records WHAT to push to Node once that local recording is transcribed.
+ *
+ * Local (normal-call) path: there is no engine room to join. Closing the overlay drops the owner
+ * back onto the dialer's own answer screen — they tap answer there, and the OFFHOOK that follows
+ * (via [NormalCallTrigger.onPhoneState]) already resets the takeover state.
  */
 private fun onOwnerPickup(
     current: TakeoverCurrentCall,
@@ -472,6 +476,13 @@ private fun onOwnerPickup(
     scope: kotlinx.coroutines.CoroutineScope,
     onDone: () -> Unit,
 ) {
+    if (NormalCallTrigger.isLocalRoom(current.roomName)) {
+        AppLogger.i(TAG, "local call: owner answered on the dialer — closing overlay")
+        TakeoverState.setPhase(TakeoverPhase.IDLE)
+        TakeoverState.setCurrent(null)
+        onDone()
+        return
+    }
     val room = current.roomName
     val engineUrl = prefs.getTakeoverEngineUrl() ?: return
     val engineToken = prefs.getTakeoverEngineToken()
@@ -527,6 +538,16 @@ private fun onAgentTakeover(
     scope: kotlinx.coroutines.CoroutineScope,
     onDone: () -> Unit,
 ) {
+    // Local (normal-call) path: handing a live carrier call to the agent needs a provider-side
+    // mechanism (agent call-back / carrier forwarding / InCallService), chosen separately. For
+    // now the tap just dismisses the overlay; the ringing call is left untouched.
+    if (NormalCallTrigger.isLocalRoom(current.roomName)) {
+        AppLogger.i(TAG, "local call: agent action is pending implementation — closing overlay")
+        TakeoverState.setPhase(TakeoverPhase.IDLE)
+        TakeoverState.setCurrent(null)
+        onDone()
+        return
+    }
     val room = current.roomName
     val engineUrl = prefs.getTakeoverEngineUrl() ?: return
     val engineToken = prefs.getTakeoverEngineToken()
@@ -565,9 +586,21 @@ private fun onAgentTakeover(
 private fun onDecline(
     current: TakeoverCurrentCall,
     prefs: AppPreferences,
+    context: Context,
     scope: kotlinx.coroutines.CoroutineScope,
     onDone: () -> Unit,
 ) {
+    // Local (normal-call) path: closing the overlay drops the owner back onto the dialer's own
+    // incoming UI (decline/answer there). Rejecting the carrier call from here needs dialer
+    // privileges Callrex does not hold — the button action will be wired when the owner picks
+    // the "hand to agent / reject" mechanism.
+    if (NormalCallTrigger.isLocalRoom(current.roomName)) {
+        AppLogger.i(TAG, "local call decline — closing overlay, dialer keeps the call")
+        TakeoverState.setPhase(TakeoverPhase.IDLE)
+        TakeoverState.setCurrent(null)
+        onDone()
+        return
+    }
     val room = current.roomName
     val engineUrl = prefs.getTakeoverEngineUrl() ?: return
     val engineToken = prefs.getTakeoverEngineToken()

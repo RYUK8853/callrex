@@ -948,7 +948,7 @@
     <string name="takeover_section_title">Voice agent</string>
     <string name="takeover_section_subtitle">Answer incoming SIP calls right on this phone — take the call yourself, hand it to the AI agent, or decline.</string>
     <string name="takeover_enable_label">Enable dynamic takeover</string>
-    <string name="takeover_enable_description">Polls your voice-agent engine for ringing calls and shows a full-screen answer screen when one comes in.</string>
+    <string name="takeover_enable_description">Shows a full-screen answer screen for every incoming call — regular calls to your number and voice-agent (SIP) calls — take the call yourself, hand it to the AI agent, or decline.</string>
     <string name="takeover_engine_url_label">Engine URL</string>
     <string name="takeover_engine_url_hint">http://192.168.x.x:8000</string>
     <string name="takeover_engine_token_label">Engine token</string>

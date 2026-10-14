@@ -50,6 +50,18 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <!--
+         Takeover overlay for NORMAL (non-SIP) incoming calls.
+
+         When a call arrives on the device's own number, the dialer app is in the FOREGROUND
+         and CallVault is in the background. Android 10+ blocks background activity launches
+         (BAL) unless the app holds SYSTEM_ALERT_WINDOW ("Display over other apps") — that
+         permission is the hard exemption that lets the takeover overlay appear ABOVE the
+         dialer's own incoming-call UI (over the lock screen too, via showWhenLocked).
+         The user grants it once from system settings (asked from Settings → Takeover).
+    -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" tools:ignore="ProtectedPermissions" />
+
+    <!--
       Package visibility (Android 11+). Without this an app sees almost no other packages, so the VoIP
       recording badge could never resolve the calling app's icon and always fell back to a generic
       glyph.

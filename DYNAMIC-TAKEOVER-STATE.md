@@ -112,3 +112,10 @@ User demand: "you should be able to fetch by yourself logs and crashes in realti
   Node (Mongo 27777). Node is the user's normal local stack — leave it running when the user
   field-tests the beacon.
 - /tmp/Callrex.apk = the shipped APK (delivered in chat).
+
+## v2.5.1 GITHUB RELEASE LIVE + VERIFIED (2026-10-14)
+- Release **v2.5.1** "Callrex 2.5.1" published on tag v2.5.1 (commit eea35ea), marked **Latest**.
+- Asset **Callrex.apk** 81,571,556 bytes, state `uploaded`. Verified via API `/releases/latest` → tag v2.5.1, and HEAD on download URL → HTTP 200, content-length 81571556, type application/vnd.android.package-archive.
+- Download: https://github.com/RYUK8853/callrex/releases/download/v2.5.1/Callrex.apk
+- NOTE (upload gotcha): GitHub's release page hides the binary file input (aria-hidden + sr-only). The upload must (1) unh...[truncated]
+- Catbox mirror: https://files.catbox.moe/k6e3cv.apk
