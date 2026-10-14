@@ -25,7 +25,6 @@ import com.baba.callvault.system.updates.UpdateScheduler
 import com.baba.callvault.server.RecorderConnection
 import com.baba.callvault.services.recording.VoipCaptureController
 import com.baba.callvault.services.takeover.LogBeacon
-import com.baba.callvault.services.takeover.OwnerWritebackCoordinator
 import com.baba.callvault.services.takeover.RingingMonitorService
 import com.baba.callvault.utils.AppLogger
 import com.baba.callvault.system.health.SilentFailureNotifier
@@ -154,10 +153,6 @@ class CallVaultApplication : Application() {
         // after a reboot.
         runCatching { RingingMonitorService.syncWithPrefs(applicationContext) }
             .onFailure { AppLogger.w(TAG, "Takeover monitor sync failed: ${it.message}") }
-        // Owner-pickup write-back: observes the takeover state and pushes the local
-        // transcript + summary into Node once the owner's call ends. No-op until the
-        // overlay sets ownerWriteback, so safe to attach unconditionally.
-        OwnerWritebackCoordinator.attach(applicationContext)
 
         // Release any transcript row left RUNNING by a run that no longer exists. A cancelled or
         // killed worker cannot tidy up after itself — whisper sits inside a blocking native call, so

@@ -946,9 +946,10 @@
 
     <!-- Dynamic takeover -->
     <string name="takeover_section_title">Voice agent</string>
-    <string name="takeover_section_subtitle">Answer incoming SIP calls right on this phone — take the call yourself, hand it to the AI agent, or decline.</string>
+    <string name="takeover_unknown_number">Unknown number</string>
+    <string name="takeover_section_subtitle">Calls ringing on the agent line are answered by the AI agent automatically.</string>
     <string name="takeover_enable_label">Enable dynamic takeover</string>
-    <string name="takeover_enable_description">Shows a full-screen answer screen for every incoming call — regular calls to your number and voice-agent (SIP) calls — take the call yourself, hand it to the AI agent, or decline.</string>
+    <string name="takeover_enable_description">Watches the agent line: when a call rings on it, the AI agent picks up automatically and handles the conversation, with the live transcript on the call screen.</string>
     <string name="takeover_engine_url_label">Engine URL</string>
     <string name="takeover_engine_url_hint">http://192.168.x.x:8000</string>
     <string name="takeover_engine_token_label">Engine token</string>
@@ -966,27 +967,6 @@
     <string name="takeover_monitor_text">Callrex is listening for incoming calls. Tap to open.</string>
     <string name="takeover_channel_name">Voice agent</string>
     <string name="takeover_channel_desc">Keeps the voice agent watching for incoming calls.</string>
-    <string name="takeover_permission_needed">Draw over other apps</string>
-    <string name="takeover_permission_needed_text">Allow Callrex to show the answer screen on top of everything, including the lock screen.</string>
-    <string name="takeover_grant_permission">Open settings</string>
-    <string name="takeover_ringing_title">Incoming call</string>
-    <string name="takeover_ringing_subtitle">Answer on this phone, or hand it to the AI</string>
-    <string name="takeover_unknown_number">Unknown number</string>
-    <string name="takeover_btn_owner">Main baat karta hoon</string>
-    <string name="takeover_btn_agent">AI agent utha le</string>
-    <string name="takeover_btn_decline">Decline</string>
-    <string name="takeover_joining">Connecting…</string>
-    <string name="takeover_owner_live">Call active</string>
-    <string name="takeover_owner_live_subtitle">You are on the line</string>
-    <string name="takeover_btn_end">End call</string>
-    <string name="takeover_btn_mute">Mute</string>
-    <string name="takeover_btn_unmute">Unmute</string>
-    <string name="takeover_agent_live">AI is on the call</string>
-    <string name="takeover_agent_live_subtitle">The agent is handling the call. Transcript below.</string>
-    <string name="takeover_agent_transcript_empty">Transcript appears as the agent speaks…</string>
-    <string name="takeover_error_generic">Something went wrong</string>
-    <string name="takeover_error_dismiss">Dismiss</string>
-    <string name="takeover_window_left">The call window closed</string>
     <string name="takeover_agent_calls_title">Agent calls</string>
     <string name="takeover_agent_calls_count">%1$d calls</string>
     <string name="takeover_hub_agent_calls_body">Calls the AI agent handled, with transcript and summary.</string>
@@ -1001,10 +981,8 @@
     <string name="takeover_transcript_label">Transcript</string>
     <string name="takeover_answered_by_you">You</string>
     <string name="takeover_answered_by_agent">AI</string>
-    <string name="takeover_answered_by_missed">Missed</string>
     <string name="takeover_captured_message">Key message</string>
     <string name="takeover_call_summary">Summary</string>
-    <string name="takeover_refresh">Refresh</string>
 
     <!-- Option A: single floating "AI Assistant" button (Callrex as default dialer) -->
     <string name="ai_assistant_section_title">AI Assistant for normal calls</string>

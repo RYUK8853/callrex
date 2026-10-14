@@ -25,7 +25,6 @@ import com.baba.callvault.services.recording.RecordingForegroundService
 import com.baba.callvault.services.recording.RecordingPolicy
 import com.baba.callvault.services.recording.VoipRecordingCoordinator
 import com.baba.callvault.services.recording.VoipTelephonyGate
-import com.baba.callvault.services.takeover.NormalCallTrigger
 import com.baba.callvault.server.RecorderConnection
 import com.baba.callvault.system.permissions.PermissionChecks
 import com.baba.callvault.utils.AppLogger
@@ -206,12 +205,7 @@ class CallSessionManager private constructor(context: Context) {
 
         AppLogger.i(TAG, "Received new phone state: $stateString (TelephonyManagerINT:$receivedCallState) | Number: ${phoneNumber}")
 
-        // Takeover side-channel: raises the answer overlay for NORMAL incoming calls (the SIP
-        // path is handled separately by RingingMonitorService's engine polling). Purely additive —
-        // it never affects the recording lifecycle below.
-        NormalCallTrigger.onPhoneState(appContext, stateString, phoneNumber)
-
-        // 1. Handle IDLE (Stop, no longer in a call)
+        // 1. Handle IDLE (Stop, no longer on a call)
         if (receivedCallState == TelephonyManager.CALL_STATE_IDLE) {
             sessionJob?.cancel() // Cancel pending verification window or ongoing session if any
             answerJob?.cancel()

@@ -34,12 +34,13 @@ import kotlinx.coroutines.launch
 
 /**
  * The ringing monitor: while dynamic takeover is enabled, this foreground service polls the
- * voice-agent engine's `GET /sip/ringing` every 2 s and, when a room it has not seen appears,
- * raises the [TakeoverOverlayActivity] so the owner can answer (owner / agent / decline) inside
- * the ringback window.
+ * voice-agent engine's `GET /sip/ringing` every 2 s and, when a room appears, hands it STRAIGHT
+ * to the AI agent (`POST /sip/agent-takeover`) — the owner never sees a decision screen. The
+ * agent call screen ([AiCallActivity], the default-dialer UI) renders the handoff + live
+ * transcript off [TakeoverState].
  *
  * **Why a foreground service and not a Worker.** WorkManager jobs are deferred by the minute and
- * re-scheduled on throttling — the ringback window is ~45 s and the decision is time-critical. A
+ * re-scheduled on throttling — the ringback window is ~45 s and the handoff is time-critical. A
  * persistent FGS gives a tight, predictable 2 s cadence. The cost (a notification) is the
  * feature being on at all: it only runs when the user has explicitly turned takeover on AND
  * pointed us at a reachable engine.
@@ -51,7 +52,7 @@ import kotlinx.coroutines.launch
  *
  * **The authoritative signal is the room set, not a timer.** A call is "new" when its room name
  * is in this poll's `ringing` list and was not in the previous one. It is "gone" when it leaves
- * the list — that is what dismisses the overlay, not the local 45 s clock (the server owns the
+ * the list — that is what ends the agent call, not the local clock (the server owns the
  * deadline and can extend or truncate it).
  */
 class RingingMonitorService : Service() {
@@ -70,25 +71,12 @@ class RingingMonitorService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val action = intent?.action ?: ACTION_START
-        when (action) {
-            ACTION_STOP -> {
-                stopSelf()
-                return START_NOT_STICKY
-            }
-            ACTION_LOCAL_RINGING -> {
-                // The overlay itself is launched DIRECTLY by [raiseLocalRinging] (before this
-                // intent arrives), so the ringback decision does not depend on the FGS start
-                // succeeding. This branch only satisfies the startForeground() contract and keeps
-                // the process warm with the persistent notification.
-                startAsForeground()
-                return START_NOT_STICKY
-            }
-            else -> {
-                startAsForeground()
-                startPolling()
-            }
+        if (intent?.action == ACTION_STOP) {
+            stopSelf()
+            return START_NOT_STICKY
         }
+        startAsForeground()
+        startPolling()
         return START_STICKY
     }
 
@@ -163,9 +151,9 @@ class RingingMonitorService : Service() {
     }
 
     /**
-     * Diff this poll's room set against the last one: a new room raises the overlay; a room that
-     * disappeared dismisses it. Multi-room entries are logged (the sheet's "stack later" case) and
-     * the first unseen room wins.
+     * Diff this poll's room set against the last one: a new room triggers the agent handoff; a
+     * room that disappeared ends it. Multi-room entries are logged (one trunk should give one)
+     * and the first unseen room wins.
      */
     private fun reconcile(ringing: List<TakeoverApiClient.RingingCall>, prefs: AppPreferences) {
         if (ringing.size > 1) {
@@ -183,7 +171,7 @@ class RingingMonitorService : Service() {
         seenRooms.clear()
         seenRooms += roomNames
 
-        // New room: raise the overlay for the first one we have not already surfaced.
+        // New room: hand the first unseen one to the AI agent.
         newRooms.forEach { room ->
             val call = ringing.first { it.roomName == room }
             AppLogger.i(TAG, "new ringing room: $room callDbId=${call.callDbId} phone=${call.phoneNumber} answered=${call.answered}")
@@ -197,158 +185,124 @@ class RingingMonitorService : Service() {
         }
     }
 
+    /**
+     * A room is ringing on the SIP trunk: hand it STRAIGHT to the AI agent. There is no owner
+     * decision screen anymore (the user's call UI is the stock dialer with the single floating
+     * "AI Assistant" button) — every room that rings is agent territory, whether it arrived as a
+     * forwarded call (the owner just tapped the button; an [TakeoverState.activeAgentHandoff] is
+     * set) or as a genuine inbound (the owner isn't looking at this phone right now, which is
+     * exactly when the agent should take over).
+     *
+     * Both cases run the same retry loop: the forwarded room lands on the trunk a few seconds
+     * after the deflect (carrier path), so the very first `agent-takeover` often 404s — retry
+     * every 2 s until it lands or the window closes.
+     */
     private fun onNewCall(call: TakeoverCurrentCall) {
-        // If we already have a live call in progress (owner/agent), do not clobber it.
+        // If we already have a live call in progress (agent), do not clobber it.
         if (TakeoverState.current.value != null) {
             AppLogger.w(TAG, "new ringing while one is already in flight — ignoring")
             return
         }
 
-        // Option A (dialer mode): the owner just tapped "AI Assistant" on the dialer call
-        // screen — the live carrier call is being forwarded to the agent line and THIS room
-        // is the forwarded call landing on the SIP trunk. Hand it straight to the agent:
-        // no legacy 3-button overlay (that would put a second call UI on a call the owner
-        // already decided to hand over). The dialer call screen renders the handoff + live
-        // transcript off TakeoverState; it must not be clobbered by the overlay.
         val arm = TakeoverState.activeAgentHandoff()
         if (arm != null) {
-            AppLogger.i(TAG, "armed agent handoff (target ${arm.targetNumber}) — auto takeover for room ${call.roomName}, no overlay")
-            TakeoverState.setPhase(TakeoverPhase.AGENT_CALL)
-            TakeoverState.setCurrent(call)
-            TakeoverState.setAgent(
-                AgentCallState(
-                    callDbId = call.callDbId,
-                    startedMs = System.currentTimeMillis(),
-                    roomName = call.roomName,
-                ),
-            )
-            scope.launch(Dispatchers.IO) {
-                autoAgentTakeover(call, ArmOutcome(arm))
-            }
-            return
+            AppLogger.i(TAG, "armed agent handoff (target ${arm.targetNumber}) — auto takeover for room ${call.roomName}")
+        } else if (call.answered) {
+            // Already answered when we first saw it (app restarted mid-call, or the agent
+            // connected between polls) — attach to the live agent view, no dispatch needed.
+            AppLogger.i(TAG, "room already answered on first sight: ${call.roomName} — attaching to agent view")
+        } else {
+            AppLogger.i(TAG, "new inbound room ${call.roomName} — handing straight to the agent")
         }
 
-        // The room already shows as answered (e.g. the app/monitor restarted mid-call, or the
-        // agent connected between two polls). Don't offer stale decision buttons: go straight
-        // to the agent view with its transcript.
-        if (call.answered) {
-            AppLogger.i(TAG, "room already answered on first sight: ${call.roomName} — straight to agent view")
-            TakeoverState.setPhase(TakeoverPhase.AGENT_CALL)
-            TakeoverState.setCurrent(call)
-            TakeoverState.setAgent(
-                AgentCallState(
-                    callDbId = call.callDbId,
-                    startedMs = System.currentTimeMillis(),
-                ),
-            )
-            launchOverlay(call.roomName, call.callDbId, call.phoneNumber)
-            return
-        }
-
-        TakeoverState.setPhase(TakeoverPhase.RINGING)
+        TakeoverState.setAgent(
+            AgentCallState(
+                callDbId = call.callDbId,
+                startedMs = System.currentTimeMillis(),
+                roomName = call.roomName,
+            ),
+        )
         TakeoverState.setCurrent(call)
-        launchOverlay(call.roomName, call.callDbId, call.phoneNumber)
+        scope.launch(Dispatchers.IO) {
+            agentTakeover(call, arm != null)
+        }
     }
 
     /**
-     * Armed-handoff takeover with retry: the forwarded call reaches the SIP trunk a few
-     * seconds AFTER the app taps deflect (carrier path), so the very first `/sip/agent-takeover`
-     * often 404s (room not there yet). Retry every 2 s until it lands or the window closes.
-     *
-     * Terminal outcomes:
-     *  - 200: agent dispatched. The room STAYS in `/sip/ringing` as answered=true (engine
-     *    10-14 contract) until the LiveKit room itself goes away, so the handoff UI keeps its
-     *    live transcript and ends when [onRoomGone] fires.
-     *  - 404 after the deadline: the forwarded call never arrived (agent line unreachable /
-     *    carrier not routing) — reset state so the handoff UI shows the failed end.
-     *  - 409: something else answered first (owner beat the forward, or a race) — keep the
-     *    agent view, the transcript is still the right thing to show.
+     * Dispatch the agent with retry. Terminal outcomes:
+     *  - 200: agent dispatched. The room STAYS in `/sip/ringing` as answered=true (engine 10-14
+     *    contract) until the LiveKit room itself goes away, so the call screen keeps its live
+     *    transcript and ends when [onRoomGone] fires.
+     *  - 404 after the deadline: the call never arrived (agent line unreachable / carrier not
+     *    routing) — reset state so the call screen shows the failed end.
+     *  - 409: something else answered first (a race, or the owner already on the line) — keep
+     *    the agent view, the transcript is still the right thing to show.
      */
-    private suspend fun autoAgentTakeover(call: TakeoverCurrentCall, arm: ArmOutcome) {
+    private suspend fun agentTakeover(call: TakeoverCurrentCall, armed: Boolean) {
         val prefs = AppPreferences(applicationContext)
         val engineUrl = prefs.getTakeoverEngineUrl()
         val engineToken = prefs.getTakeoverEngineToken()
         if (engineUrl.isNullOrBlank()) {
             AppLogger.e(TAG, "auto takeover: no engine URL — cannot dispatch agent")
-            resetHandoffState()
+            TakeoverState.resetHandoffState()
             return
         }
         val deadlineMs = System.currentTimeMillis() + AUTO_TAKEOVER_WINDOW_MS
         while (System.currentTimeMillis() < deadlineMs) {
             try {
                 TakeoverApiClient.agentTakeover(engineUrl, call.roomName, engineToken)
-                AppLogger.i(TAG, "auto agent takeover OK for room ${call.roomName}")
+                AppLogger.i(TAG, "agent takeover OK for room ${call.roomName}")
                 TakeoverState.clearAgentHandoff()
                 return
             } catch (e: TakeoverApiClient.TakeoverException) {
                 when (e.status) {
                     404 -> {
                         // Room still not on the trunk — keep retrying until the deadline.
-                        AppLogger.w(TAG, "auto takeover: room ${call.roomName} not on trunk yet (404), retrying")
+                        AppLogger.w(TAG, "agent takeover: room ${call.roomName} not on trunk yet (404), retrying")
                     }
                     409 -> {
-                        AppLogger.i(TAG, "auto takeover: already answered (409) — keeping agent view")
+                        AppLogger.i(TAG, "agent takeover: already answered (409) — keeping agent view")
                         TakeoverState.clearAgentHandoff()
                         return
                     }
                     else -> {
                         // 5xx / 0 (network): transient — retry within the window.
-                        AppLogger.w(TAG, "auto takeover: engine error ${e.status} (${e.message}), retrying")
+                        AppLogger.w(TAG, "agent takeover: engine error ${e.status} (${e.message}), retrying")
                     }
                 }
             }
             delay(TAKEOVER_RETRY_MS)
         }
-        AppLogger.e(TAG, "auto takeover: window closed without agent answer for room ${call.roomName}")
+        val why = if (armed) "window closed without agent answer" else "inbound never reached the trunk"
+        AppLogger.e(TAG, "agent takeover: $why for room ${call.roomName}")
         TakeoverState.clearAgentHandoff()
-        resetHandoffState()
+        resetCallState()
     }
 
-    /** Reset the takeover state so the handoff UI transitions to its terminal (failed) view. */
-    private fun resetHandoffState() {
+    /** Reset the takeover state so the call screen transitions to its terminal (failed) view. */
+    private fun resetCallState() {
         TakeoverState.setCurrent(null)
-        TakeoverState.setPhase(TakeoverPhase.IDLE)
+        TakeoverState.setAgent(null)
     }
-
-    /** Small holder so the retry loop can log the arm that caused the takeover. */
-    private data class ArmOutcome(val arm: AgentHandoffArm)
 
     private fun onRoomGone() {
-        // The authoritative end-of-window. Whatever phase we were in, the room is gone.
-        // The overlay (if up) reads the phase/current and closes; the monitor resets state.
+        // The authoritative end of the call: the room left the ringing list. Whatever state we
+        // were in, the call screen (if showing the agent view) reads TakeoverState and closes;
+        // the monitor resets the state.
         val was = TakeoverState.current.value
         if (was == null) return
         AppLogger.i(TAG, "resetting takeover state (room gone), was=${was.roomName}")
         TakeoverState.setCurrent(null)
-        TakeoverState.setPhase(TakeoverPhase.IDLE)
-        dismissOverlay()
-    }
-
-    private fun launchOverlay(room: String, callDbId: String?, phone: String?) {
-        val intent = Intent(this, TakeoverOverlayActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            putExtra(TakeoverOverlayActivity.EXTRA_ROOM, room)
-            putExtra(TakeoverOverlayActivity.EXTRA_CALL_DB_ID, callDbId)
-            putExtra(TakeoverOverlayActivity.EXTRA_PHONE, phone)
-        }
-        runCatching {
-            startActivity(intent)
-        }.onFailure {
-            AppLogger.e(TAG, "could not launch overlay: ${it.message}")
-        }
-    }
-
-    private fun dismissOverlay() {
-        // The overlay observes TakeoverState and closes itself; nothing to send.
+        TakeoverState.setAgent(null)
     }
 
     override fun onDestroy() {
         pollJob?.cancel()
         scope.cancel()
         // Leave state clean if the service is torn down mid-call (e.g. the user turned the
-        // feature off). The live overlay, if any, will see the phase reset on its next tick.
+        // feature off). The call screen, if any, will see the reset on its next tick.
         TakeoverState.setCurrent(null)
-        TakeoverState.setPhase(TakeoverPhase.IDLE)
+        TakeoverState.setAgent(null)
         super.onDestroy()
         AppLogger.i(TAG, "RingingMonitorService destroyed")
     }
@@ -365,10 +319,6 @@ class RingingMonitorService : Service() {
 
         const val ACTION_START = "com.baba.callvault.TAKEOVER_MONITOR_START"
         const val ACTION_STOP = "com.baba.callvault.TAKEOVER_MONITOR_STOP"
-        /** Raised by [NormalCallTrigger] for a normal (non-SIP) incoming call on the carrier. */
-        const val ACTION_LOCAL_RINGING = "com.baba.callvault.TAKEOVER_LOCAL_RINGING"
-        /** Extra carrying the caller number for [ACTION_LOCAL_RINGING]. */
-        const val EXTRA_LOCAL_NUMBER = "takeover_local_number"
 
         /**
          * How long the armed handoff keeps retrying `/sip/agent-takeover` after the forwarded
@@ -400,27 +350,6 @@ class RingingMonitorService : Service() {
                 start(context)
             } else {
                 stop(context)
-            }
-        }
-
-        /**
-         * Bring the monitor foreground (so it may launch the overlay) and raise it for a
-         * **normal** incoming call on the carrier. Called by [NormalCallTrigger]. Unlike
-         * [start] this does not require an engine URL — the local path needs no backend to be
-         * armed, only that takeover is enabled.
-         */
-        fun raiseLocalRinging(context: Context, number: String?) {
-            val i = Intent(context, RingingMonitorService::class.java).apply {
-                action = ACTION_LOCAL_RINGING
-                putExtra(EXTRA_LOCAL_NUMBER, number)
-            }
-            runCatching {
-                context.startForegroundService(i)
-            }.onFailure {
-                // Background FGS start is blocked when the app has no BAL exemption yet
-                // (SYSTEM_ALERT_WINDOW not granted). The overlay simply won't raise; the log
-                // tells the field test why. Never crash the phone-state path.
-                AppLogger.w(TAG, "raiseLocalRinging startForegroundService blocked: ${it.message}")
             }
         }
     }

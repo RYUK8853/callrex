@@ -1,5 +1,72 @@
 # DECISION.md — Callrex (CallVault fork)
-_Last updated: 2026-10-14 — LOG BEACON done + live-verified against running Node (real POST/GET tests). Full suite 1967/1967 green. NEXT: release build v2.5.0 + real SIP E2E._
+_Last updated: 2026-10-14 — v2.5.4 REWORK DONE: legacy 3-button overlay DELETED (user order: sirf floating button rahega). Code committed pending (local). PUSH/PUBLISH PENDING user permission._
+
+## v2.5.4 (final) — AI agent auto-pickup + legacy overlay DELETED (2026-10-14)
+
+### User order (verbatim)
+"ye to remove kar jo maine batya the one floating button sirf wahi rakhege"
+→ Purana 3-button takeover overlay POORA hat jaana chahiye. Sirf ek takeover UI:
+stock call screen + floating "AI Assistant" button. Agent line pe jo bhi ring kare
+(forwarded ya genuine inbound) → agent apne aap uthayega. Koi decision screen nahi.
+
+### Deleted (git rm)
+- `TakeoverOverlayActivity.kt` (3-button overlay UI)
+- `NormalCallTrigger.kt` (normal incoming call → overlay trigger; CALL_STATE observer)
+- `DialerRole.kt` (overlay guard ka single-source dialer-role check — zero callers after overlay gone)
+- `OwnerWritebackCoordinator.kt` + `OwnerWritebackCoordinatorTest.kt`
+  (sirf overlay "owner pickup" pe call DB me owner writeback karta tha)
+
+### Modified
+- `RingingMonitorService.kt`: `onNewCall()` ab seedha `agentTakeover()` karta hai
+  (armed ya genuine inbound — dono same path). `ACTION_LOCAL_RINGING` gone.
+  Legacy "raise overlay" branch removed. `resetHandoffState()` added to TakeoverState.
+- `TakeoverState.kt`: `TakeoverPhase`/`phase` removed — overlay gone ho chuka,
+  inhe koi nahi padhta. `TakeoverCurrentCall.answered` kept. `resetHandoffState()`
+  added.
+- `DialerRole.kt`: DELETED (git rm) — uska sirf ek caller tha NormalCallTrigger (overlay
+  guard); overlay gone → zero callers.
+- `CallSessionManager.kt`: `NormalCallTrigger.onPhoneState()` call removed + import gone.
+- `CallVaultApplication.kt`: `OwnerWritebackCoordinator.start()` removed + import gone.
+- `SettingsScreen.kt`: `OverlayPermissionRow` composable + "Draw over other apps" row gone;
+  `NormalCallTrigger`/`LifecycleOwner` imports gone.
+- `AndroidManifest.xml`: `SYSTEM_ALERT_WINDOW` permission removed; `TakeoverOverlayActivity`
+  entry removed; `AiCallActivity` comment updated.
+- `strings.xml`: 23 overlay-only strings deleted (`takeover_btn_owner/agent/decline`,
+  `takeover_ringing_title/subtitle`, `takeover_permission_needed/_text`, `takeover_grant_permission`,
+  `takeover_owner_live/_subtitle`, `takeover_agent_live/_subtitle`, `takeover_btn_end/mute/unmute`,
+  `takeover_joining`, `takeover_error_generic/dismiss`, `takeover_window_left`,
+  `takeover_answered_by_missed`, `takeover_refresh`).
+  `takeover_unknown_number` kept (AgentCallsScreen use karta hai).
+  Section subtitle/description updated (no more "take it yourself / hand to AI / decline").
+- `CHANGELOG.md`: v2.5.4 entry updated — overlay DELETED, single floating-button path.
+
+### Verified
+- `./gradlew :app:compileDebugKotlin` → BUILD SUCCESSFUL (0 errors)
+- `./gradlew :app:testDebugUnitTest` → BUILD SUCCESSFUL (1953 tests, 0 failures)
+  (14 tests kam = deleted `OwnerWritebackCoordinatorTest` ka expected drop)
+- Manifest XML well-formed ✓
+- No dangling refs: `TakeoverOverlayActivity`/`NormalCallTrigger`/`OwnerWritebackCoordinator`/
+  `raiseLocalRinging`/`TakeoverPhase`/`ACTION_LOCAL_RINGING` — zero matches in app/src
+
+### Why not alternatives
+- Engine-side "deflected call detect karo" — impossible: direct-dial aur deflect dono same SIP
+  trunk pe aate hain; trigger sirf app jaanti hai (ne deflect kiya). Isliye arm state app-side.
+- Overlay wapas laana — user ne 3-button overlay reject kiya tha ("only one floating button").
+
+### Status (verified, claims nahi)
+- App: 7 files, +460 lines; compile green; **1967/1967 unit tests green**; secret scan clean.
+- APK: `/tmp/Callrex-2.5.4.apk` (81,686,676 B) — versionCode **20504**, versionName **2.5.4** (aapt-verified).
+- Engine: restart ho chuka (naya contract load, pid 64658), `/sip/ringing` 200; Mongo launchd (8.2, KeepAlive) pid 63763 — reboot-safe ab.
+- Commits LOCAL only: callrex `c24f93a`, zantacall `55cfa03d`. **Push/release PENDING — user permission chahiye (strict rule).**
+- FIELD TEST BLOCKED: Vobiz carrier inbound provisioning 24-48h pending (number +91 80642 69004
+  abhi "call cannot be connected" deta hai). Provisioning aane ke baad: install 2.5.4 → call
+  karwao agent line pe ya deflect test karo → transcript panel dikhna chahiye.
+
+### Infra lessons (10-14, is session me aaye)
+- Mongo exit-62 mystery = FCV 8.0 data + mongod 7.0.35 → FATAL version guard (corruption NAHI).
+  Ab launchd se chalta hai: `~/Library/LaunchAgents/com.zantacall.mongod27017.plist` (8.2 binary).
+  Plist `<str>` invalid hai (`<string>`) — plutil -lint se pakda.
+- Engine kill slow hota hai — kill -9 safe hai (dev).
 
 ## Log Beacon — crash/log self-fetch (2026-10-14)
 

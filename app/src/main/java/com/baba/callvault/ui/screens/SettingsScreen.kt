@@ -75,11 +75,7 @@ import java.io.File
 import com.baba.callvault.services.recording.DaemonKeepAliveService
 import com.baba.callvault.services.recording.VoipCaptureController
 import com.baba.callvault.services.takeover.LogBeacon
-import com.baba.callvault.services.takeover.NormalCallTrigger
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -1885,11 +1881,6 @@ private fun TakeoverSection(
             onCheckedChange = { actions.setTakeoverEnabled(it) }
         )
 
-        // Overlay permission — the one manual grant the NORMAL (non-SIP) trigger needs so the
-        // answer screen can come up over the dialer / lock screen. SIP needs no permission
-        // (the engine room is already "ours"), so this row is only load-bearing for regular calls.
-        OverlayPermissionRow(context = context)
-
         // Config lives under the master switch: the monitor only starts when a URL is present,
         // so an empty URL with the switch on is a no-op, not an error.
         OutlinedTextField(
@@ -2081,56 +2072,6 @@ private fun AiAssistantSubSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
-        )
-    }
-}
-
-/**
- * One-time "display over other apps" grant for the takeover overlay. Regular (non-SIP) incoming
- * calls arrive with the dialer in the foreground, so raising the answer screen over it is a
- * background activity launch — Android only allows that with this permission. It is not a
- * runtime permission (no system dialog), so the row deep-links to the app's system settings page.
- */
-@Composable
-private fun OverlayPermissionRow(context: Context) {
-    var granted by remember { mutableStateOf(NormalCallTrigger.overlayPermissionGranted(context)) }
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                granted = NormalCallTrigger.overlayPermissionGranted(context)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { NormalCallTrigger.openOverlayPermissionScreen(context) }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = stringResource(R.string.takeover_permission_needed),
-                style = MaterialTheme.typography.titleSmall,
-                color = if (granted) MaterialTheme.colorScheme.primary
-                       else MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                text = stringResource(R.string.takeover_permission_needed_text),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Spacer(Modifier.width(12.dp))
-        Text(
-            text = if (granted) "✓" else stringResource(R.string.takeover_grant_permission),
-            style = MaterialTheme.typography.labelMedium,
-            color = if (granted) MaterialTheme.colorScheme.primary
-                   else MaterialTheme.colorScheme.primary,
         )
     }
 }
