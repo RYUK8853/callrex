@@ -3,6 +3,27 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.5.4] — 2026-10-14 — AI agent auto-pickup after "AI Assistant" tap (agent side)
+The "AI Assistant" tap forwarded the call to the agent line, but the agent never actually
+answered: nothing triggered the engine's `POST /sip/agent-takeover` on the dialer path, so
+the forwarded call rang on the SIP trunk and was dropped after 45 s. Now the whole handoff
+closes the loop on the phone:
+
+- **Auto agent takeover:** tapping AI Assistant *arms* a takeover window (44 s). When the
+  forwarded call's room appears in the engine's ringing list, `RingingMonitorService` fires
+  `POST /sip/agent-takeover` automatically (2 s retry, backoff) — no button, no legacy
+  overlay. The agent answers and talks to the caller.
+- **Handoff UI in the call screen:** after the tap, the stock call screen switches to an
+  "AI agent" panel — *Connecting…* with a watchdog (if the ring never arrives, it says so
+  and offers Back), then **live transcript** lines as the agent talks, plus an **End call**
+  button that drops the agent call on the engine.
+- **No more early screen exit:** the activity no longer finishes the moment the local call
+  gets disconnected by the deflect; it stays open for the agent handoff.
+- **Ringing contract fix (engine):** `/sip/ringing` now keeps entries while the room is
+  answered, so "gone from the list" truly means the call ended — the app no longer resets
+  agent state when a takeover succeeds.
+- Legacy 3-button overlay path is untouched when Callrex is **not** the default dialer.
+
 ## [2.5.3] — 2026-10-14 — AI Assistant: one floating button on the stock-style call screen (Option A)
 Normal incoming calls get the original phone-style UI (number, green Answer, red Decline)
 with a single extra floating **AI Assistant** button. Tap it and the ringing call is

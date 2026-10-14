@@ -1027,5 +1027,14 @@
     <string name="ai_call_cancel">Cancel</string>
     <string name="ai_call_forwarding">Forwarding…</string>
     <string name="ai_call_no_target">Set the AI agent line in Settings → Dynamic Takeover first.</string>
+    <string name="ai_handoff_connecting">Handing call to AI agent…</string>
+    <string name="ai_handoff_connecting_subtitle">The call is being forwarded to the agent line. This usually takes 5–15 seconds.</string>
+    <string name="ai_handoff_stale">Agent did not pick up</string>
+    <string name="ai_handoff_stale_subtitle">The forwarded call did not reach the agent line. Check the agent line in Settings and the Vobiz number routing.</string>
+    <string name="ai_handoff_cancel">Cancel</string>
+    <string name="ai_handoff_live">AI agent is on the call</string>
+    <string name="ai_handoff_transcript_empty">Transcript appears as the agent speaks…</string>
+    <string name="ai_handoff_end">End call</string>
+    <string name="ai_handoff_no_engine">Set the Engine URL in Settings → Dynamic Takeover first — otherwise the agent cannot pick up the forwarded call.</string>
     <string name="ai_dial_title">Dial</string>
 </resources>

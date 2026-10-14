@@ -73,6 +73,13 @@ object TakeoverApiClient {
         val roomName: String,
         val callDbId: String?,
         val phoneNumber: String?,
+        /**
+         * Engine-side fact (DYNAMIC-TAKEOVER 10-14): the room is still tracked by the ringing
+         * monitor — either still ringing or already answered (agent/owner took over). A room
+         * that has ENDED simply leaves the list, so presence in the list is the authoritative
+         * "call still live" signal and this flag only tells the app WHICH half of live it is.
+         */
+        val answered: Boolean = false,
     )
 
     /**
@@ -133,6 +140,9 @@ object TakeoverApiClient {
                 roomName = room,
                 callDbId = o.optString("call_db_id").takeIf { it.isNotBlank() },
                 phoneNumber = o.optString("phone_number").takeIf { it.isNotBlank() },
+                // 10-14 engine contract: answered=true means the room is tracked but the call
+                // is no longer ringing (agent/owner took over). Older engines omit the field → false.
+                answered = o.optBoolean("answered"),
             )
         }
     }

@@ -54,6 +54,12 @@ data class TakeoverCurrentCall(
     val callDbId: String?,
     val phoneNumber: String?,
     val firstSeenMs: Long,
+    /**
+     * Engine-side fact at first sight (DYNAMIC-TAKEOVER 10-14): the room was already answered
+     * (agent/owner took over) when the monitor first saw it. Lets the monitor skip the stale
+     * 3-button decision screen and go straight to the agent view.
+     */
+    val answered: Boolean = false,
 ) {
     /**
      * How many milliseconds of the ringback window are (pessimistically) left. The overlay
@@ -86,7 +92,32 @@ data class AgentCallState(
     val callDone: Boolean = false,
     val finalTranscript: String? = null,
     val finalSummary: String? = null,
+    /**
+     * The LiveKit room this agent call lives in (dialer/Option-A path). Lets the call screen
+     * offer "End call" via `/sip/call-drop`; null on the legacy overlay path, which has no
+     * in-view end button.
+     */
+    val roomName: String? = null,
 )
+
+/**
+ * Armed when the owner taps "AI Assistant" on the dialer call screen (Option A): the live
+ * carrier call is being forwarded to the agent line, and the room that will ring on the SIP
+ * trunk must be handed straight to the agent via `/sip/agent-takeover` — NOT surfaced as the
+ * legacy 3-button overlay (that would put a second call UI on a call the owner already
+ * decided to hand over). The [RingingMonitorService] checks this flag when a new room appears.
+ *
+ * [armedMs] bounds how long the arm is honoured: a forwarded call reaches the trunk within
+ * seconds (carrier path), so an arm older than the window is stale and a genuinely new
+ * inbound SIP call must get the normal overlay.
+ */
+data class AgentHandoffArm(
+    val targetNumber: String,
+    val armedMs: Long,
+)
+
+/** How long an [AgentHandoffArm] is honoured before it is treated as stale. */
+const val AGENT_HANDOFF_ARM_WINDOW_MS = 90_000L
 
 /**
  * Singleton source of truth for the takeover feature. Owned by the process, observed by the
@@ -103,6 +134,9 @@ object TakeoverState {
 
     private val _agent = MutableStateFlow<AgentCallState?>(null)
     val agent: StateFlow<AgentCallState?> = _agent.asStateFlow()
+
+    private val _agentHandoffArm = MutableStateFlow<AgentHandoffArm?>(null)
+    val agentHandoffArm: StateFlow<AgentHandoffArm?> = _agentHandoffArm.asStateFlow()
 
     /**
      * Whether the overlay should be on screen RIGHT NOW. The monitor sets it when a call
@@ -129,6 +163,22 @@ object TakeoverState {
     fun setAgent(state: AgentCallState?) {
         _agent.value = state
     }
+
+    @Synchronized
+    fun armAgentHandoff(targetNumber: String) {
+        _agentHandoffArm.value = AgentHandoffArm(targetNumber, System.currentTimeMillis())
+    }
+
+    @Synchronized
+    fun clearAgentHandoff() {
+        _agentHandoffArm.value = null
+    }
+
+    /** The arm, if still inside its [AGENT_HANDOFF_ARM_WINDOW_MS] window. */
+    @Synchronized
+    fun activeAgentHandoff(nowMs: Long = System.currentTimeMillis()): AgentHandoffArm? =
+        _agentHandoffArm.value
+            ?.takeIf { nowMs - it.armedMs < AGENT_HANDOFF_ARM_WINDOW_MS }
 
     fun setOverlayVisible(visible: Boolean) {
         _overlayVisible.value = visible
