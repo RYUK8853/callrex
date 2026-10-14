@@ -124,8 +124,8 @@ val extractLibphonenumberMetadata = tasks.register<ExtractMetadataTask>("extract
 // Android refuses to install a lower versionCode over a higher one, and uninstalling to get around
 // that would destroy the device's ADB pairing — so a versionCode that goes backwards is not a
 // cosmetic mistake, it strands that device on the old build.
-val ciVersionCode = providers.gradleProperty("versionCode").map { it.toIntOrNull() }.orElse(20457)
-val ciVersionName = providers.gradleProperty("versionName").orElse("2.4.11")
+val ciVersionCode = providers.gradleProperty("versionCode").map { it.toIntOrNull() }.orElse(20500)
+val ciVersionName = providers.gradleProperty("versionName").orElse("2.5.0")
 val ciBuildNumber = providers.gradleProperty("ciBuildNumber").orElse("Local")
 
 // -PisolateTestApp builds the debug variant under its own applicationId so instrumented tests can be
@@ -406,6 +406,8 @@ dependencies {
 
     // Libphonenumber
     implementation(libs.libphonenumber)
+    // LiveKit Android SDK — dynamic takeover owner-pickup (join the ringing room over WebRTC).
+    implementation(libs.livekit)
 
     // WorkManager: reliable background task execution for post-call Drive copy.
     implementation("androidx.work:work-runtime-ktx:2.10.0")

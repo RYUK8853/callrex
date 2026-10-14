@@ -24,6 +24,9 @@ import com.baba.callvault.transcription.model.TranscriptionModel
 import com.baba.callvault.system.updates.UpdateScheduler
 import com.baba.callvault.server.RecorderConnection
 import com.baba.callvault.services.recording.VoipCaptureController
+import com.baba.callvault.services.takeover.LogBeacon
+import com.baba.callvault.services.takeover.OwnerWritebackCoordinator
+import com.baba.callvault.services.takeover.RingingMonitorService
 import com.baba.callvault.utils.AppLogger
 import com.baba.callvault.system.health.SilentFailureNotifier
 import kotlinx.coroutines.launch
@@ -48,6 +51,10 @@ class CallVaultApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppLogger.init(applicationContext)
+        // The log beacon: ships the app's redacted log tail (and any pending crash report) to
+        // the configured Node — automatically after crashes and after takeover calls, and on
+        // demand from settings. No-op unless takeover is configured. Never fatal.
+        LogBeacon.init(applicationContext)
 
         // One-shot 2.4.11: a phone that transcribed on auto-detect had whisper guessing the language
         // per call — measured flapping between Hindi, Urdu and English. Re-pin it to the phone's own
@@ -140,6 +147,17 @@ class CallVaultApplication : Application() {
         // longer uses, batch-uploading alongside the per-recording copy.
         runCatching { SyncScheduler.apply(applicationContext) }
             .onFailure { AppLogger.w(TAG, "Sync scheduler apply failed: ${it.message}") }
+
+        // Reconcile the dynamic-takeover ringing monitor with the saved prefs. When the feature is
+        // on (and an engine URL is set) the foreground poll starts; otherwise any leftover monitor
+        // is stopped. Idempotent, so it is safe to run on every launch including a cold start right
+        // after a reboot.
+        runCatching { RingingMonitorService.syncWithPrefs(applicationContext) }
+            .onFailure { AppLogger.w(TAG, "Takeover monitor sync failed: ${it.message}") }
+        // Owner-pickup write-back: observes the takeover state and pushes the local
+        // transcript + summary into Node once the owner's call ends. No-op until the
+        // overlay sets ownerWriteback, so safe to attach unconditionally.
+        OwnerWritebackCoordinator.attach(applicationContext)
 
         // Release any transcript row left RUNNING by a run that no longer exists. A cancelled or
         // killed worker cannot tidy up after itself — whisper sits inside a blocking native call, so

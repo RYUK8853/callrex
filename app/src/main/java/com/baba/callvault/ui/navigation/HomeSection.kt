@@ -28,7 +28,10 @@ enum class HomeSection(val key: String) {
     Transcripts("transcripts"),
 
     /** Everything summarised. */
-    Summaries("summaries");
+    Summaries("summaries"),
+
+    /** Inbound SIP calls the voice agent handled, with their transcript and summary. */
+    AgentCalls("agent_calls");
 
     companion object {
 

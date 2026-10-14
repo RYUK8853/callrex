@@ -93,6 +93,18 @@ object AppLogger {
     /** Reference to the app preferences to check logging enablement dynamically. */
     private var prefs: AppPreferences? = null
 
+    /**
+     * Optional observer invoked from the uncaught-exception handler, AFTER the log has been
+     * flushed to disk but BEFORE the process is handed back to the default handler.
+     *
+     * [com.baba.callvault.services.takeover.LogBeacon] sets this to persist a crash report and
+     * fire a best-effort network send. It runs on the dying thread and MUST be fast and side
+     * -effect-safe: never block on I/O that could deadlock, and wrap everything in runCatching —
+     * a throw here would mask the real crash.
+     */
+    @Volatile
+    var onUncaught: ((thread: Thread, throwable: Throwable) -> Unit)? = null
+
     /** Pointer to the internal application diagnostic log file. */
     private var logFile: File? = null
 
@@ -185,6 +197,9 @@ object AppLogger {
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             e(TAG, "Caught an uncaught exception, flushing logs to disk before process death...", throwable)
             flushSync()
+            // Best-effort crash report + network send. Must never throw: a failure here would
+            // replace the real crash stack with the beacon's own exception.
+            runCatching { onUncaught?.invoke(thread, throwable) }
             // Forward runtime exception to original uncaught handler
             defaultHandler?.uncaughtException(thread, throwable)
         }

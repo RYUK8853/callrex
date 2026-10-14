@@ -24,6 +24,9 @@ ksp = "2.3.9"
 aboutlibraries = "14.2.1"
 libphonenumber = "9.0.31"
 
+# LiveKit Android SDK — dynamic takeover (inbound SIP owner-pickup joins the room over WebRTC)
+livekit = "2.29.0"
+
 [libraries]
 shizukuApi = { module = "dev.rikka.shizuku:api", version.ref = "shizuku-api" }
 shizukuProvider = { module = "dev.rikka.shizuku:provider", version.ref = "shizuku-provider" }
@@ -55,6 +58,7 @@ aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3",
 
 # Libphonenumber
 libphonenumber = { module = "com.googlecode.libphonenumber:libphonenumber", version.ref = "libphonenumber" }
+livekit = { module = "io.livekit:livekit-android", version.ref = "livekit" }
 
 # Room (recordings catalog)
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }

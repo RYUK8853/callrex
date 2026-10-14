@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.AndroidViewModel
 import com.baba.callvault.BuildConfig
 import com.baba.callvault.services.debug.DebugNotificationHelper
+import com.baba.callvault.services.takeover.RingingMonitorService
 import com.baba.callvault.data.AppPreferences
 import com.baba.callvault.server.RecorderBackend
 import com.baba.callvault.data.StorageTarget
@@ -136,6 +137,17 @@ interface SettingsActions {
     fun deleteSummaryModel(model: SummaryModel)
     fun setSyncDayOfWeek(day: Int)
     fun setUpdateCheckEnabled(enabled: Boolean)
+
+    // ----- Dynamic takeover (voice agent handoff) -----
+
+    fun setTakeoverEnabled(enabled: Boolean)
+    fun setTakeoverEngineUrl(url: String)
+    fun setTakeoverEngineToken(token: String)
+    fun setTakeoverNodeUrl(url: String)
+    fun setTakeoverNodeToken(token: String)
+
+    /** Clears all stored takeover endpoints and tokens. */
+    fun clearTakeoverSettings()
 }
 
 /**
@@ -653,6 +665,49 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         preferences.setUpdateCheckEnabled(enabled)
         if (!enabled) preferences.setAvailableUpdateTag(null)
         UpdateScheduler.apply(appContext)
+        refresh()
+    }
+
+    // -------- Dynamic takeover (voice agent handoff)
+
+    /**
+     * Master switch for dynamic takeover. Turning it on starts the ringing monitor; off stops it
+     * and stops any in-flight ring. The endpoints and tokens are untouched — only the feature flag
+     * changes, so re-enabling picks straight up where it left off.
+     */
+    override fun setTakeoverEnabled(enabled: Boolean) {
+        preferences.setTakeoverEnabled(enabled)
+        RingingMonitorService.syncWithPrefs(appContext)
+        refresh()
+    }
+
+    override fun setTakeoverEngineUrl(url: String) {
+        preferences.setTakeoverEngineUrl(url)
+        refresh()
+    }
+
+    override fun setTakeoverEngineToken(token: String) {
+        preferences.setTakeoverEngineToken(token)
+        refresh()
+    }
+
+    override fun setTakeoverNodeUrl(url: String) {
+        preferences.setTakeoverNodeUrl(url)
+        refresh()
+    }
+
+    override fun setTakeoverNodeToken(token: String) {
+        preferences.setTakeoverNodeToken(token)
+        refresh()
+    }
+
+    /** Clears all four stored takeover endpoints/tokens; the enabled flag itself is kept. */
+    override fun clearTakeoverSettings() {
+        preferences.setTakeoverEngineUrl(null)
+        preferences.setTakeoverEngineToken(null)
+        preferences.setTakeoverNodeUrl(null)
+        preferences.setTakeoverNodeToken(null)
+        RingingMonitorService.syncWithPrefs(appContext)
         refresh()
     }
 

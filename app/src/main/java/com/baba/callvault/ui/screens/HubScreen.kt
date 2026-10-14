@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
@@ -68,6 +69,8 @@ fun HubScreen(
     recordingsCount: Int,
     transcriptsCount: Int,
     summariesCount: Int,
+    agentCallsCount: Int = 0,
+    agentCallsVisible: Boolean = false,
     listState: LazyGridState,
     onOpenSection: (HomeSection) -> Unit,
     onOpenSettings: () -> Unit,
@@ -142,6 +145,20 @@ fun HubScreen(
                     body = stringResource(R.string.home_hub_summaries_body),
                     onClick = { onOpenSection(HomeSection.Summaries) },
                 )
+            }
+            // Only while the voice agent is on: an empty, unconfigured section would be a dead tile
+            // on a screen opened every day, so it stays hidden until takeover has been turned on.
+            if (agentCallsVisible) {
+                item {
+                    HubCard(
+                        icon = Icons.Filled.Call,
+                        accent = brand.warning,
+                        count = stringResource(R.string.takeover_agent_calls_count, agentCallsCount),
+                        title = stringResource(R.string.takeover_agent_calls_title),
+                        body = stringResource(R.string.takeover_hub_agent_calls_body),
+                        onClick = { onOpenSection(HomeSection.AgentCalls) },
+                    )
+                }
             }
             // Last, and only while the user has not tucked it away: an invitation is worth one cell of a
             // screen they open every day, and worth none at all once they have taken it up. Long-press

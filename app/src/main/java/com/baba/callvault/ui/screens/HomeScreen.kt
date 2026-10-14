@@ -35,6 +35,8 @@ import com.baba.callvault.data.merge.MergeCandidates
 import com.baba.callvault.data.recordings.AudioImport
 import com.baba.callvault.data.recordings.DeleteScope
 import com.baba.callvault.data.recordings.RecordingSelection
+import com.baba.callvault.data.takeover.TakeoverCallRepository
+import kotlinx.coroutines.flow.flowOf
 import com.baba.callvault.system.openTelegramGroup
 import com.baba.callvault.ui.common.DeleteScopeStateSaver
 import com.baba.callvault.ui.common.M3DropdownField
@@ -907,12 +909,18 @@ fun HomeScreen(
             .collectAsState(initial = 0)
         val summariesCount by remember(section) { LibraryCounts.summarised(context) }
             .collectAsState(initial = 0)
+        // The tile only exists while takeover is on; the count stream behind it only then too.
+        val agentCallsCount by remember(section, preferences.isTakeoverEnabled()) {
+            if (preferences.isTakeoverEnabled()) TakeoverCallRepository(context).observeCount() else flowOf(0)
+        }.collectAsState(initial = 0)
 
         HubScreen(
             modifier = modifier,
             recordingsCount = uiState.recordings.size,
             transcriptsCount = transcriptsCount,
             summariesCount = summariesCount,
+            agentCallsCount = agentCallsCount,
+            agentCallsVisible = preferences.isTakeoverEnabled(),
             listState = hubGridState,
             onOpenSection = onSelectSection,
             onOpenSettings = onOpenSettings,
@@ -1355,6 +1363,11 @@ fun HomeScreen(
         }
         }
     }
+
+    HomeSection.AgentCalls -> AgentCallsScreen(
+        modifier = modifier.fillMaxSize(),
+        onBack = { onSelectSection(HomeSection.Hub) },
+    )
 
     } // end of the section switch
 

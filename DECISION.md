@@ -1,5 +1,95 @@
 # DECISION.md — Callrex (CallVault fork)
-_Last updated: 2026-10-12 — v2.4.11 PUBLISHED (commit 13ced3f, tag v2.4.11, GitHub release + Catbox live, in-app update path verified). NEXT: user installs + fish key + 1-2 calls → report → R3 root-cause fix v2.4.12._
+_Last updated: 2026-10-14 — LOG BEACON done + live-verified against running Node (real POST/GET tests). Full suite 1967/1967 green. NEXT: release build v2.5.0 + real SIP E2E._
+
+## Log Beacon — crash/log self-fetch (2026-10-14)
+
+### User ka demand (verbatim)
+"how you can test all this ... how you are going to take the crashes logs in realtime ...
+it should be like you can fetch by yourself logs and the errors and crashes. can we do that?"
+→ **Haan, ho gaya.** Ab phone khud apne logs/crashes Node pe bhejta hai; main server-side
+se log file padh leta hoon — user ko kuch batane ki zaroorat nahi.
+
+### Design (kyun aisa)
+1. **Node `POST/GET /debug/logs`** (routes/debugLogs.js) — global server-token auth ke
+   BAADE mount, isliye phone bhi wahi `NODEJS_API_TOKEN` use karta hai jo takeover pe
+   daalta hai. **Naya credential nahi, naya setting nahi.** Files disk pe
+   `data/debug-logs/` (max 50, prune). Response `{accepted:true,file}`.
+   - **Live-verified:** server uthaya (Mongo 27777), real POST/GET chala:
+     POST+token 200, POST bina token 401, GET list 200, GET detail 200, GET bina token 401,
+     disk pe 3 files read-back. Ek real bug pakda: Express-4 me internal path `/` likha
+     tha → `/debug/logs` 404; fix `/logs`. File-name me spaces → underscores (name URL
+     segment bhi hai). Test data delete.
+2. **App `LogBeacon`** (services/takeover) — 3 triggers:
+   - **Crash:** `AppLogger.onUncaught` (naya hook) → crash report `files/log_beacon/crash_*.txt`
+     me **sync** save (process marne se pehle hi disk pe — ye reliable path hai) + 10s
+     best-effort bhejo; agle app-start pe `flushPending` chhoota hua bhej deta hai.
+   - **Takeover call-end:** writeback ke baad (ok **ya** failed — failed write-back wahi
+     waqt hai jab logs chahiye) `sendAfterCall`.
+   - **Manual:** Settings → Voice agent → Diagnostics → "Send logs now" (toast result).
+   - Payload: device/app/reason + crash? + **500-line log tail** (AppLogger pehle se
+     redact karta hai — phone number/name already masked, naya koi data nahi jaata).
+   - **Beacon = takeover ka bachha:** takeover enabled + node URL set nahi → complete
+     no-op (koi byte nahi jaati). 5s/15s socket timeouts, har send apni IO scope pe
+     `runCatching` — beacon fail ho toh app ko thoda bhi effect nahi.
+3. **AppLogger me `onUncaught` hook** — dying thread pe chalta hai, isliye KDoc me saaf:
+   fast, side-effect-safe, `runCatching` wrapped (throw real crash mask karega).
+
+### Verified
+- Node: live POST/GET + auth negative tests (upar). Test data clean.
+- App: compile GREEN (6s); full suite **1967/1967 GREEN** (beacon ke saath — koi regression nahi).
+- **Phone pe end-to-end (real crash/call) abhi NAHI** — wo release build + real call ke saath aayega.
+
+### Bachi hui (same as before)
+- Release build v2.5.0 (beacon isi release me aayega — koi alag build nahi).
+- Real SIP E2E (Vobiz/KYC + phone same Wi-Fi).
+
+## 2.5.0 Dynamic Takeover — OwnerWritebackCoordinator (P5, 2026-10-14)
+
+### Kya hua
+P5 ka aakhri open piece — `OwnerWritebackCoordinator` — code likha + **32 naye tests**
+likhe jo **6 real production bugs** pakde (jo recon se nahi pakad sakte the). Sab fix.
+**Final: `:app:testDebugUnitTest` → 1967/1967 GREEN (1935 purane + 32 naye). Compile GREEN. P5 CODE-wise DONE.**
+
+### Key decisions (aur kyun)
+1. **Trigger = combine(ownerWriteback, current) + CAS.** Overlay owner-join pe
+   `ownerWriteback` set karta hai (tab `current` abhi set hai → guarded skip); call-end pe
+   monitor `current` clear karta hai — yahi real fire point. CAS (`inflightCallIds.add`)
+   se ek call pe writeback **sirf ek baar** — ring repeat pe bhi duplicate nahi.
+   (User: "0 times" data-loss; trigger miss = Node pe khaali record.)
+2. **CRITICAL timing:** trigger ANSWER pe fire hota hai, lekin Room catalog row sirf
+   call-END (file finalize) pe likhi jati hai (VoipRecordingCoordinator stop path).
+   Isliye `waitForRecording()` **poll** karta hai (10s interval, 2h cap) — ek-baar
+   check hamesha null deta.
+3. **`_voip` suffix REQUIRED matching me:** time-window alone kafi nahi — carrier call
+   bhi same window me ho sakti hai. `_voip` sirf VoIP recording match karta.
+   (Wrong recording ka transcript sahi call_id pe write = corruption — sabse khatarnaak bug.)
+4. **`roleForChannel` A_IS_FAR inverted tha (TEST pakda):** A = far party = caller =
+   "user" (pehle "assistant" tha). B (owner) = "assistant".
+5. **BOTH/SILENCE skip (TEST pakda):** `fromKey()` BOTH/SILENCE pe valid value deta hai
+   (null nahi) — `?: continue` unhe skip nahi karta tha. Explicit guard laga.
+6. **parseTranscript — 3 latent bugs (TESTS pakde):** (a) `runCatching{...return}` poora
+   function short-circuit karta tha (fallbacks dead code); (b) top-level array
+   `JSONObject()` me crash; (c) org.json: no-arg `optString("missing")` → literal `"null"`,
+   empty array pe `optString` → `"[]"` — dono text me leak. Fix: `(opt(key) as? String)?.`.
+7. **`observeTranscript` arg order (recon pakda):** `getTranscript(nodeUrl, callId, nodeToken)`
+   — token PATH segment ban raha tha. CallId route param hai; token auth header ka.
+
+### Abhi bhi open (not verified)
+- **Real E2E (SIP owner pickup → Node writeback):** blocked on Vobiz number + KYC + phone online.
+- **Release build v2.5.0:** abhi nahi bana (user ko phone me update chahiye).
+- **Phone offline** (ADB no devices); Node :3000 DOWN; local Mongo 27777 EMPTY; AI/legacy box unreachable
+  — transcript shape **LiveKit SDK source se verify** kiya (ground truth enough).
+
+### Files
+- NEW `services/takeover/OwnerWritebackCoordinator.kt` (306)
+- NEW test `services/takeover/OwnerWritebackCoordinatorTest.kt` (15)
+- NEW test `services/takeover/TakeoverApiClientTest.kt` (17)
+- MOD `TakeoverApiClient.kt` (parseTranscript/parseItems/buildUpdateBody + JSONArray import)
+- MOD `TakeoverCallRepository.kt` (observeTranscript arg order)
+- MOD `CallVaultApplication.kt` (attach() hook ~151)
+
+---
+
 
 ## 2.4.11 addendum — Fish Audio STT (user directive: "we will use fish.audio for stt for now")
 

@@ -29,7 +29,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Keeps the CPU awake for the duration of a call so screen-off cannot suspend the capture
-         thread and break the recording mid-call (PARTIAL_WAKE_LOCK, time-boxed per call). -->
+         thread and break the recording. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!--
@@ -180,6 +180,31 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="ADB wireless-debugging pairing." />
+        </service>
+
+        <!-- Dynamic takeover: the incoming-call decision screen (owner pickup / agent / decline).
+             showWhenLocked + turnScreenOn: the ringback window is ~45 s — the overlay must appear
+             above the lock screen, wherever the phone is. SYSTEM_ALERT_WINDOW keeps it above
+             everything if the user opens another app mid-window. -->
+        <activity
+            android:name=".services.takeover.TakeoverOverlayActivity"
+            android:exported="false"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Callrex" />
+
+        <!-- Dynamic takeover: polls the voice-agent engine for ringing calls and keeps the
+             overlay decision window alive. specialUse (a personal inbound-call triage feature
+             the user explicitly turned on; no other FGS type fits "watch for my calls"). -->
+        <service
+            android:name=".services.takeover.RingingMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse|dataSync">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Voice-agent dynamic takeover: watches for incoming agent-assisted calls." />
         </service>
 
         <!-- Support different languages on Android 11 and 12 https://developer.android.com/guide/topics/resources/app-languages#api-implementation:~:text=Support%20Android%2012%20and%20lower -->

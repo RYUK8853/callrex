@@ -295,6 +295,14 @@ class AppPreferences(context: Context) {
         // done. False = detect the call and offer a Record button instead. Only consulted when
         // VOIP_RECORDING_ENABLED is on.
         const val VOIP_AUTO_START = true
+        // Dynamic takeover defaults: feature off, nothing configured. URLs are blank by design — the
+        // engine only runs on the user's own machine (LAN or tunnel), so there is no sensible
+        // default to fall back to, and a blank URL must never be treated as "localhost".
+        const val TAKEOVER_ENABLED = false
+        val TAKEOVER_ENGINE_URL: String? = null
+        val TAKEOVER_NODE_URL: String? = null
+        val TAKEOVER_ENGINE_TOKEN: String? = null
+        val TAKEOVER_NODE_TOKEN: String? = null
 
         // --- Audio/Scrcpy Quality ---
         val AUDIO_SOURCE = ScrcpyAudioSource.VOICE_CALL.cliKey
@@ -418,6 +426,19 @@ class AppPreferences(context: Context) {
         CARRIER_RECORDING_ENABLED("carrier_recording_enabled"),
         AUTO_RECORD_INCOMING("auto_record_incoming"),
         AUTO_RECORD_OUTGOING("auto_record_outgoing"),
+
+        // --- Voice-agent dynamic takeover (inbound SIP calls: owner / agent / decline) ---
+        // Feature master switch. Off by default: the engine endpoint is personal infrastructure the
+        // user must configure, and nothing should poll a server the user never pointed us at.
+        TAKEOVER_ENABLED("takeover_enabled"),
+        // Engine host (port 8000 side): /sip/ringing, /sip/human-join, /sip/agent-takeover.
+        TAKEOVER_ENGINE_URL("takeover_engine_url"),
+        // Node API host (port 3000 side): /calls, /calls/{id}, /transcript — the "Agent Calls" data source.
+        TAKEOVER_NODE_URL("takeover_node_url"),
+        // Engine bearer token — prod sets ZANTACALL_API_TOKEN; local may leave it blank. NOT exported.
+        TAKEOVER_ENGINE_TOKEN("takeover_engine_token"),
+        // Node X-Server-Token. NOT exported.
+        TAKEOVER_NODE_TOKEN("takeover_node_token"),
         RECORD_FROM_ANSWER("record_from_answer"),
         
         // --- Filters & Contacts ---
@@ -727,6 +748,31 @@ class AppPreferences(context: Context) {
      */
     fun isVoipAutoStartEnabled() = getBoolean(Key.VOIP_AUTO_START, DefaultsValue.VOIP_AUTO_START)
     fun setVoipAutoStartEnabled(enabled: Boolean) = setBoolean(Key.VOIP_AUTO_START, enabled)
+
+    // --- Voice-agent dynamic takeover ---
+
+    /**
+     * Whether dynamic takeover is on. When on, [com.baba.callvault.services.takeover.RingingMonitorService]
+     * polls the engine's `/sip/ringing` and shows the incoming-call overlay inside the ringback window.
+     */
+    fun isTakeoverEnabled() = getBoolean(Key.TAKEOVER_ENABLED, DefaultsValue.TAKEOVER_ENABLED)
+    fun setTakeoverEnabled(enabled: Boolean) = setBoolean(Key.TAKEOVER_ENABLED, enabled)
+
+    /** Engine host, e.g. `http://192.168.1.42:8000`. Null/blank = not configured. */
+    fun getTakeoverEngineUrl(): String? = getString(Key.TAKEOVER_ENGINE_URL, DefaultsValue.TAKEOVER_ENGINE_URL)?.takeIf { it.isNotBlank() }
+    fun setTakeoverEngineUrl(url: String?) = setString(Key.TAKEOVER_ENGINE_URL, url)
+
+    /** Node API host, e.g. `http://192.168.1.42:3000`. Null/blank = not configured. */
+    fun getTakeoverNodeUrl(): String? = getString(Key.TAKEOVER_NODE_URL, DefaultsValue.TAKEOVER_NODE_URL)?.takeIf { it.isNotBlank() }
+    fun setTakeoverNodeUrl(url: String?) = setString(Key.TAKEOVER_NODE_URL, url)
+
+    /** Engine bearer token. Blank/null = no auth header (local stack). */
+    fun getTakeoverEngineToken(): String? = getString(Key.TAKEOVER_ENGINE_TOKEN, DefaultsValue.TAKEOVER_ENGINE_TOKEN)?.takeIf { it.isNotBlank() }
+    fun setTakeoverEngineToken(token: String?) = setString(Key.TAKEOVER_ENGINE_TOKEN, token)
+
+    /** Node server token. Blank/null = no header. */
+    fun getTakeoverNodeToken(): String? = getString(Key.TAKEOVER_NODE_TOKEN, DefaultsValue.TAKEOVER_NODE_TOKEN)?.takeIf { it.isNotBlank() }
+    fun setTakeoverNodeToken(token: String?) = setString(Key.TAKEOVER_NODE_TOKEN, token)
 
     /**
      * Whether "Resilient recording" (the audio-capture handoff, Option B) is enabled. Default false =

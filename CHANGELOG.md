@@ -3,6 +3,33 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.5.0] — 2026-10-14
+
+### Added
+
+- **Dynamic takeover: answer incoming voice-agent calls right on this phone.**
+  A new "Voice agent" section in Settings (engine URL, Node URL, tokens — all entered
+  in-app, nothing shipped in the repo) enables a full-screen answer screen the moment the
+  engine reports a ringing SIP call: **take the call yourself**, hand it to the AI agent,
+  or decline. Pick-up works over LiveKit (owner hears both sides live); the owner's call is
+  recorded locally and, after the call, transcribed + summarised like any other call.
+- **Agent Calls section** (Home + Hub): agent-handled calls from the Node API — list,
+  detail, transcript. Visible only while the feature is configured.
+- **Owner write-back**: after an owner-picked-up call ends, the app writes the transcript,
+  summary, status, end time and duration to the Node (`update-call`) so owner calls show up
+  exactly like agent calls — `session_data.handled_by: "owner"`.
+- **Log beacon** (crash/log self-fetch): after a crash, after every takeover call, or from
+  a Settings button, the phone ships its own redacted log tail (plus any pending crash
+  report) to the Node's `POST /debug/logs`. Crash reports are persisted on-disk before the
+  process dies and re-sent on the next start, so a crash that happens while the phone is
+  offline still arrives when the phone comes back. No new credentials: the beacon reuses
+  the takeover Node URL + token and is a complete no-op when the feature is not configured.
+
+### Changed
+
+- `AppLogger` gained an `onUncaught` observer hook (used by the log beacon; must be
+  fast, side-effect-safe, and never throw — it runs on the dying thread).
+
 ## [2.4.11] — 2026-10-12
 
 ### Added

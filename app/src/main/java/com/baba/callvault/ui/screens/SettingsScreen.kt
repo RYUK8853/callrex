@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
@@ -68,6 +69,7 @@ import java.time.LocalDateTime
 import java.io.File
 import com.baba.callvault.services.recording.DaemonKeepAliveService
 import com.baba.callvault.services.recording.VoipCaptureController
+import com.baba.callvault.services.takeover.LogBeacon
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.mutableStateOf
@@ -637,6 +639,17 @@ fun SettingsContent(
                 )
             }
             item {
+                // Dynamic takeover: answer the SIP call that rings the voice agent — on this phone.
+                // It lives between transcription and general because it is a first-class caller
+                // experience, not a niche toggle, and its config (engine URL + tokens) deserves the
+                // same visibility as the cloud endpoint fields.
+                TakeoverSection(
+                    preferences, updateTrigger, actions,
+                    expanded = openSection == SECTION_TAKEOVER,
+                    onToggle = { onToggleSection(SECTION_TAKEOVER) }
+                )
+            }
+            item {
                 GeneralSection(
                     preferences = preferences,
                     updateTrigger = updateTrigger,
@@ -734,6 +747,7 @@ private const val SECTION_STORAGE = "storage"
 private const val SECTION_RETENTION = "retention"
 private const val SECTION_AUDIO = "audio"
 private const val SECTION_TRANSCRIPTION = "transcription"
+private const val SECTION_TAKEOVER = "takeover"
 private const val SECTION_GENERAL = "general"
 
 // Sub-section keys. Scoped to their parent section, so the same value can never collide across two.
@@ -1828,20 +1842,127 @@ private fun AudioSection(preferences: AppPreferences, updateTrigger: Int, action
     }
 }
 
-/** Shows the theme and dynamic colour settings.
- *
- * @param preferences   The [AppPreferences] instance to read data from.
- * @param updateTrigger Trigger value to force recomposition when settings change.
- * @param actions       Implementation of [SettingsActions] to handle user interaction.
- */
 /**
- * **General** — the settings that are about the app itself rather than about a recording: how it
- * looks, what is switched on experimentally, and how it updates.
- *
- * These were three top-level accordions, which made Settings read as a flat list of everything
- * instead of having a shape. They keep their own section keys as sub-headers so nothing about the
- * user's stored state changes.
+ * **Takeover** — answer the incoming SIP calls that reach the voice agent right on this phone.
+ * The owner picks: take the call themselves (joins the LiveKit room), hand it to the AI agent, or
+ * decline. The monitor only starts when the feature is on AND an engine URL is set, so an empty
+ * URL is a no-op rather than a hard error.
  */
+@Composable
+private fun TakeoverSection(
+    preferences: AppPreferences,
+    updateTrigger: Int,
+    actions: SettingsActions,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+) {
+    val enabled = remember(updateTrigger) { preferences.isTakeoverEnabled() }
+    val context = LocalContext.current
+    val engineUrl = remember(updateTrigger) { preferences.getTakeoverEngineUrl() }
+    val engineToken = remember(updateTrigger) { preferences.getTakeoverEngineToken() }
+    val nodeUrl = remember(updateTrigger) { preferences.getTakeoverNodeUrl() }
+    val nodeToken = remember(updateTrigger) { preferences.getTakeoverNodeToken() }
+
+    SettingsSection(
+        title = stringResource(R.string.takeover_section_title),
+        expanded = expanded,
+        onToggle = onToggle
+    ) {
+        SettingsToggleRow(
+            icon = Icons.Filled.GraphicEq,
+            label = stringResource(R.string.takeover_enable_label),
+            description = stringResource(R.string.takeover_enable_description),
+            checked = enabled,
+            onCheckedChange = { actions.setTakeoverEnabled(it) }
+        )
+
+        // Config lives under the master switch: the monitor only starts when a URL is present,
+        // so an empty URL with the switch on is a no-op, not an error.
+        OutlinedTextField(
+            value = engineUrl.orEmpty(),
+            onValueChange = { actions.setTakeoverEngineUrl(it) },
+            label = { Text(stringResource(R.string.takeover_engine_url_label)) },
+            placeholder = { Text(stringResource(R.string.takeover_engine_url_hint)) },
+            singleLine = true,
+            enabled = enabled,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+        )
+        OutlinedTextField(
+            value = engineToken.orEmpty(),
+            onValueChange = { actions.setTakeoverEngineToken(it) },
+            label = { Text(stringResource(R.string.takeover_engine_token_label)) },
+            singleLine = true,
+            enabled = enabled,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+        )
+        OutlinedTextField(
+            value = nodeUrl.orEmpty(),
+            onValueChange = { actions.setTakeoverNodeUrl(it) },
+            label = { Text(stringResource(R.string.takeover_node_url_label)) },
+            placeholder = { Text(stringResource(R.string.takeover_node_url_hint)) },
+            singleLine = true,
+            enabled = enabled,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+        )
+        OutlinedTextField(
+            value = nodeToken.orEmpty(),
+            onValueChange = { actions.setTakeoverNodeToken(it) },
+            label = { Text(stringResource(R.string.takeover_node_token_label)) },
+            singleLine = true,
+            enabled = enabled,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+
+        // Diagnostics — the log beacon. The button is the escape hatch; the crash and
+        // call-end sends happen on their own, without anyone tapping anything.
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.takeover_logs_title),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = stringResource(R.string.takeover_logs_description),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            OutlinedButton(
+                onClick = {
+                    LogBeacon.sendNow { result ->
+                        Toast
+                            .makeText(
+                                context,
+                                if (result.startsWith("Sent")) {
+                                    context.getString(R.string.takeover_logs_sent)
+                                } else {
+                                    context.getString(R.string.takeover_logs_failed, result)
+                                },
+                                Toast.LENGTH_LONG,
+                            ).show()
+                    }
+                },
+                enabled = enabled,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .align(Alignment.End)
+            ) {
+                Text(stringResource(R.string.takeover_logs_send))
+            }
+        }
+    }
+}
+
 @Composable
 private fun GeneralSection(
     preferences: AppPreferences,
@@ -3431,6 +3552,12 @@ private fun SettingsScreenPreview() {
             override fun setSyncTimeMinute(minute: Int) {}
             override fun setSyncDayOfWeek(day: Int) {}
             override fun setUpdateCheckEnabled(enabled: Boolean) {}
+            override fun setTakeoverEnabled(enabled: Boolean) {}
+            override fun setTakeoverEngineUrl(url: String) {}
+            override fun setTakeoverEngineToken(token: String) {}
+            override fun setTakeoverNodeUrl(url: String) {}
+            override fun setTakeoverNodeToken(token: String) {}
+            override fun clearTakeoverSettings() {}
         }
 
         SettingsContent(
