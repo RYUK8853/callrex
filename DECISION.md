@@ -1,5 +1,5 @@
 # DECISION.md — Callrex (CallVault fork)
-_Last updated: 2026-10-14 — v2.5.4 REWORK DONE: legacy 3-button overlay DELETED (user order: sirf floating button rahega). Code committed pending (local). PUSH/PUBLISH PENDING user permission._
+_Last updated: 2026-10-14 — v2.5.4 PUBLISHED: overlay-deleted APK push + tag v2.5.4 + GitHub release + Catbox. Hash-verified end-to-end (SHA-256 match on GitHub download AND Catbox). Test: Vobiz live hote hi agent line pe koi call → agent khud uthana chahiye.
 
 ## v2.5.4 (final) — AI agent auto-pickup + legacy overlay DELETED (2026-10-14)
 
@@ -54,13 +54,20 @@ stock call screen + floating "AI Assistant" button. Agent line pe jo bhi ring ka
 - Overlay wapas laana — user ne 3-button overlay reject kiya tha ("only one floating button").
 
 ### Status (verified, claims nahi)
-- App: 7 files, +460 lines; compile green; **1967/1967 unit tests green**; secret scan clean.
-- APK: `/tmp/Callrex-2.5.4.apk` (81,686,676 B) — versionCode **20504**, versionName **2.5.4** (aapt-verified).
-- Engine: restart ho chuka (naya contract load, pid 64658), `/sip/ringing` 200; Mongo launchd (8.2, KeepAlive) pid 63763 — reboot-safe ab.
-- Commits LOCAL only: callrex `c24f93a`, zantacall `55cfa03d`. **Push/release PENDING — user permission chahiye (strict rule).**
+- **PUBLISHED 2026-10-14** (user "pubish the latest version"): branch `callrex` → `05a79a8` push +
+  tag `v2.5.4` push + GitHub release (release_id 412883333) + Catbox.
+  - GitHub: https://github.com/RYUK8853/callrex/releases/tag/v2.5.4
+  - Catbox: https://files.catbox.moe/cnyhfx.apk
+  - Hash-verified: GitHub download AND Catbox download dono = local build SHA-256
+    `bc1091899d1551439a4cce4fad5f84a2a0cd5010f4897ec3384fe794cb7f16da`, aapt 2.5.4/20504.
+- **GitHub upload GOTCHAS:** (1) tag-URL variants 422 "Bad Size" dete the — release-ID URL
+  (`/releases/<id>/assets`) se kaam chala; (2) pehla upload store-while-multipart-framing
+  (208 B corrupt) — delete + RAW binary re-upload. Rule: asset download kar ke hash+aapt verify,
+  "201 success" se kaafi nahi.
+- Zantacall `55cfa03d` intentionally NOT pushed — engine Mac par direct chala raha hai.
 - FIELD TEST BLOCKED: Vobiz carrier inbound provisioning 24-48h pending (number +91 80642 69004
-  abhi "call cannot be connected" deta hai). Provisioning aane ke baad: install 2.5.4 → call
-  karwao agent line pe ya deflect test karo → transcript panel dikhna chahiye.
+  abhi "call cannot be connected" deta hai). Provisioning aane ke baad: install 2.5.4 (GitHub
+  release ya Catbox) → kisi se agent line pe call karwao → agent khud uthana chahiye, transcript panel.
 
 ### Infra lessons (10-14, is session me aaye)
 - Mongo exit-62 mystery = FCV 8.0 data + mongod 7.0.35 → FATAL version guard (corruption NAHI).
