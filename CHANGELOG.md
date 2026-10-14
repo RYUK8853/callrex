@@ -3,6 +3,12 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.5.1] — 2026-10-14 — bug fix: the phone could not reach the local Mac over HTTP
+Android 11+ (this app's minimum) blocks cleartext `http://` traffic by default, so the
+phone never reached the engine (`:8000`) or the Node (`:3000`). The first "Send logs"
+press went nowhere — and no takeover request could have worked either. The manifest now
+declares `usesCleartextTraffic="true"`. No other change.
+
 ## [2.5.0] — 2026-10-14
 
 ### Added
