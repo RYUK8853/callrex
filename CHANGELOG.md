@@ -3,6 +3,26 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.5.3] — 2026-10-14 — AI Assistant: one floating button on the stock-style call screen (Option A)
+Normal incoming calls get the original phone-style UI (number, green Answer, red Decline)
+with a single extra floating **AI Assistant** button. Tap it and the ringing call is
+deflected to the AI agent line (Vobiz number) via `Call.deflect` — the caller then talks
+to the AI agent over the existing SIP → LiveKit → engine pipeline.
+
+- **Make Callrex the default phone app** (one-tap system dialog in Settings) — required for
+  the in-call UI and deflecting to work; without the dialer role the legacy takeover
+  overlay keeps working as before (safe fallback, the two UIs never stack).
+- New **AI agent line** field in Settings (forwarding target; blank = button shows a toast,
+  never forwards to the wrong number).
+- Manifest: `AiCallActivity` (+ dial pad / call-button intents), `AiCallInCallService`
+  (`BIND_INCALL_SERVICE`), `CALL_PHONE` for the dial pad.
+
+## [2.5.2] — 2026-10-14 — normal-call takeover overlay
+Incoming calls to the phone's own SIM now raise the 3-button takeover overlay
+(take it yourself / hand to agent / decline) while takeover is on, without any SIP
+involvement. Superseded as the primary UI by 2.5.3's floating-button design; retained
+as the fallback for devices where Callrex is not the default dialer.
+
 ## [2.5.1] — 2026-10-14 — bug fix: the phone could not reach the local Mac over HTTP
 Android 11+ (this app's minimum) blocks cleartext `http://` traffic by default, so the
 phone never reached the engine (`:8000`) or the Node (`:3000`). The first "Send logs"

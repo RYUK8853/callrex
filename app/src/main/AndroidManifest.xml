@@ -25,6 +25,9 @@
     <!-- In-app updater: commit a PackageInstaller session for the tap-to-update flow. -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- Option A: the dial pad's call button (TelecomManager.placeCall). Runtime-granted like
+         any normal dialer; only used for the dial-pad screen that the dialer role requires. -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -193,6 +196,42 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="ADB wireless-debugging pairing." />
+        </service>
+
+        <!-- Option A: stock-look call screen + the single floating "AI Assistant" button.
+             Launched by AiCallInCallService for every telephony call while Callrex holds
+             ROLE_DIALER, and via ACTION_DIAL as the minimal dial pad the dialer role requires.
+             showWhenLocked/turnScreenOn: it is the call UI itself — it must appear above the
+             lock screen and keep the screen on through ringback and the agent conversation. -->
+        <activity
+            android:name=".services.takeover.AiCallActivity"
+            android:exported="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Callrex">
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.CALL_BUTTON" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Option A: receives every telephony Call while Callrex is the default dialer
+             (ROLE_DIALER, granted through the system role dialog from Settings). It hands the
+             live Call to AiCallActivity, where the owner answers/declines or deflects the call
+             to the AI agent line. BIND_INCALL_SERVICE is enforced by the platform. -->
+        <service
+            android:name=".services.takeover.AiCallInCallService"
+            android:exported="true"
+            android:permission="android.permission.BIND_INCALL_SERVICE">
+            <intent-filter>
+                <action android:name="android.telecom.InCallService" />
+            </intent-filter>
         </service>
 
         <!-- Dynamic takeover: the incoming-call decision screen (owner pickup / agent / decline).

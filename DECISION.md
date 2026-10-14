@@ -403,3 +403,35 @@ Choice: "Overlay pehle banao, button action main choose karunga".
 - Overlay permission bina diye overlay nahi aayega (Settings me one-time grant; missing par log + beacon fire).
 - Live carrier call ko app se agent me bridge karna Android pe allowed nahi — provider-side mechanism (call-back/forwarding/InCallService) chahiye; user choose karega.
 - R3 screen-off death field test abhi bhi pending.
+
+## 2026-10-14 — AI Assistant (Option A): default-dialer path + ek floating button (v2.5.3 candidate)
+
+### User ka final UI decision (verbatim)
+"i didnt like that there should be only one floating button named ai asistant if i click on that button it will forward that call to ai agent then ai agent will talk to caller. and i want to pick and decline from the original phone ui not from callrex"
+Decision: "okay we will go for option a then" — Callrex ek baar default dialer bane (system role dialog se), phir call screen stock-look + sirf ek floating "AI Assistant" button.
+
+### Kya bana
+1. **NEW `AiCallInCallService.kt`** — InCallService. Jab Callrex ROLE_DIALER ho, system har telephony call yahan deta hai. RINGING/NEW par `activeRingingCall` set + `AiCallActivity` launch (live `Call` reference share).
+2. **NEW `AiCallActivity.kt`** — stock-look call screen (black bg, number center):
+   - Incoming: green **Answer** (`call.answer(AUDIO_ONLY)`) + red **Decline** (`call.reject(DECLINED)`) + ek floating red **"AI Assistant"** pill.
+   - **AI Assistant tap** → `call.deflect(tel:<Vobiz number>)` = Android ka official ringing-call forward. Caller ab Vobiz line pe rings → SIP trunk → LiveKit → engine → **AI agent caller se baat karta hai** (pipeline pehle se wired, zero engine changes).
+   - In-call (user ne khud uthaya): number + End. Outgoing: Cancel. `ACTION_DIAL`/`CALL_BUTTON`: minimal dial pad (dialer role ka requirement, `placeCall`).
+   - Target number set na ho → toast (call kabhi galat number pe nahi jayegi).
+3. **NEW `DialerRole.kt`** — `RoleManager.isRoleHeld(ROLE_DIALER)` ka single source of truth (device-level fact, har call par fresh read).
+4. **`NormalCallTrigger` guard** — jab default-dialer path UI own karta hai, legacy 3-button overlay OFF (do call UIs stack nahi honge). Non-dialer mode me legacy overlay same jaisa chalta hai (fallback).
+5. **Settings → Dynamic Takeover → "AI Assistant for normal calls"** — (a) "Make Callrex the default phone app" button (system role dialog — code silently role nahi le sakta, user ka explicit choice), (b) "AI agent line (Vobiz number)" field → `AppPreferences.getTakeoverForwardNumber`.
+6. **Manifest** — `AiCallActivity` (exported, showWhenLocked/turnScreenOn, ACTION_DIAL + CALL_BUTTON filters), `AiCallInCallService` (`BIND_INCALL_SERVICE` permission), `CALL_PHONE` (dial pad ka call button, runtime-granted).
+7. **Strings** — `ai_assistant_*` + `ai_call_*` set.
+
+### Verified (real)
+- SDK `android-36` android.jar se APIs verify: `deflect(Uri)` (API 29+; minSdk 30 ✓), `reject(int)` (no-arg overload NAHI hai — ye bug code-review me pakda, `reject(DECLINED)` use kiya).
+- `:app:compileDebugKotlin` GREEN (2s)
+- `:app:testDebugUnitTest` **1967/1967, 0 failures, 0 errors**
+- Release build v2.5.3 (20503) — yehi abhi chal raha hai
+
+### Honest limitations (field-test ke liye)
+- **Default dialer banana user ka ek-tap hai** (Settings button → system dialog). Dialer role bina liye AI Assistant button nahi dikhega (InCallService call nahi milta).
+- **Deflect = carrier-level forward.** Android call ko Vobiz number pe bhejta hai; agent se baat tabhi hogi jab Vobiz inbound PSTN routing active ho (24-48h provisioning pending tha). Tak button UI test hota hai.
+- Default dialer banne se Callrex ka dial pad bhi phone ka default ban jata hai (minimal stock-style) — ye role ka OS requirement hai, hata nahi sakte.
+- Vobiz number field me jo daala gaya usi pe forward hoga — galat number ka guard = blank to toast.
+- Push/tag/release: NAHI hua (strict rule) — sirf local build + DECISION.md.

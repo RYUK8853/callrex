@@ -146,6 +146,9 @@ interface SettingsActions {
     fun setTakeoverNodeUrl(url: String)
     fun setTakeoverNodeToken(token: String)
 
+    /** Option A: the agent line (Vobiz) normal calls are deflected to on "AI Assistant" tap. */
+    fun setTakeoverForwardNumber(number: String)
+
     /** Clears all stored takeover endpoints and tokens. */
     fun clearTakeoverSettings()
 }
@@ -698,6 +701,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     override fun setTakeoverNodeToken(token: String) {
         preferences.setTakeoverNodeToken(token)
+        refresh()
+    }
+
+    override fun setTakeoverForwardNumber(number: String) {
+        preferences.setTakeoverForwardNumber(number)
         refresh()
     }
 

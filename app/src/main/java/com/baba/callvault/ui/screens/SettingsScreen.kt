@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.GraphicEq
@@ -36,6 +38,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.CallMade
 import androidx.compose.material.icons.automirrored.filled.CallReceived
 import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.PhoneInTalk
@@ -1931,6 +1935,17 @@ private fun TakeoverSection(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         )
 
+        // Option A: the single floating "AI Assistant" button. Requires Callrex to be the
+        // default dialer (RoleManager ROLE_DIALER) so the system hands us the live Call we
+        // deflect to the agent line. The forward number is the Vobiz agent line.
+        AiAssistantSubSection(
+            preferences = preferences,
+            updateTrigger = updateTrigger,
+            actions = actions,
+            context = context,
+            enabled = enabled,
+        )
+
         // Diagnostics — the log beacon. The button is the escape hatch; the crash and
         // call-end sends happen on their own, without anyone tapping anything.
         Column(
@@ -1970,6 +1985,103 @@ private fun TakeoverSection(
                 Text(stringResource(R.string.takeover_logs_send))
             }
         }
+    }
+}
+
+/**
+ * Option A block: "AI Assistant" for normal calls.
+ *
+ * - **Dialer role row**: Option A needs Callrex to be the phone's default dialer
+ *   ([RoleManager] `ROLE_DIALER`) — only the dialer receives the live `Call` from the
+ *   [com.baba.callvault.services.takeover.AiCallInCallService] and may deflect it to the agent
+ *   line. Tapping the row raises the system role-assignment dialog (no code can take the role
+ *   silently — that is an explicit user choice, exactly what it should be).
+ * - **Forward number**: the Vobiz agent line a call is deflected to on "AI Assistant" tap.
+ *   Blank = button visible but inert (a toast explains), so a wrong number can never receive a
+ *   live call by accident.
+ */
+@Composable
+private fun AiAssistantSubSection(
+    preferences: AppPreferences,
+    updateTrigger: Int,
+    actions: SettingsActions,
+    context: android.content.Context,
+    enabled: Boolean = true,
+) {
+    val activityContext = LocalContext.current
+    val forwardNumber = remember(updateTrigger) { preferences.getTakeoverForwardNumber() }
+
+    // The dialer role is a device-level fact, not a preference: re-read it every settings pass
+    // so a user who just changed the default phone app in system Settings sees it here without
+    // restarting Callrex.
+    val roleManager = remember { context.getSystemService(android.app.role.RoleManager::class.java) }
+    val isDialer = remember(updateTrigger) {
+        roleManager?.isRoleHeld(android.app.role.RoleManager.ROLE_DIALER) == true
+    }
+
+    val requestDialerLauncher = rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+    ) {
+        // The result code is deliberately not acted on: a cancellation leaves the row reading
+        // "not the default dialer" on the next recomposition (refresh below), and an acceptance
+        // flips it to "default dialer". Both are visible without trusting the callback.
+        actions.refreshSettings()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.ai_assistant_section_title),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        Text(
+            text = stringResource(R.string.ai_assistant_section_description),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        Button(
+            onClick = {
+                val intent = roleManager?.createRequestRoleIntent(android.app.role.RoleManager.ROLE_DIALER)
+                if (intent == null) {
+                    Toast.makeText(activityContext, R.string.ai_assistant_role_unavailable, Toast.LENGTH_LONG).show()
+                } else {
+                    runCatching { requestDialerLauncher.launch(intent) }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 4.dp)
+        ) {
+            Icon(
+                imageVector = if (isDialer) Icons.Filled.CheckCircle else Icons.Filled.SmartToy,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                stringResource(
+                    if (isDialer) R.string.ai_assistant_dialer_active
+                    else R.string.ai_assistant_dialer_set
+                )
+            )
+        }
+
+        OutlinedTextField(
+            value = forwardNumber.orEmpty(),
+            onValueChange = { actions.setTakeoverForwardNumber(it) },
+            label = { Text(stringResource(R.string.ai_assistant_forward_number_label)) },
+            placeholder = { Text(stringResource(R.string.ai_assistant_forward_number_hint)) },
+            singleLine = true,
+            enabled = enabled,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        )
     }
 }
 
@@ -3617,6 +3729,7 @@ private fun SettingsScreenPreview() {
             override fun setTakeoverEngineToken(token: String) {}
             override fun setTakeoverNodeUrl(url: String) {}
             override fun setTakeoverNodeToken(token: String) {}
+            override fun setTakeoverForwardNumber(number: String) {}
             override fun clearTakeoverSettings() {}
         }
 

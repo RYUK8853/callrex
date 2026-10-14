@@ -1005,4 +1005,27 @@
     <string name="takeover_captured_message">Key message</string>
     <string name="takeover_call_summary">Summary</string>
     <string name="takeover_refresh">Refresh</string>
+
+    <!-- Option A: single floating "AI Assistant" button (Callrex as default dialer) -->
+    <string name="ai_assistant_section_title">AI Assistant for normal calls</string>
+    <string name="ai_assistant_section_description">When a call comes to your number, a stock call screen appears with Answer / Decline plus one floating “AI Assistant” button. Tapping it forwards the live call to your AI agent so the agent talks to the caller. This needs Callrex to be the phone’s default dialer.</string>
+    <string name="ai_assistant_dialer_set">Make Callrex the default phone app</string>
+    <string name="ai_assistant_dialer_active">Callrex is the default phone app</string>
+    <string name="ai_assistant_role_unavailable">Default-dialer option unavailable on this device.</string>
+    <string name="ai_assistant_forward_number_label">AI agent line (Vobiz number)</string>
+    <string name="ai_assistant_forward_number_hint">e.g. +91 80642 69004</string>
+
+    <!-- Option A: call screen labels -->
+    <string name="ai_assistant_button">AI Assistant</string>
+    <string name="ai_call_incoming">Incoming call</string>
+    <string name="ai_call_in_call">On call</string>
+    <string name="ai_call_outgoing">Calling…</string>
+    <string name="ai_call_unknown">Unknown number</string>
+    <string name="ai_call_answer">Answer</string>
+    <string name="ai_call_decline">Decline</string>
+    <string name="ai_call_end">End</string>
+    <string name="ai_call_cancel">Cancel</string>
+    <string name="ai_call_forwarding">Forwarding…</string>
+    <string name="ai_call_no_target">Set the AI agent line in Settings → Dynamic Takeover first.</string>
+    <string name="ai_dial_title">Dial</string>
 </resources>

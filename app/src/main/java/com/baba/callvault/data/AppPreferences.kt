@@ -439,6 +439,9 @@ class AppPreferences(context: Context) {
         TAKEOVER_ENGINE_TOKEN("takeover_engine_token"),
         // Node X-Server-Token. NOT exported.
         TAKEOVER_NODE_TOKEN("takeover_node_token"),
+        // Option A: the agent line (Vobiz) a normal incoming call is deflected to when the
+        // user taps "AI Assistant". Stored as plain digits / E.164 without the "tel:" scheme.
+        TAKEOVER_FORWARD_NUMBER("takeover_forward_number"),
         RECORD_FROM_ANSWER("record_from_answer"),
         
         // --- Filters & Contacts ---
@@ -773,6 +776,15 @@ class AppPreferences(context: Context) {
     /** Node server token. Blank/null = no header. */
     fun getTakeoverNodeToken(): String? = getString(Key.TAKEOVER_NODE_TOKEN, DefaultsValue.TAKEOVER_NODE_TOKEN)?.takeIf { it.isNotBlank() }
     fun setTakeoverNodeToken(token: String?) = setString(Key.TAKEOVER_NODE_TOKEN, token)
+
+    /**
+     * Option A: the agent line (Vobiz number) a normal incoming call is deflected to when the
+     * user taps the floating "AI Assistant" button. Blank/null = not configured — the button
+     * stays visible but is a no-op (with a toast), so a misconfigured number can never send a
+     * call somewhere the user did not intend.
+     */
+    fun getTakeoverForwardNumber(): String? = getString(Key.TAKEOVER_FORWARD_NUMBER, null)?.takeIf { it.isNotBlank() }
+    fun setTakeoverForwardNumber(number: String?) = setString(Key.TAKEOVER_FORWARD_NUMBER, number)
 
     /**
      * Whether "Resilient recording" (the audio-capture handoff, Option B) is enabled. Default false =

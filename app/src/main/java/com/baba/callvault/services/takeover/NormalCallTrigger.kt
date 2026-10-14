@@ -88,6 +88,15 @@ object NormalCallTrigger {
                 val prefs = AppPreferences(context)
                 if (!prefs.isTakeoverEnabled()) return
 
+                // Option A: when Callrex IS the default dialer, the InCallService path
+                // (AiCallInCallService -> AiCallActivity, stock look + "AI Assistant" button)
+                // already owns the call UI. Raising the old 3-button overlay here too would
+                // stack two call screens — so this legacy path steps aside entirely.
+                if (DialerRole.isHeld(context)) {
+                    AppLogger.i(TAG, "normal incoming call ${phoneNumber ?: "<unknown>"} — default-dialer path owns the UI; legacy overlay skipped")
+                    return
+                }
+
                 val cur = TakeoverState.current.value
                 if (cur != null) {
                     // Double-broadcast: the second RINGING carries the real number.
