@@ -3,6 +3,41 @@
 All notable changes to CallVault are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project uses semantic-ish versioning.
 
+## [2.5.5] — 2026-10-17 — Decline hands the call to the AI agent (deflect) + app no longer dies mid-call
+
+The takeover flow is now exactly: an incoming call rings on the stock-looking call
+screen → you tap **Decline** → the call is **deflected** to your configured agent
+line (the Vobiz number) → the voice agents answer and talk to the caller. Answer
+still takes the call locally with recording/transcription/summary as before.
+
+- **Decline = forward to the agent:** the red Decline button on the call screen
+  now calls `Call.deflect()` to the agent-line number stored in Settings
+  ("Forward to number") and arms the agent handoff (the existing
+  `RingingMonitorService` → `POST /sip/agent-takeover` auto-pickup path). Gated on
+  Takeover enabled + engine URL + forward number all set. If the platform cannot
+  deflect (e.g. emulated telephony), the failure is caught, shown as a debug toast,
+  and the call stays live — never a crash, never an accidental drop. The old
+  floating "AI Assistant" pill is gone; the screen is just the number, Answer and
+  Decline, on the original phone call UI.
+- **App no longer dies during calls (OOM fix):** Whisper (~2 GB) and Llama
+  (~3.5 GB) could load at the same time on the same call — observed as 7 process
+  deaths in 3 minutes in v2.5.4 field logs. New `HeavyModelGate` serializes the
+  load→use→free span of both models process-wide; the second engine now waits for
+  the first to finish instead of doubling the memory footprint.
+- **Incoming call screen crash fixed:** the call screen crashed on
+  `setContentView(null)` before Compose installed its view — incoming calls would
+  take the app down. Removed; the screen now renders in well under a second.
+- **Caller number shows clean digits:** the `tel:` URI prefix is stripped, so the
+  screen shows `+91…` exactly as dialed.
+- **Default-dialer button actually works now:** the manifest declares the two
+  required `ACTION_DIAL` filters (the second with the `tel:` scheme) plus the
+  `IN_CALL_SERVICE_UI` metadata, which is what makes the app eligible in the
+  system "Default phone app" picker. Previously the "Make Callrex Default" button
+  silently did nothing.
+- **LiveKit re-point completed on the agent side** (project moved to "Callrex"):
+  the app always joins with the `serverUrl` + token from the human-join response,
+  no hardcoded URL.
+
 ## [2.5.4] — 2026-10-14 — AI agent auto-pickup + the legacy 3-button overlay is GONE
 The "AI Assistant" tap forwarded the call to the agent line, but the agent never actually
 answered: nothing triggered the engine's `POST /sip/agent-takeover` on the dialer path, so

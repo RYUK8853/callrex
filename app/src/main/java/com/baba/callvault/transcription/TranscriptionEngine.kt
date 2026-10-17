@@ -12,6 +12,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.SystemClock
 import androidx.annotation.VisibleForTesting
+import com.baba.callvault.HeavyModelGate
 import com.baba.callvault.server.speakers.OfflineSpeakerLabeller
 import com.baba.callvault.utils.AppLogger
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -315,6 +316,10 @@ object TranscriptionEngine {
         // once, whatever the length of the call.
         lastSetupMs = 0L
         val setupStartedAt = SystemClock.elapsedRealtime()
+        // Serialize against the summary model: at most one heavy model resident at a
+        // time, or the whisper (~2 GB) + llama (~3.46 GB) mappings coexist and OOM the
+        // process mid-run (observed: 7 deaths in 3 minutes, calls lost).
+        HeavyModelGate.withSingleHeavyModel {
         val ptr = WhisperNative.initContext(modelPath, context.applicationInfo.nativeLibraryDir)
         if (ptr == 0L) error("Could not load whisper model at $modelPath")
         try {
@@ -412,6 +417,7 @@ object TranscriptionEngine {
             all.also { AppLogger.i(TAG, "Produced ${it.size} segments across ${plan.size} pass(es)") }
         } finally {
             WhisperNative.freeContext(ptr)
+        }
         }
         } finally {
             isRunning = false

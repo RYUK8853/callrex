@@ -1,5 +1,96 @@
 # DECISION.md — Callrex (CallVault fork)
-_Last updated: 2026-10-14 — v2.5.4 PUBLISHED: overlay-deleted APK push + tag v2.5.4 + GitHub release + Catbox. Hash-verified end-to-end (SHA-256 match on GitHub download AND Catbox). Test: Vobiz live hote hi agent line pe koi call → agent khud uthana chahiye.
+_Last updated: 2026-10-17 — v2.5.5 in release: decline→deflect flow + OOM gate + dialer eligibility. Emulator pe app-side E2E proven (Decline → REQUEST_DEFLECT); emulator CS telephony deflect support nahi karta (platform limit) — real SIM device pe full loop.
+
+## v2.5.5 — Decline = agent ko forward (deflect) + app mid-call nahi marega (2026-10-17)
+
+### User order (verbatim)
+"now onw thing we will drop the idea of over lay from android what we will do
+listen and understand clearly call comes on the phone number 1234567890 if i
+declined the call it gets forwarded to vobiz number +918064269004 which is
+connected to the voice agents to answer the call this is what i wanted to be
+done today at any cost."
+→ Overlay idea ABANDON. Flow: call aayega → original phone call UI → user
+Decline tap karega → call Vobiz number pe deflect → voice agents utha lein.
+Floating "AI Assistant" pill bhi hata di (user ne pehle kaha tha sirf ek
+button, ab to Decline hi wo button hai).
+
+### Decisions (aur kyun)
+1. **Decline button ko hi "send to agent" bana diya** — `call.deflect(Uri)` on
+   the ringing `Call` (Telecom API, Android 10+). Kyun: user chahta hai
+   original phone UI se pick/decline; Decline ab reject nahi, forward karta
+   hai. Deflect = network-level forward — call carrier ke through Vobiz pe
+   chalti hai, agent line pe ring, `RingingMonitorService` → `POST
+   /sip/agent-takeover` → agent auto-pickup (existing path, koi naya code nahi).
+2. **Gate conditions:** deflect tabhi hoga jab `takeover_enabled` +
+   `takeover_engine_url` + `takeover_forward_number` teeno set hon. Warna
+   Decline normal reject karega (aaj se pehle jaisa) — config adhoora ho to
+   call na jhaam ho.
+3. **Deflect fail hone pe (jaise emulator) kya hota hai:** `CallStateException`
+   catch, debug toast, call LIVE rehti hai — crash nahi, call drop nahi. Kyun:
+   emulator fake CS telephony deflect support nahi karta; real device pe real
+   network forward ho jayega. "At any cost" = app kabhi call mat giraaye.
+4. **Floating pill DELETED** (`FloatingAiButton` + `AiRed` removed). Screen sirf:
+   caller number + Decline (red) + Answer (green).
+5. **`setContentView(null)` removed (CRASH FIX):** incoming call pe app crash
+   karta tha — `IllegalArgumentException: Cannot add a null child view`
+   (Compose `setContent{}` se pehle null content view illegal hai). Fix: line
+   hata di, comment lagaya. Emulator pe verified: call screen 782ms me render,
+   0 FATAL.
+6. **`tel:` prefix display fix:** `Call.Details.handle` ek Uri hai
+   (`tel:1234567890`); screen pe raw dikh raha tha. `displayNumber()` helper
+   = `removePrefix("tel:")`, initial state + `onStateChanged` dono pe.
+   Emulator vision-verified: clean `1234567890`.
+7. **HeavyModelGate (OOM FIX — "7 deaths in 3 min"):** v2.5.4 field logs me
+   ek call pe Whisper (~2GB) + Llama (~3.5GB) DONO simultaneously load ho rahe
+   the → 7 process deaths in 3 min. `HeavyModelGate.kt` (naya file):
+   process-wide `Mutex`; dono engines ka load→use→free span isme wrapped.
+   Second engine ab WAIT karta hai (log hota hai), memory double nahi hoti.
+8. **Manifest: default-dialer eligibility (in-app "Make Callrex Default"
+   button silently no-op tha — root cause):** RoleManagerCompat ke mutabiq
+   ROLE_DIALER eligibility = 2× `ACTION_DIAL` filters (doosre me `tel:`
+   scheme) + InCallService with `IN_CALL_SERVICE_UI` metadata. Teeno ab
+   manifest me. Purana `<role>` element build-tools 36 AAPT me invalid tha
+   (build fail) — removed, zaroori bhi nahi tha.
+
+### Verified (real runs, emulator `callrex2` = Android Studio emulator)
+- `assembleDebug` + `testDebugUnitTest` GREEN (OOM gate + saare fixes ke sath)
+- E2E: `emu gsm call 1234567890` → `onCallAdded` → `AiCallActivity` top-resumed
+  782ms, no crash → vision: number + red Decline + green Answer, pill GONE
+- Decline tap → app `call.deflect()` → Telecom log me `REQUEST_DEFLECT` →
+  `CallStateException: deflect is not supported for CS` (emulator platform
+  limit) → graceful: caught + toast + call live, 0 FATAL
+- DIALER role: `cmd role add-role-holder android.app.role.DIALER
+  com.vishal.callrex` — reboot ke baad bhi persist (emulator)
+- Prefs (4 keys) device pe verified, reboot-safe
+
+### Known limits (honest)
+- **Emulator pe full loop impossible:** CS telephony deflect reject karta hai.
+  App-side proof (REQUEST_DEFLECT dispatch) max extent hai. Real completion
+  = real phone + SIM, jahan carrier deflect support karta hai.
+- **Emulator conhost unstable ho gaya end me:** cold reboot ke baad `emu gsm
+  call` ke ~6 me sirf 1 Telecom tak pahuncha; baaki silently vanish. Tried:
+  cancel-all, adb reboot, full emu kill + cold boot, role re-grant, full
+  uninstall+install. App-side nahi hai (PM me service registered sahi, role
+  sahi, mDefaultDialerCache sahi) — emulator instance ka system-state issue.
+  AOSP source se verify kiya: dialer binding live PM query se hota hai
+  (InCallController.getDefaultDialerComponent), stale map nahi.
+- **Vobiz inbound:** 24-48h provisioning pending (deflect forward number
+  `+918064269004` active + KYC done). Real E2E uske baad.
+
+### Build note
+`assembleRelease` ko documented escape chahiye:
+`-PallowMissingTranslations=true` (13 locales me v2.4.10+ ke strings missing
+hain — pre-existing, v2.4.11 se documented). v2.5.5 bhi isi flag se.
+
+### Open (next)
+- Real device E2E: phone me install → "Make Callrex Default" (ECM flow) →
+  real call → Decline → Vobiz → agent pickup.
+- R3 screen-off test (0 occurrences requirement) — field.
+- Optional: `SipTakeoverClient.kt:230` stale LiveKit fallback remove (user
+  "haan" pending).
+- Owner side: `nodejs-api/server.js:172` LiveKit credentials plaintext —
+  separate permission chahiye.
+- 13 locales ke missing strings — alag release me.
 
 ## v2.5.4 (final) — AI agent auto-pickup + legacy overlay DELETED (2026-10-14)
 

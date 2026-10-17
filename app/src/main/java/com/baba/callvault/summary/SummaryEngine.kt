@@ -9,6 +9,7 @@
 package com.baba.callvault.summary
 
 import android.content.Context
+import com.baba.callvault.HeavyModelGate
 import com.baba.callvault.transcription.TranscriptionEngine
 import com.baba.callvault.utils.AppLogger
 import kotlinx.coroutines.Dispatchers
@@ -81,6 +82,10 @@ object SummaryEngine {
     ): T =
         withContext(Dispatchers.Default) {
             mutex.withLock {
+                // Serialize against the transcription model: at most one heavy model
+                // resident at a time, or the llama (~3.46 GB) + whisper (~2 GB)
+                // mappings coexist and OOM the process mid-run.
+                HeavyModelGate.withSingleHeavyModel {
                 val ptr = LlamaNative.initContext(modelPath, context.applicationInfo.nativeLibraryDir)
                 if (ptr == 0L) error("Could not load the summarisation model")
                 isRunning = true
@@ -91,6 +96,7 @@ object SummaryEngine {
                     // the app believing a run is still in progress for the rest of the process.
                     isRunning = false
                     LlamaNative.freeContext(ptr)
+                }
                 }
             }
         }

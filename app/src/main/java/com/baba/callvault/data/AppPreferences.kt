@@ -440,7 +440,7 @@ class AppPreferences(context: Context) {
         // Node X-Server-Token. NOT exported.
         TAKEOVER_NODE_TOKEN("takeover_node_token"),
         // Option A: the agent line (Vobiz) a normal incoming call is deflected to when the
-        // user taps "AI Assistant". Stored as plain digits / E.164 without the "tel:" scheme.
+        // user taps Decline on the call screen. Stored as plain digits / E.164 without the "tel:" scheme.
         TAKEOVER_FORWARD_NUMBER("takeover_forward_number"),
         RECORD_FROM_ANSWER("record_from_answer"),
         

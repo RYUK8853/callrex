@@ -79,17 +79,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-private val AiRed = Color(0xFFD71921)
-
 /**
  * Option A call screen (Callrex = default dialer).
  *
  * Three modes:
  *  1. Incoming call (launched by [AiCallInCallService] with a live [Call]):
  *     stock-look caller number + red Decline + green Answer (the original
- *     phone UI), plus the single floating "AI Assistant" pill. Tapping the
- *     pill calls [Call.deflect] with the configured agent line (Vobiz),
- *     forwarding the live ringing call to the AI agent.
+ *     phone UI). Decline is the agent handoff: it calls [Call.deflect] with
+ *     the configured agent line (Vobiz), forwarding the live ringing call to
+ *     the AI agent. There is no separate floating button — decline IS the
+ *     handoff.
  *  2. In-call / dialing (same live [Call], other states): number + End/Cancel.
  *  3. Dial pad (ACTION_DIAL launch, no live [Call]): minimal dialer required
  *     to hold the system dialer role.
@@ -113,7 +112,10 @@ class AiCallActivity : ComponentActivity() {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
         enableEdgeToEdge()
-        setContentView(null)
+        // NOTE: no explicit setContentView() here — the Compose setContent { }
+        // below creates and installs the ComposeView itself. Calling
+        // setContentView(null) first crashes with
+        // IllegalArgumentException: Cannot add a null child view to a ViewGroup.
         call = AiCallInCallService.activeRingingCall
         setContent {
             CallVaultTheme {
@@ -185,7 +187,7 @@ private fun AiCallRoot(
     // Track the live call state for the UI (mirrors the [Call.Callback] that
     // closes the activity on disconnect, in AiCallActivity).
     var callState by remember { mutableIntStateOf(call?.getState() ?: Call.STATE_DISCONNECTED) }
-    var number by remember { mutableStateOf(initialNumber.ifBlank { call?.details?.handle?.toString().orEmpty() }) }
+    var number by remember { mutableStateOf(displayNumber(initialNumber.ifBlank { call?.details?.handle?.toString().orEmpty() })) }
     var forwarding by remember { mutableStateOf(false) }
 
     DisposableEffect(call) {
@@ -193,13 +195,13 @@ private fun AiCallRoot(
         val cb = object : Call.Callback() {
             override fun onStateChanged(c: Call, state: Int) {
                 callState = state
-                number = c.details.handle?.toString().orEmpty().ifBlank { number }
+                number = displayNumber(c.details.handle?.toString().orEmpty()).ifBlank { number }
                 if (state != Call.STATE_RINGING && state != Call.STATE_NEW) forwarding = false
             }
         }
         c.registerCallback(cb)
         callState = c.getState()
-        number = c.details.handle?.toString().orEmpty().ifBlank { number }
+        number = displayNumber(c.details.handle?.toString().orEmpty()).ifBlank { number }
         onDispose { c.unregisterCallback(cb) }
     }
 
@@ -266,38 +268,6 @@ private fun AiCallRoot(
                 CallIdentity(number, stringResource(R.string.ai_call_incoming))
                 Spacer(Modifier.weight(1f))
 
-                // The single floating Callrex control: "AI Assistant".
-                FloatingAiButton(
-                    enabled = !forwarding,
-                    forwarding = forwarding,
-                    onClick = {
-                        val target = forwardTarget
-                        if (target.isNullOrBlank()) {
-                            Toast.makeText(context, R.string.ai_call_no_target, Toast.LENGTH_LONG).show()
-                        } else if (!prefs.isTakeoverEnabled() || prefs.getTakeoverEngineUrl().isNullOrBlank()) {
-                            // Without the engine configured there is nobody to arm — the forwarded
-                            // call would ring the agent line with no agent behind it.
-                            Toast.makeText(context, R.string.ai_handoff_no_engine, Toast.LENGTH_LONG).show()
-                        } else {
-                            forwarding = true
-                            runCatching {
-                                call.deflect(Uri.fromParts("tel", target, null))
-                            }.onSuccess {
-                                // Arm the auto agent handoff: when the forwarded call lands on
-                                // the SIP trunk (5-15 s via the carrier) the monitor hands it
-                                // straight to the agent — no second UI, no waiting on the owner.
-                                TakeoverState.armAgentHandoff(target)
-                            }.onFailure {
-                                forwarding = false
-                                if (BuildConfig.DEBUG) {
-                                    Toast.makeText(context, "deflect failed: ${it.message}", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    }
-                )
-                Spacer(Modifier.height(28.dp))
-
                 // Original phone UI: decline (left) + answer (right).
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 48.dp),
@@ -310,7 +280,31 @@ private fun AiCallRoot(
                         label = stringResource(R.string.ai_call_decline),
                         container = MaterialTheme.colorScheme.error,
                         contentColor = MaterialTheme.colorScheme.onError,
-                        onClick = { call.reject(Call.REJECT_REASON_DECLINED) }
+                        enabled = !forwarding,
+                        onClick = {
+                            // Decline = hand the call to the AI agent: deflect the live call to the
+                            // configured agent line (Vobiz). The forwarded call reaches the SIP
+                            // trunk and the monitor hands it to the agent — no separate floating
+                            // button, decline IS the handoff.
+                            val target = forwardTarget
+                            if (target.isNullOrBlank()) {
+                                Toast.makeText(context, R.string.ai_call_no_target, Toast.LENGTH_LONG).show()
+                            } else if (!prefs.isTakeoverEnabled() || prefs.getTakeoverEngineUrl().isNullOrBlank()) {
+                                Toast.makeText(context, R.string.ai_handoff_no_engine, Toast.LENGTH_LONG).show()
+                            } else {
+                                forwarding = true
+                                runCatching {
+                                    call.deflect(Uri.fromParts("tel", target, null))
+                                }.onSuccess {
+                                    TakeoverState.armAgentHandoff(target)
+                                }.onFailure {
+                                    forwarding = false
+                                    if (BuildConfig.DEBUG) {
+                                        Toast.makeText(context, "deflect failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
                     )
                     CallActionButton(
                         icon = Icons.Filled.Call,
@@ -365,6 +359,7 @@ private fun CallActionButton(
     label: String,
     container: Color,
     contentColor: Color,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -372,8 +367,11 @@ private fun CallActionButton(
             modifier = Modifier
                 .size(78.dp)
                 .clip(CircleShape)
-                .background(container)
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onClick() },
+                .background(container.copy(alpha = if (enabled) 1f else 0.4f))
+                .then(
+                    if (enabled) Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onClick() }
+                    else Modifier
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -389,51 +387,6 @@ private fun CallActionButton(
             style = MaterialTheme.typography.bodyLarge,
             color = contentColor
         )
-    }
-}
-
-@Composable
-private fun FloatingAiButton(
-    enabled: Boolean,
-    forwarding: Boolean,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(28.dp))
-            .background(AiRed)
-            .then(
-                if (enabled) Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onClick() }
-                else Modifier
-            )
-            .padding(horizontal = 26.dp, vertical = 15.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            if (forwarding) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(18.dp),
-                    color = Color.White,
-                    strokeWidth = 2.dp
-                )
-            } else {
-                Icon(
-                    Icons.Filled.SmartToy,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-            Text(
-                text = if (forwarding) stringResource(R.string.ai_call_forwarding) else stringResource(R.string.ai_assistant_button),
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
     }
 }
 
@@ -619,6 +572,9 @@ private fun AgentHandoffLivePanel(
         Spacer(Modifier.height(8.dp))
     }
 }
+
+/** Strips the `tel:` URI scheme that [android.telecom.Call.Details.handle] keeps. */
+private fun displayNumber(raw: String): String = raw.removePrefix("tel:")
 
 @Composable
 private fun DialPadScreen(initialNumber: String, onBack: () -> Unit) {

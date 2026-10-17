@@ -186,11 +186,14 @@
                 android:value="ADB wireless-debugging pairing." />
         </service>
 
-        <!-- Option A: stock-look call screen + the single floating "AI Assistant" button.
-             Launched by AiCallInCallService for every telephony call while Callrex holds
-             ROLE_DIALER, and via ACTION_DIAL as the minimal dial pad the dialer role requires.
-             showWhenLocked/turnScreenOn: it is the call UI itself — it must appear above the
-             lock screen and keep the screen on through ringback and the agent conversation. -->
+        <!-- Option A: stock-look call screen (Answer + Decline; Decline = hand off to the
+             AI agent line). Launched by AiCallInCallService for every telephony call while
+             Callrex holds ROLE_DIALER, and via ACTION_DIAL as the minimal dial pad the
+             dialer role requires. showWhenLocked/turnScreenOn: it is the call UI itself —
+             it must appear above the lock screen and keep the screen on through ringback
+             and the agent conversation.
+             ROLE_DIALER eligibility (per RoleManagerCompat) = two ACTION_DIAL filters
+             (the second with a tel: scheme) + the InCallService with IN_CALL_SERVICE_UI. -->
         <activity
             android:name=".services.takeover.AiCallActivity"
             android:exported="true"
@@ -202,6 +205,14 @@
             <intent-filter>
                 <action android:name="android.intent.action.DIAL" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- Second required ROLE_DIALER filter: DIAL + tel: scheme (per the official
+                 role requirements). Makes the app an eligible candidate in the system
+                 "Default phone app" picker. -->
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="tel" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.CALL_BUTTON" />
@@ -220,6 +231,12 @@
             <intent-filter>
                 <action android:name="android.telecom.InCallService" />
             </intent-filter>
+            <!-- Marks this InCallService as the in-call UI provider. Required for the app
+                 to be eligible for ROLE_DIALER (otherwise the system won't offer it as a
+                 default phone app). -->
+            <meta-data
+                android:name="android.telecom.IN_CALL_SERVICE_UI"
+                android:value="true" />
         </service>
 
         <!-- Dynamic takeover: polls the voice-agent engine for ringing calls and hands them
