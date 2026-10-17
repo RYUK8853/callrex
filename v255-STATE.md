@@ -1,6 +1,6 @@
 # v2.5.5 — STATE (2026-10-17)
 
-## Release status
+## Release status — PUBLISHED 2026-10-17 20:12 IST
 | Step | Status |
 |---|---|
 | Code (decline→deflect, OOM gate, crash fix, tel: fix, dialer manifest) | DONE, emulator-verified |
@@ -8,12 +8,19 @@
 | CHANGELOG v2.5.5 | DONE |
 | assembleRelease (-PallowMissingTranslations=true) | GREEN, aapt: 20505/2.5.5 |
 | Cert vs v2.5.4 | IDENTICAL (SHA-256 2505c33a…) → in-place update |
-| Commit + push (callrex + main) | IN PROGRESS |
-| Tag v2.5.5 | PENDING |
-| GitHub release assets: `Callrex.apk` (in-app updater) + `Callrex-2.5.5.apk` (link) | PENDING |
-| Asset byte-verify (sha256 + PK + badging) | PENDING |
-| Catbox + verify (range GET head PK + tail content-range) | PENDING |
-| In-app updater check: `GET /releases/latest` → v2.5.5 + `Callrex.apk` | PENDING |
+| Commit + push (callrex + main) | DONE — `cfff3f6` on callrex AND main |
+| Tag v2.5.5 | DONE, pushed |
+| GitHub release assets: `Callrex.apk` (in-app updater) + `Callrex-2.5.5.apk` (link) | DONE, release_id 415852952 |
+| Asset byte-verify (sha256 `97c3b5f4…f5c8` + PK + badging) | PASS — download from GitHub matches local exactly |
+| Catbox + verify (range GET head PK + tail content-range) | PASS — `https://files.catbox.moe/9j2s0d.apk` |
+| In-app updater check: `GET /releases/latest` | v2.5.5 + `Callrex.apk` present, prerelease=false |
+
+## Links
+- GitHub: https://github.com/RYUK8853/callrex/releases/tag/v2.5.5
+- Download (versioned): https://github.com/RYUK8853/callrex/releases/download/v2.5.5/Callrex-2.5.5.apk
+- In-app asset: https://github.com/RYUK8853/callrex/releases/download/v2.5.5/Callrex.apk
+- Catbox: https://files.catbox.moe/9j2s0d.apk
+- LAN: http://192.168.1.9:8899/ (apk-test dir, if still up)
 
 ## Verified on emulator (callrex2)
 - Inbound `emu gsm call 1234567890` → AiCallActivity top-resumed 782ms, no crash
