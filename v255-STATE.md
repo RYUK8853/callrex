@@ -15,6 +15,14 @@
 | Catbox + verify (range GET head PK + tail content-range) | PASS — `https://files.catbox.moe/9j2s0d.apk` |
 | In-app updater check: `GET /releases/latest` | v2.5.5 + `Callrex.apk` present, prerelease=false |
 
+## Emulator final verification (v2.5.5 RELEASE apk, 2026-10-17 22:03 IST)
+Fresh cold boot (conhost recovered) + release APK + correct prefs ownership (uid 10215/u0a215):
+- `emu gsm call 1234567890` → AiCallActivity focus in +455ms, clean number, Decline/Answer visible
+- **Decline tap → `call.deflect()` → Telecom `REQUEST_DEFLECT` → TelephonyConnectionService → GsmCdmaConnection.deflect** (full chain confirmed in logcat)
+- Emulator carrier then rejects: `CallStateException: deflect is not supported for CS` (platform limit — fake network, no real carrier to execute the forward)
+- App handled failure gracefully: 0 crashes, call returned to normal RINGING state
+- PITFALL found: release build runs as u0a215 (uid 10215), NOT the debug uid — chown'ing seeded prefs to the wrong uid makes SharedPreferences delete+recreate the file, silently wiping takeover settings (gate fails → toast → no deflect). Use `stat -c %u /data/data/<pkg>` for the real uid.
+
 ## Links
 - GitHub: https://github.com/RYUK8853/callrex/releases/tag/v2.5.5
 - Download (versioned): https://github.com/RYUK8853/callrex/releases/download/v2.5.5/Callrex-2.5.5.apk
